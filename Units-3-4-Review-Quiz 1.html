@@ -1,0 +1,833 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Units 3 and 4 Review Quiz</title>
+<style>
+:root{
+  --ink:#1B1F3B; --paper:#F3F5F9; --card:#FFFFFF; --soft:#E1E7F5; --line:#C9D1E8;
+  --amber:#FFC247; --blue:#2C5BE0; --muted:#4A5272; --green:#0E7A5F; --red:#C62F3A;
+  --greenbg:#DDF3EC; --redbg:#FBE3E5; --onamber:#1B1F3B; --onblue:#FFFFFF;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#F3F5F9; --paper:#14172B; --card:#1D2142; --soft:#272D58; --line:#3A4175;
+    --amber:#FFC247; --blue:#8FA8FF; --muted:#B8C0E0; --green:#5FD3B5; --red:#FF8A6B;
+    --greenbg:#17433A; --redbg:#4D2733; --onamber:#1B1F3B; --onblue:#14172B;
+  }
+}
+:root[data-theme="dark"]{--ink:#F3F5F9; --paper:#14172B; --card:#1D2142; --soft:#272D58; --line:#3A4175; --amber:#FFC247; --blue:#8FA8FF; --muted:#B8C0E0; --green:#5FD3B5; --red:#FF8A6B; --greenbg:#17433A; --redbg:#4D2733; --onamber:#1B1F3B; --onblue:#14172B;}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:18px;line-height:1.45}
+h1,h2,h3{font-family:Cambria,Georgia,"Times New Roman",serif;margin:0;line-height:1.15}
+button{font:inherit;color:inherit;cursor:pointer}
+.wrap{max-width:1000px;margin:0 auto;padding:20px 20px 60px}
+header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+header.top h1{font-size:30px;flex:1;min-width:220px}
+.pill{display:inline-flex;align-items:center;gap:8px;background:var(--soft);border-radius:999px;padding:8px 16px;font-weight:700;font-size:16px}
+.btn{background:var(--ink);color:var(--paper);border:0;border-radius:12px;padding:12px 22px;font-weight:700}
+.btn.amber{background:var(--amber);color:var(--onamber)}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:focus-visible,.opt:focus-visible,.tile:focus-visible,.cell:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.hero{background:#1B1F3B;color:#F3F5F9;border-radius:22px;padding:28px 30px;margin-bottom:24px;display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.hero h2{font-size:34px;margin-bottom:6px}
+.hero p{margin:0;color:#B8C0E0;max-width:560px}
+.hero .big{margin-left:auto;text-align:center;background:var(--amber);color:#1B1F3B;border-radius:18px;padding:14px 26px}
+.hero .big b{display:block;font-family:Cambria,Georgia,serif;font-size:40px;line-height:1}
+.hero .big span{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.tile{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:18px;text-align:left;display:flex;flex-direction:column;gap:6px;min-height:128px}
+.tile:hover{border-color:var(--blue)}
+.tile .n{width:34px;height:34px;border-radius:50%;background:var(--amber);color:var(--onamber);font-weight:800;display:grid;place-items:center;font-size:15px}
+.tile h3{font-size:21px}
+.tile p{margin:0;color:var(--muted);font-size:15px}
+.tile .sc{margin-top:auto;font-weight:700;font-size:14px;color:var(--muted)}
+.tile.done{border-color:var(--green)}
+.tile.done .sc{color:var(--green)}
+.panel{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:26px}
+.bar{height:10px;border-radius:99px;background:var(--soft);overflow:hidden;margin-bottom:18px}
+.bar i{display:block;height:100%;background:var(--blue);width:0;transition:width .3s}
+.q{font-family:Cambria,Georgia,serif;font-size:30px;font-weight:700;line-height:1.25;margin:6px 0 20px}
+.tag{display:inline-block;background:var(--soft);color:var(--muted);border-radius:8px;padding:3px 10px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.opts{display:grid;gap:12px}
+.opt{background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:14px 18px;text-align:left;font-size:21px;font-weight:600}
+.opt:hover:not(:disabled){border-color:var(--blue)}
+.opt.ok{background:var(--greenbg);border-color:var(--green)}
+.opt.bad{background:var(--redbg);border-color:var(--red)}
+.opt:disabled{cursor:default}
+.fb{margin-top:18px;border-radius:14px;padding:14px 18px;font-size:18px}
+.fb.ok{background:var(--greenbg);border-left:6px solid var(--green)}
+.fb.bad{background:var(--redbg);border-left:6px solid var(--red)}
+.fb b{display:block;margin-bottom:2px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:18px}
+input.txt{font:inherit;font-size:24px;font-weight:700;border:0;border-bottom:3px solid var(--blue);background:var(--soft);color:var(--ink);padding:4px 10px;border-radius:8px 8px 0 0;width:210px;text-align:center}
+input.txt.wide{width:100%;text-align:left;font-size:22px;border-radius:10px;border:2px solid var(--line);padding:12px 14px}
+input.txt.ok{background:var(--greenbg);border-color:var(--green)}
+input.txt.bad{background:var(--redbg);border-color:var(--red)}
+.chips{display:flex;flex-wrap:wrap;gap:10px;min-height:56px}
+.chip{background:var(--blue);color:var(--onblue);border:0;border-radius:12px;padding:10px 16px;font-size:21px;font-weight:700}
+.chip.used{opacity:.25}
+.drop{border:2px dashed var(--line);border-radius:14px;padding:10px;min-height:68px;margin-bottom:14px;background:var(--paper)}
+.drop .chip{background:var(--ink);color:var(--paper)}
+.match{display:grid;grid-template-columns:1fr 1fr;gap:12px 28px}
+.match .col{display:grid;gap:10px;align-content:start}
+.m{background:var(--paper);border:2px solid var(--line);border-radius:12px;padding:12px 14px;text-align:left;font-size:18px;font-weight:600}
+.m.sel{border-color:var(--blue);background:var(--soft)}
+.m.done{background:var(--greenbg);border-color:var(--green);cursor:default}
+.m.shake{animation:sh .35s;border-color:var(--red)}
+@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.cards{display:flex;gap:12px;margin-top:6px;flex-wrap:wrap}
+.cards .opt{flex:1;min-width:150px;text-align:center}
+.bigword{font-family:Cambria,Georgia,serif;font-size:46px;font-weight:700;text-align:center;background:var(--soft);border-radius:18px;padding:30px 10px;margin:8px 0 18px}
+.ladder{width:100%;border-collapse:separate;border-spacing:0 8px}
+.ladder th{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:0 8px}
+.ladder td{padding:0 6px 0 0}
+.ladder .given{background:var(--ink);color:var(--paper);font-weight:700;border-radius:10px;padding:10px 14px;font-size:20px}
+.ladder input{width:100%;font:inherit;font-size:20px;font-weight:700;padding:9px 12px;border-radius:10px;border:2px dashed var(--muted);background:var(--soft);color:var(--ink)}
+.ladder input.ok{border:2px solid var(--green);background:var(--greenbg)}
+.ladder input.bad{border:2px solid var(--red);background:var(--redbg)}
+.cwwrap{display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:start}
+@media (max-width:860px){.cwwrap{grid-template-columns:1fr}.match{grid-template-columns:1fr}}
+.cw{display:grid;gap:2px;width:max-content;max-width:100%}
+.cell{position:relative;width:38px;height:38px}
+.cell.blk{background:transparent}
+.cell input{width:100%;height:100%;border:2px solid var(--line);background:var(--card);color:var(--ink);text-align:center;font:inherit;font-weight:800;font-size:20px;text-transform:uppercase;padding:0;border-radius:6px;caret-color:transparent}
+.cell input.in{background:var(--soft)}
+.cell input.cur{background:var(--amber);color:var(--onamber);border-color:var(--amber)}
+.cell input.ok{background:var(--greenbg);border-color:var(--green)}
+.cell input.bad{background:var(--redbg);border-color:var(--red)}
+.cell small{position:absolute;top:1px;left:3px;font-size:10px;font-weight:700;color:var(--muted);pointer-events:none;z-index:1}
+.clues h3{font-size:19px;margin:0 0 6px}
+.clues ol{margin:0 0 14px;padding:0;list-style:none}
+.clues li{padding:6px 10px;border-radius:8px;font-size:16px;cursor:pointer}
+.clues li b{display:inline-block;min-width:34px}
+.clues li:hover{background:var(--soft)}
+.clues li.act{background:var(--amber);color:var(--onamber)}
+.clues li.fin{text-decoration:line-through;opacity:.55}
+.sum{text-align:center;padding:10px 0}
+.sum .score{font-family:Cambria,Georgia,serif;font-size:72px;font-weight:700;line-height:1}
+.sum p{color:var(--muted)}
+.rules summary{cursor:pointer;font-weight:700;padding:10px 0}
+.rules table{border-collapse:collapse;width:100%;font-size:16px;margin:6px 0 14px}
+.rules td,.rules th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.rules th{color:var(--muted);font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+.k{font-weight:800;color:var(--blue)}
+.hint{color:var(--muted);font-size:16px}
+[hidden]{display:none!important}
+.pill:empty{display:none}
+.pill.paused{background:var(--redbg);color:var(--red)}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.12em}
+input.txt.mono{text-transform:uppercase}
+.idbig{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:64px;font-weight:800;letter-spacing:.2em;background:var(--amber);color:#1B1F3B;border-radius:18px;padding:18px 10px 18px 28px;margin:14px 0}
+.hint.err{color:var(--red);min-height:1.4em;margin:6px 0}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tab{flex:1;background:var(--paper);border:2px solid var(--line);border-radius:12px;padding:10px;font-weight:700}
+.tab.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.tile.prog{border-color:var(--amber)}
+.tile.prog .sc{color:var(--blue)}
+.ov{position:fixed;inset:0;background:rgba(10,12,30,.6);display:grid;place-items:center;z-index:50;padding:20px}
+.dlg{background:var(--card);color:var(--ink);border-radius:18px;padding:26px;max-width:460px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.dlg p{margin:0 0 6px;font-size:19px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>Units 3 and 4 Review</h1>
+    <span class="pill" id="timerPill" hidden></span>
+    <span class="pill" id="idPill" hidden></span>
+    <span class="pill" id="totalPill" hidden></span>
+    <span class="pill" id="syncPill" hidden aria-live="polite"></span>
+    <button class="btn ghost" id="homeBtn" hidden>All activities</button>
+    <button class="btn ghost" id="themeBtn" aria-label="Toggle light and dark">Light / Dark</button>
+  </header>
+  <main id="app"></main>
+</div>
+
+<script>
+/* ============ helpers ============ */
+const $ = (s, r=document) => r.querySelector(s);
+const el = (t, props={}, ...kids) => { const e=document.createElement(t); for(const k in props){ if(k==='class') e.className=props[k]; else if(k==='html') e.innerHTML=props[k]; else if(k.startsWith('on')) e.addEventListener(k.slice(2),props[k]); else e.setAttribute(k,props[k]); } kids.flat().forEach(c=>e.append(c&&c.nodeType?c:document.createTextNode(c??''))); return e; };
+const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const norm = s => String(s).toLowerCase().replace(/[’‘`]/g,"'").replace(/\s+/g,' ').trim().replace(/[.?!]+$/,'').trim();
+const app = $('#app');
+/* ============ configuration ============ */
+// 1) Paste the web-app URL of the teacher's Google Apps Script between the quotes.
+//    Leave empty to run in offline mode (results are only kept on this device).
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxd5HASD9Y3_5OLQv8o3YrBOYT5Cxh2rl8EIDxhqaLy-mNS6zNVqcjDJaq8CE7cOMRbiw/exec";
+// 2) Optional time limit in minutes (0 = no limit). When time is up, the quiz is sent automatically.
+const TIME_LIMIT_MIN = 45;
+
+const ACT = [];      // registered activities (in column order)
+const store = (()=>{ try{ localStorage.setItem('_t','1'); localStorage.removeItem('_t'); return localStorage; }catch(e){ const m={}; return {getItem:k=>(k in m?m[k]:null),setItem:(k,v)=>{m[k]=String(v)},removeItem:k=>{delete m[k]}}; } })();
+const blankSt=()=>({id:'',name:'',done:{},prog:{},t:0,sent:false,u:0});
+let st=null;         // current student's state
+let cur=null;        // current activity {id,data,finished,save()}
+let dirty=false, saving=false, netFail=false, sendError='', timedOut=false;
+const lsKey=id=>'q34:'+id;
+const normId=s=>String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+function saveSt(touch=true){ if(!st||!st.id) return; if(touch) st.u=Date.now(); try{ store.setItem(lsKey(st.id),JSON.stringify(st)); }catch(e){} if(touch) dirty=true; }
+function readLocal(id){ try{ const j=store.getItem(lsKey(id)); return j?JSON.parse(j):null; }catch(e){ return null; } }
+function fixSt(s){ s.done=s.done||{}; s.prog=s.prog||{}; s.t=s.t||0; s.u=s.u||0; s.sent=!!s.sent; return s; }
+function mergeStates(a,b){
+  if(!a) return b?fixSt(b):null; if(!b) return fixSt(a);
+  a=fixSt(a); b=fixSt(b);
+  const base=a.u>=b.u?a:b, other=base===a?b:a;
+  base.t=Math.max(a.t,b.t); base.sent=a.sent||b.sent;
+  for(const id in other.done) if(!base.done[id]) base.done[id]=other.done[id];
+  for(const id in base.done) delete base.prog[id];
+  return base;
+}
+const fmt=s=>{ s=Math.max(0,Math.floor(s)); const m=Math.floor(s/60), r=s%60; return String(m).padStart(2,'0')+':'+String(r).padStart(2,'0'); };
+
+/* ---------- grades ---------- */
+const gradeOf=(got,total)=>Math.round(got/total*100)/10;
+function average(){ let s=0; ACT.forEach(a=>{ if(st.done[a.id]) s+=st.done[a.id].grade; }); return Math.round(s/ACT.length*10)/10; }
+function finalize(id,got,total){
+  if(st.done[id]) return st.done[id];
+  got=Math.max(0,Math.min(total,got));
+  const grade=gradeOf(got,total);
+  st.done[id]={grade,got,total}; delete st.prog[id];
+  saveSt(); updateHeader();
+  return st.done[id];
+}
+function finalizeAll(){ ACT.forEach(a=>{ if(!st.done[a.id]&&st.prog[a.id]) finalize(a.id,st.prog[a.id].got||0,a.total); }); }
+
+/* ---------- server sync ---------- */
+async function api(payload,keepalive=false){
+  const r=await fetch(SCRIPT_URL,{method:'POST',keepalive,headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+  const txt=await r.text();
+  try{ return JSON.parse(txt); }catch(e){ const err=new Error('NOT_JSON'); err.detail='HTTP '+r.status+' · '+txt.replace(/\s+/g,' ').slice(0,80); throw err; }
+}
+function netMsg(e){
+  if(e&&e.message==='NOT_JSON') return 'The server answered, but not with data ('+e.detail+'). Tell your teacher: the Apps Script deployment must allow access to "Anyone" and the URL must end in /exec.';
+  return 'Could not connect to the server. Check your internet. If it keeps failing, tell your teacher ('+((e&&e.message)||'network error')+').';
+}
+async function checkServer(el2){
+  if(!SCRIPT_URL){ el2.textContent='Offline mode: results are only kept on this device.'; return; }
+  el2.textContent='Checking connection…';
+  try{
+    const r=await fetch(SCRIPT_URL); const txt=await r.text(); let j=null; try{ j=JSON.parse(txt); }catch(e){}
+    if(j&&j.ok){ el2.textContent='Server connected ✓'; el2.style.color='var(--green)'; }
+    else { el2.textContent='Server problem: it answered but not with data (HTTP '+r.status+'). Check the deployment: access must be "Anyone" and the URL must end in /exec.'; el2.style.color='var(--red)'; }
+  }catch(e){ el2.textContent='Cannot reach the server ('+((e&&e.message)||'network error')+'). Check your internet or the script URL. [file v5 · URL …'+SCRIPT_URL.slice(-12)+' · '+(location.protocol==='file:'?'opened from a file':location.protocol)+']'; el2.style.color='var(--red)'; }
+}
+function mergeServerDone(j){
+  for(const id in (j.done||{})){ st.done[id]=Object.assign(st.done[id]||{},{grade:j.done[id]}); delete st.prog[id]; }
+  if(j.sent||j.alreadySent) st.sent=true;
+}
+async function pushState(final=false,keepalive=false){
+  if(!SCRIPT_URL||!st||!st.id||saving) return false;
+  saving=true;
+  try{
+    const grades={}; ACT.forEach(a=>{ const d=st.done[a.id]; if(d&&d.got!==undefined) grades[a.id]={grade:d.grade,got:d.got,total:d.total}; });
+    const j=await api({action:'save',id:st.id,final,grades,time:st.t,state:{done:st.done,prog:st.prog,t:st.t,u:st.u,sent:st.sent||final}},keepalive&&JSON.stringify(st).length<30000);
+    saving=false;
+    if(j&&j.ok){ netFail=false; mergeServerDone(j); dirty=false; if(final) st.sent=true; saveSt(false); updateHeader(); return true; }
+    sendError=(j&&j.error)||'The server did not accept the data.'; updateHeader(); return false;
+  }catch(e){ saving=false; netFail=true; dirty=true; sendError=netMsg(e); updateHeader(); return false; }
+}
+setInterval(()=>{ if(st&&st.id&&SCRIPT_URL&&!st.sent&&(dirty||netFail)&&!document.hidden) pushState(false); },8000);
+window.addEventListener('online',()=>{ if(st&&SCRIPT_URL&&!st.sent) pushState(false); updateHeader(); });
+window.addEventListener('offline',updateHeader);
+
+/* ---------- timer: runs only while the page is visible and online ---------- */
+function running(){ return !!st&&!!st.id&&!st.sent&&document.visibilityState==='visible'&&navigator.onLine!==false&&!(SCRIPT_URL&&netFail); }
+setInterval(()=>{
+  if(!st||!st.id) return;
+  if(running()){
+    st.t++;
+    if(st.t%5===0) saveSt(false);
+    if(st.t%30===0) dirty=true;
+    if(TIME_LIMIT_MIN>0&&st.t>=TIME_LIMIT_MIN*60&&!timedOut) timeUp();
+  }
+  updateHeader();
+},1000);
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'){ saveSt(false); if(SCRIPT_URL&&st&&st.id&&!st.sent) pushState(false,true); } updateHeader(); });
+window.addEventListener('pagehide',()=>{ saveSt(false); if(SCRIPT_URL&&st&&st.id&&!st.sent) pushState(false,true); });
+async function timeUp(){
+  timedOut=true; cur=null; finalizeAll();
+  app.innerHTML='';
+  app.append(el('section',{class:'panel',style:'max-width:640px;margin:30px auto;text-align:center'},el('h2',{},'Time is up!'),el('p',{},'Your answers are being sent to your teacher…')));
+  if(SCRIPT_URL){ await pushState(true); }
+  showHome();
+}
+
+/* ---------- header ---------- */
+function updateHeader(){
+  const tp=$('#timerPill'), ap=$('#totalPill'), ip=$('#idPill'), sp=$('#syncPill');
+  if(!st||!st.id){ [tp,ap,ip,sp].forEach(x=>x.hidden=true); return; }
+  [tp,ap,ip,sp].forEach(x=>x.hidden=false);
+  ap.textContent='Average '+average().toFixed(1)+' / 10';
+  ip.textContent='ID '+st.id;
+  const left=TIME_LIMIT_MIN>0?TIME_LIMIT_MIN*60-st.t:null;
+  const paused=!st.sent&&!running();
+  tp.textContent=(paused?'⏸ ':'⏱ ')+(left!==null?'Left '+fmt(left):fmt(st.t))+(paused?' paused':'');
+  tp.classList.toggle('paused',paused);
+  if(!SCRIPT_URL) sp.textContent='Offline mode';
+  else if(st.sent) sp.textContent='Sent ✓';
+  else if(netFail||navigator.onLine===false) sp.textContent='No connection';
+  else if(saving) sp.textContent='Saving…';
+  else sp.textContent=dirty?'Saving soon…':'Saved ✓';
+}
+const updateTotal=updateHeader;
+
+/* ---------- screens ---------- */
+function confirmBox(msg,yes,onYes){
+  const ov=el('div',{class:'ov'},el('div',{class:'dlg',role:'dialog'},el('p',{},msg),
+    el('div',{class:'row'},el('button',{class:'btn amber',onclick:()=>{ov.remove();onYes();}},yes),el('button',{class:'btn ghost',onclick:()=>ov.remove()},'Keep working'))));
+  document.body.append(ov);
+}
+function lastUsed(){ try{ return JSON.parse(store.getItem('q34:last')||'null'); }catch(e){ return null; } }
+function rememberLast(){ try{ store.setItem('q34:last',JSON.stringify({id:st.id,name:st.name})); }catch(e){} }
+
+function showGate(){
+  st=null; cur=null; updateHeader(); $('#homeBtn').hidden=true; app.innerHTML='';
+  const last=lastUsed();
+  const connLine=el('p',{class:'hint',style:'margin-top:16px;font-size:14px'}); checkServer(connLine);
+  const errNew=el('p',{class:'hint err'}), errId=el('p',{class:'hint err'});
+  const nameIn=el('input',{class:'txt wide',type:'text',autocomplete:'name',placeholder:'First name and last name','aria-label':'Full name'});
+  const idIn=el('input',{class:'txt wide mono',type:'text',autocomplete:'off',autocapitalize:'characters',spellcheck:'false',placeholder:'ID (5 characters)','aria-label':'ID',maxlength:'8'});
+  if(last) idIn.value=last.id;
+
+  const goNew=async()=>{
+    const name=nameIn.value.replace(/\s+/g,' ').trim();
+    if(name.split(' ').filter(w=>w.length>1).length<2){ errNew.textContent='Please write your full name (first name and last name).'; return; }
+    bNew.disabled=true; bNew.textContent='One moment…'; errNew.textContent='';
+    let id;
+    if(SCRIPT_URL){
+      try{
+        const j=await api({action:'register',name});
+        if(j&&j.exists){ errNew.textContent='This name is already registered. Use "I have an ID" to continue. If you lost your ID, ask your teacher.'; bNew.disabled=false; bNew.textContent='Get my ID'; return; }
+        if(!(j&&j.ok&&j.id)){ errNew.textContent=(j&&j.error)||'Could not register. Try again.'; bNew.disabled=false; bNew.textContent='Get my ID'; return; }
+        id=j.id;
+      }catch(e){ errNew.textContent=netMsg(e); bNew.disabled=false; bNew.textContent='Get my ID'; return; }
+    } else {
+      const al='ABCDEFGHJKMNPQRSTUVWXYZ23456789'; id='X'; for(let i=0;i<4;i++) id+=al[Math.floor(Math.random()*al.length)];
+    }
+    st=blankSt(); st.id=id; st.name=name; saveSt(); rememberLast(); showIdCard();
+  };
+  const goId=async()=>{
+    const id=normId(idIn.value);
+    if(id.length<4){ errId.textContent='Write your ID.'; return; }
+    bId.disabled=true; bId.textContent='One moment…'; errId.textContent='';
+    const local=readLocal(id); let server=null, name=local?local.name:'';
+    if(SCRIPT_URL){
+      try{
+        const j=await api({action:'login',id});
+        if(!(j&&j.ok)){ errId.textContent='ID not found. Check it and try again, or ask your teacher.'; bId.disabled=false; bId.textContent='Continue'; return; }
+        name=j.name; server=j.state||blankSt(); server.id=id; server.name=name;
+        for(const k in (j.done||{})){ server.done=server.done||{}; if(!server.done[k]) server.done[k]={grade:j.done[k]}; }
+        if(j.sent) server.sent=true;
+      }catch(e){ errId.textContent=netMsg(e); bId.disabled=false; bId.textContent='Continue'; return; }
+    } else if(!local){ errId.textContent='ID not found on this device.'; bId.disabled=false; bId.textContent='Continue'; return; }
+    st=mergeStates(local,server); st.id=id; st.name=name; saveSt(false); dirty=true; rememberLast(); showHome();
+  };
+  const bNew=el('button',{class:'btn amber',onclick:goNew},'Get my ID');
+  const bId=el('button',{class:'btn amber',onclick:goId},'Continue');
+  nameIn.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); goNew(); } });
+  idIn.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); goId(); } });
+  const pNew=el('div',{},el('p',{},'Write your full name. You will get a personal ID.'),nameIn,errNew,el('div',{class:'row'},bNew));
+  const pId=el('div',{hidden:true},el('p',{},'Write the ID you received. You will continue where you stopped.'),idIn,errId,el('div',{class:'row'},bId));
+  const tabNew=el('button',{class:'tab on',onclick:()=>sw(true)},'I am new');
+  const tabId=el('button',{class:'tab',onclick:()=>sw(false)},'I have an ID');
+  const sw=n=>{ pNew.hidden=!n; pId.hidden=n; tabNew.classList.toggle('on',n); tabId.classList.toggle('on',!n); setTimeout(()=>(n?nameIn:idIn).focus(),20); };
+  app.append(el('section',{class:'panel',style:'max-width:640px;margin:30px auto'},
+    el('span',{class:'tag'},'Units 3 and 4 · Review quiz'), el('h2',{style:'font-size:34px;margin:10px 0'},'Welcome!'),
+    el('div',{class:'fb bad',style:'margin:10px 0 16px'},el('b',{},'Important'),'Each activity can be answered only ONE time. The timer runs only while this page is open and you are online. When you press Send results, you cannot change anything.'),
+    el('div',{class:'tabs'},tabNew,tabId), pNew, pId, connLine));
+  if(last){ sw(false); } else setTimeout(()=>nameIn.focus(),30);
+}
+function showIdCard(){
+  app.innerHTML='';
+  app.append(el('section',{class:'panel',style:'max-width:640px;margin:30px auto;text-align:center'},
+    el('span',{class:'tag'},'Welcome, '+st.name.split(' ')[0]), el('h2',{style:'font-size:30px;margin:10px 0'},'This is your personal ID'),
+    el('div',{class:'idbig'},st.id),
+    el('p',{},'Write it down or take a screenshot. If you leave, lose your connection or change computers, use this ID to continue where you stopped.'),
+    el('div',{class:'row',style:'justify-content:center'},el('button',{class:'btn amber',onclick:()=>showHome()},'I saved my ID. Start!'))));
+}
+function csvText(){
+  const q=s=>'"'+String(s).replace(/"/g,'""')+'"';
+  const head=['ID','Name',...ACT.map(a=>a.title),'Average','Time (min)'];
+  const row=[st.id,st.name,...ACT.map(a=>st.done[a.id]?st.done[a.id].grade:''),average(),(st.t/60).toFixed(1)];
+  return head.map(q).join(',')+'\n'+row.map(q).join(',')+'\n';
+}
+function downloadCsv(){
+  const blob=new Blob(['﻿'+csvText()],{type:'text/csv;charset=utf-8'});
+  const a=el('a',{href:URL.createObjectURL(blob),download:'results-'+st.id+'.csv'}); document.body.append(a); a.click(); a.remove();
+}
+function actStatus(a){
+  const d=st.done[a.id];
+  if(d) return 'Completed · '+d.grade.toFixed(1)+' / 10';
+  if(st.sent) return 'Not completed';
+  return st.prog[a.id]?'In progress · tap to resume':'Not started';
+}
+async function doSend(){
+  finalizeAll();
+  const ok=await pushState(true);
+  if(ok){ st.sent=true; saveSt(false); }
+  showHome();
+}
+function showHome(){
+  cur=null; $('#homeBtn').hidden=true; app.innerHTML='';
+  const doneN=ACT.filter(a=>st.done[a.id]).length, first=st.name.split(' ')[0];
+  const title = st.sent ? 'Results sent, '+first+'!' : 'Hello, '+first+'!';
+  const text = st.sent ? 'Your teacher already has your grades. You cannot change or repeat the activities.'
+    : 'Choose an activity. You can leave one unfinished and come back later. Each activity can be answered only once. When you are ready, press Send results.';
+  app.append(el('section',{class:'hero'},
+    el('div',{}, el('h2',{},title), el('p',{},text), el('p',{style:'margin-top:8px'},'Your ID: ',el('b',{class:'mono'},st.id),' · Time: '+fmt(st.t))),
+    el('div',{class:'big'}, el('b',{}, average().toFixed(1)), el('span',{}, doneN+' of '+ACT.length+' done'))
+  ));
+  if(sendError&&!st.sent) app.append(el('div',{class:'fb bad',style:'margin:0 0 18px'},el('b',{},'Not sent.'),sendError+' Your answers are saved on this device. Press Send results again.'));
+  const grid=el('div',{class:'grid'});
+  ACT.forEach((a,i)=>{
+    const d=st.done[a.id], inprog=!d&&st.prog[a.id];
+    const b=el('button',{class:'tile'+(d?' done':'')+(inprog?' prog':''),onclick:()=>openAct(a)},
+      el('span',{class:'n'},i+1), el('h3',{},a.title), el('p',{},a.desc), el('span',{class:'sc'},actStatus(a)));
+    if(d||st.sent) b.disabled=true;
+    grid.append(b);
+  });
+  app.append(grid);
+  const row=el('div',{class:'row',style:'margin-top:24px'});
+  if(SCRIPT_URL && !st.sent){
+    const sb=el('button',{class:'btn amber',style:'font-size:20px;padding:16px 30px',onclick:()=>{
+      const left=ACT.length-doneN, started=ACT.filter(a=>!st.done[a.id]&&st.prog[a.id]).length;
+      let m='Send your results to your teacher now?';
+      if(started) m+=' '+started+' activit'+(started===1?'y is':'ies are')+' unfinished and will be graded with the answers you gave so far.';
+      if(left-started>0) m+=' '+(left-started)+' not started will count as 0.';
+      m+=' After sending you cannot change anything.';
+      confirmBox(m,'Yes, send',async()=>{ sb.disabled=true; sb.textContent='Sending…'; await doSend(); });
+    }},'Send results');
+    row.append(sb, el('span',{class:'hint'},'You can send even if you have not finished everything.'));
+  }
+  row.append(el('button',{class:'btn ghost',onclick:downloadCsv},'Download my results (CSV)'));
+  if(!SCRIPT_URL) row.append(el('span',{class:'hint'},'Offline mode: results are not sent to the teacher. Download the file and send it to your teacher.'));
+  app.append(row, rulesPanel());
+  updateHeader();
+}
+function openAct(a){
+  if(st.done[a.id]||st.sent) return;
+  $('#homeBtn').hidden=false; app.innerHTML='';
+  if(!st.prog[a.id]){ st.prog[a.id]={got:0,total:a.total,data:null}; saveSt(); }
+  const p=st.prog[a.id];
+  cur={id:a.id,data:p.data,finished:false,save:(data,got)=>{ p.data=data; p.got=got; saveSt(); }};
+  const panel=el('section',{class:'panel'}); app.append(panel);
+  a.run(panel);
+  window.scrollTo({top:0});
+}
+$('#homeBtn').onclick = ()=>showHome();
+$('#themeBtn').onclick = () => {
+  const r=document.documentElement;
+  const c = r.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  r.setAttribute('data-theme', c==='dark' ? 'light' : 'dark');
+};
+
+function summary(panel,id,got,total){
+  const a=ACT.find(x=>x.id===id);
+  if(cur&&cur.id===id) cur.finished=true;
+  const d=finalize(id,got,total);
+  const pct=Math.round(100*got/total);
+  const msg = pct===100?'Perfect! Excellent work.':pct>=80?'Very good!':pct>=60?'Good effort.':'Keep practicing in class. You can do it!';
+  panel.innerHTML='';
+  panel.append(el('div',{class:'sum'}, el('span',{class:'tag'},'Results · '+a.title), el('div',{class:'score'}, d.grade.toFixed(1)+' / 10'), el('p',{}, got+' correct out of '+total+'. '+msg),
+    el('p',{class:'hint'},'This activity is now closed. When you are ready, press Send results on the main screen.'),
+    el('div',{class:'row',style:'justify-content:center'}, el('button',{class:'btn amber',onclick:showHome},'Back to activities'))));
+}
+
+/* generic sequence with pause and resume */
+function sequence(panel,id,title,items,renderer){
+  const saved=cur.data;
+  const order=saved?saved.order:shuffle(items.map((_,k)=>k));
+  let i=saved?saved.i:0, score=saved?saved.score:0;
+  const persist=(next)=>cur.save({order,i:next,score},score);
+  if(!saved) persist(0);
+  const step=()=>{
+    if(i>=order.length) return summary(panel,id,score,order.length);
+    panel.innerHTML='';
+    panel.append(el('div',{class:'bar'}, el('i',{style:'width:'+(100*i/order.length)+'%'})));
+    panel.append(el('span',{class:'tag'}, title+' · '+(i+1)+' of '+order.length));
+    const box=el('div'); panel.append(box);
+    let answered=false;
+    renderer(items[order[i]], box, (ok,expl,correctText)=>{
+      if(answered) return; answered=true; if(ok) score++; persist(i+1);
+      box.append(el('div',{class:'fb '+(ok?'ok':'bad')}, el('b',{}, ok?'Correct!':'Not quite.'), (!ok&&correctText?('Answer: '+correctText+'. '):'')+(expl||'')));
+      const last = i===order.length-1;
+      const nb = el('button',{class:'btn amber',onclick:()=>{i++;step();}}, last?'See results':'Next');
+      box.append(el('div',{class:'row'}, nb)); nb.focus();
+    });
+  };
+  step();
+}
+
+/* ============ renderers ============ */
+function rMC(it,box,done){
+  box.append(el('div',{class:'q'}, it.q));
+  const correct = it.o[it.a];
+  const opts = shuffle(it.o);
+  const wrap = el('div',{class:'opts'});
+  opts.forEach((o,idx)=>{
+    const b=el('button',{class:'opt',onclick:()=>{
+      [...wrap.children].forEach(c=>{c.disabled=true; if(c.dataset.v===correct) c.classList.add('ok');});
+      const ok = o===correct; if(!ok) b.classList.add('bad');
+      done(ok,it.e,correct);
+    },'data-v':o}, String.fromCharCode(65+idx)+')  '+o);
+    wrap.append(b);
+  });
+  box.append(wrap);
+}
+function rBlank(it,box,done){
+  const parts = it.t.split('___');
+  const inp = el('input',{class:'txt',type:'text',autocomplete:'off',autocapitalize:'off',spellcheck:'false','aria-label':'Your answer'});
+  const q = el('div',{class:'q'}, parts[0], inp, parts[1]||'');
+  box.append(q);
+  box.append(el('p',{class:'hint'}, 'Type the correct form. Use the word in parentheses.'));
+  const check = ()=>{
+    if(!inp.value.trim()) return;
+    const ok = it.a.map(norm).includes(norm(inp.value));
+    inp.classList.add(ok?'ok':'bad'); inp.disabled=true; btn.disabled=true;
+    done(ok,it.e,it.a[0]);
+  };
+  const btn=el('button',{class:'btn',onclick:check},'Check');
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();check();}});
+  box.append(el('div',{class:'row'},btn));
+  setTimeout(()=>inp.focus(),30);
+}
+function rTyped(it,box,done){ // whole-sentence correction
+  box.append(el('div',{class:'q'}, 'Find the mistake and write the correct sentence.'));
+  box.append(el('div',{class:'bigword',style:'font-size:32px;text-decoration:underline wavy var(--red)'}, it.s));
+  const inp=el('input',{class:'txt wide',type:'text',autocomplete:'off',autocapitalize:'off',spellcheck:'false','aria-label':'Corrected sentence'});
+  box.append(inp);
+  const check=()=>{ if(!inp.value.trim())return; const ok=it.a.map(norm).includes(norm(inp.value)); inp.classList.add(ok?'ok':'bad'); inp.disabled=true; btn.disabled=true; done(ok,it.e,it.a[0].charAt(0).toUpperCase()+it.a[0].slice(1)); };
+  const btn=el('button',{class:'btn',onclick:check},'Check');
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();check();}});
+  box.append(el('div',{class:'row'},btn)); setTimeout(()=>inp.focus(),30);
+}
+function rOrder(it,box,done){
+  box.append(el('div',{class:'q'}, 'Put the words in order.'));
+  const drop=el('div',{class:'drop','aria-label':'Your sentence'}), pool=el('div',{class:'chips'});
+  const chips = shuffle(it.w).map((w,i)=>({w,i,used:false}));
+  const built=[];
+  const draw=()=>{
+    drop.innerHTML=''; pool.innerHTML='';
+    built.forEach((c,bi)=>drop.append(el('button',{class:'chip',onclick:()=>{c.used=false;built.splice(bi,1);draw();}},c.w)));
+    chips.forEach(c=>{ const b=el('button',{class:'chip'+(c.used?' used':''),onclick:()=>{if(c.used)return;c.used=true;built.push(c);draw();}},c.w); if(c.used) b.disabled=true; pool.append(b); });
+    btn.disabled = built.length!==chips.length;
+  };
+  const btn=el('button',{class:'btn',onclick:()=>{
+    const ans = built.map(c=>c.w).join(' ');
+    const ok = it.a.map(norm).includes(norm(ans));
+    drop.querySelectorAll('button').forEach(b=>b.disabled=true); pool.querySelectorAll('button').forEach(b=>b.disabled=true); btn.disabled=true; reset.disabled=true;
+    done(ok,it.e,it.a[0]);
+  }},'Check');
+  const reset=el('button',{class:'btn ghost',onclick:()=>{built.length=0;chips.forEach(c=>c.used=false);draw();}},'Reset');
+  box.append(drop,pool,el('div',{class:'row'},btn,reset)); draw();
+}
+function rWrong(it,box,done){
+  box.append(el('div',{class:'q'}, 'Which sentence has a mistake?'));
+  const wrap=el('div',{class:'opts'});
+  it.s.forEach((s,idx)=>{
+    const b=el('button',{class:'opt',onclick:()=>{
+      [...wrap.children].forEach((c,ci)=>{c.disabled=true; if(ci===it.w) c.classList.add('ok');});
+      const ok=idx===it.w; if(!ok) b.classList.add('bad'); done(ok,it.e,null);
+    }}, (idx+1)+')  '+s);
+    wrap.append(b);
+  });
+  box.append(wrap);
+}
+function makeSort(cats){
+  return (it,box,done)=>{
+    box.append(el('div',{class:'q'}, cats.prompt));
+    box.append(el('div',{class:'bigword'}, it.t));
+    const wrap=el('div',{class:'cards'});
+    cats.c.forEach(c=>{
+      const b=el('button',{class:'opt',onclick:()=>{
+        [...wrap.children].forEach(x=>{x.disabled=true; if(x.dataset.c===it.k) x.classList.add('ok');});
+        const ok=c===it.k; if(!ok) b.classList.add('bad'); done(ok,it.e,null);
+      },'data-c':c}, c);
+      wrap.append(b);
+    });
+    box.append(wrap);
+  };
+}
+
+/* ============ data ============ */
+const MC = [
+ {q:'I ___ my keys. I can\'t open the door.',o:['lost','have lost','am losing'],a:1,e:'Present perfect: a past action with a result now. / Resultado en el presente: have + participio.'},
+ {q:'She ___ her homework yet.',o:['doesn\'t finish','hasn\'t finished','didn\'t finished'],a:1,e:'"Yet" goes with present perfect: hasn\'t + participle.'},
+ {q:'___ you ever visited Mexico City?',o:['Did','Have','Are'],a:1,e:'"Ever" goes with Have you ever + participle? (experiences).'},
+ {q:'We ___ in Mazatlán since 2020.',o:['live','lived','have lived'],a:2,e:'"Since" + starting point = present perfect.'},
+ {q:'They ___ a movie last night.',o:['have watched','watched','watch'],a:1,e:'"Last night" is finished time, so use past simple.'},
+ {q:'I ___ my phone yesterday.',o:['have broken','break','broke'],a:2,e:'"Yesterday" = past simple. Break → broke.'},
+ {q:'Did she ___ the app?',o:['download','downloaded','downloads'],a:0,e:'After did / didn\'t we use the base verb.'},
+ {q:'He ___ to school yesterday.',o:['didn\'t went','didn\'t go','hasn\'t gone'],a:1,e:'Didn\'t + base verb: didn\'t go.'},
+ {q:'The past participle of "take" is…',o:['took','taken','taked'],a:1,e:'take – took – taken.'},
+ {q:'The past participle of "write" is…',o:['wrote','writed','written'],a:2,e:'write – wrote – written.'},
+ {q:'She is ___ honest person.',o:['a','an','the'],a:1,e:'Silent H: honest starts with a vowel sound, so "an".'},
+ {q:'He has ___ university degree.',o:['a','an','the'],a:0,e:'University starts with a "you" sound (consonant), so "a".'},
+ {q:'I need ___ hour to finish.',o:['a','an','one hour'],a:1,e:'Silent H: an hour.'},
+ {q:'That is Maria\'s phone. It is ___ phone.',o:['his','her','their'],a:1,e:'Maria is a woman: her.'},
+ {q:'We love ___ new teacher.',o:['our','ours','we'],a:0,e:'Possessive adjective before a noun: our.'},
+ {q:'The dog wags ___ tail.',o:['it\'s','its','their'],a:1,e:'"its" (no apostrophe) = possessive. "it\'s" = it is.'},
+ {q:'This laptop is not yours. It is ___.',o:['my','mine','me'],a:1,e:'Possessive pronoun (no noun after it): mine.'},
+ {q:'We ___ want a big TV.',o:['doesn\'t','don\'t','not'],a:1,e:'I / you / we / they + don\'t + verb.'},
+ {q:'She ___ a smartwatch.',o:['have','has','haves'],a:1,e:'He / she / it + has.'},
+ {q:'___ you buy a new tablet last week?',o:['Have','Did','Do'],a:1,e:'"Last week" is finished time: Did + base verb.'},
+];
+const BL = [
+ {t:'I ___ (lose) my wallet yesterday.',a:['lost'],e:'Past simple of lose: lost.'},
+ {t:'She has ___ (buy) a new tablet.',a:['bought'],e:'buy – bought – bought.'},
+ {t:'They ___ (not / watch) TV last night.',a:["didn't watch","did not watch"],e:'Didn\'t + base verb.'},
+ {t:'Have you ever ___ (break) a screen?',a:['broken'],e:'break – broke – broken.'},
+ {t:'We have ___ (live) here for two years.',a:['lived'],e:'Regular verb: add -d.'},
+ {t:'He ___ (go) to the store two days ago.',a:['went'],e:'"Ago" = past simple. go – went – gone.'},
+ {t:'I have never ___ (see) that movie.',a:['seen'],e:'see – saw – seen.'},
+ {t:'___ (you / download) the app yesterday?',a:['did you download'],e:'Question in past simple: Did + subject + base verb.'},
+ {t:'My brother ___ (have) a laptop since 2022.',a:['has had'],e:'Since + present perfect: has had.'},
+ {t:'She has just ___ (write) an email.',a:['written'],e:'write – wrote – written.'},
+ {t:'I eat ___ (a / an) apple every day.',a:['an'],e:'Apple starts with a vowel sound: an.'},
+ {t:'This is Ana and Luis\'s house. It is ___ house. (their / his)',a:['their'],e:'Two owners: their.'},
+ {t:'That bag belongs to me. It is ___ bag. (my / mine)',a:['my'],e:'Before a noun: my. Without a noun: mine.'},
+ {t:'It\'s a cat. ___ name is Luna. (Its / It\'s)',a:['its'],e:'Its = possessive adjective.'},
+];
+const MATCH_QA = [
+ ['Have you ever lost your phone?','Yes, I have. I lost it last year.'],
+ ['Did you call Ana yesterday?',"No, I didn't."],
+ ['Whose bag is this?',"It's mine."],
+ ['Has he finished his homework yet?',"No, he hasn't."],
+ ['How long have you had your phone?','For two years.'],
+ ['Do you have a tablet?',"No, I don't."],
+ ['What do you want for your birthday?','I want a new smartwatch.'],
+ ["Is that Maria's car?","Yes, it's her car."],
+];
+const MATCH_VP = [['break','broken'],['take','taken'],['see','seen'],['go','gone'],['write','written'],['give','given'],['buy','bought'],['lose','lost']];
+const LADDER = [
+ ['have','had','had'],['buy','bought','bought'],['lose','lost','lost'],['send','sent','sent'],
+ ['break','broke','broken'],['take','took','taken'],['see','saw','seen'],['go','went','gone'],
+ ['write','wrote','written'],['give','gave','given'],['play','played','played'],['charge','charged','charged'],
+];
+const ORDER = [
+ {w:['I','have','lost','my','phone'],a:['I have lost my phone'],e:'Subject + have + participle + object.'},
+ {w:['She','has','never','broken','a','screen'],a:['She has never broken a screen'],e:'"Never" goes between has and the participle.'},
+ {w:['Have','you','downloaded','the','app','?'],a:['Have you downloaded the app ?','Have you downloaded the app?'],e:'Question: Have + subject + participle.'},
+ {w:['We','didn\'t','watch','TV','last','night'],a:['We didn\'t watch TV last night'],e:'Didn\'t + base verb.'},
+ {w:['That','is','their','new','laptop'],a:['That is their new laptop'],e:'Possessive adjective + adjective + noun.'},
+ {w:['He','doesn\'t','have','a','tablet'],a:['He doesn\'t have a tablet'],e:'He / she / it + doesn\'t + base verb.'},
+ {w:['They','have','lived','here','since','2020'],a:['They have lived here since 2020'],e:'Since + starting point.'},
+ {w:['Did','you','buy','an','umbrella','yesterday','?'],a:['Did you buy an umbrella yesterday ?','Did you buy an umbrella yesterday?'],e:'Did + subject + base verb; "an" before a vowel sound.'},
+];
+const SORT_RI = [
+ ['play','Regular','play – played – played'],['download','Regular','download – downloaded – downloaded'],['use','Regular','use – used – used'],['charge','Regular','charge – charged – charged'],['watch','Regular','watch – watched – watched'],['call','Regular','call – called – called'],['study','Regular','study – studied – studied'],
+ ['break','Irregular','break – broke – broken'],['buy','Irregular','buy – bought – bought'],['lose','Irregular','lose – lost – lost'],['send','Irregular','send – sent – sent'],['go','Irregular','go – went – gone'],['see','Irregular','see – saw – seen'],['write','Irregular','write – wrote – written'],
+].map(([t,k,f])=>({t,k,e:f+'.'}));
+const SORT_SIG = [
+ ['ever','Present Perfect','Used in questions: Have you ever…?'],['never','Present Perfect','I have never…'],['just','Present Perfect','Recent past with result now.'],['already','Present Perfect','Recent past with result now.'],['yet','Present Perfect','Negatives and questions: not … yet.'],['for two years','Present Perfect','For + period of time.'],['since 2024','Present Perfect','Since + starting point.'],
+ ['yesterday','Past Simple','Finished time.'],['last week','Past Simple','Finished time.'],['two days ago','Past Simple','"Ago" = finished time.'],['in 2023','Past Simple','A finished year.'],['last night','Past Simple','Finished time.'],
+].map(([t,k,e])=>({t,k,e}));
+const SORT_AAN = [
+ ['___ hour','an','Silent H: an hour.'],['___ university','a','"You" sound: a university.'],['___ honest man','an','Silent H: an honest man.'],['___ umbrella','an','Vowel sound: an umbrella.'],['___ European trip','a','"You" sound: a European trip.'],['___ heir','an','Silent H: an heir.'],['___ unicorn','a','"You" sound: a unicorn.'],['___ apple','an','Vowel sound: an apple.'],['___ hotel','a','Loud H: a hotel.'],['___ one-way ticket','a','"W" sound: a one-way ticket.'],['___ FBI agent','an','F is said "eff": an FBI agent.'],['___ user','a','"You" sound: a user.'],
+].map(([t,k,e])=>({t,k,e}));
+const WRONG = [
+ {s:['I have seen that movie.','She has bought a new tablet.','We have went to the park.'],w:2,e:'Correct: We have gone to the park. (go – went – gone)'},
+ {s:['I lost my phone yesterday.','He has broken his screen.','They have watched a movie last night.'],w:2,e:'Correct: They watched a movie last night. ("Last night" = past simple.)'},
+ {s:['She is an honest person.','He has an university degree.','I need an hour.'],w:1,e:'Correct: He has a university degree. ("You" sound.)'},
+ {s:['This is my book.','That is her bag.','These are hers shoes.'],w:2,e:'Correct: These are her shoes. (Before a noun use "her".)'},
+ {s:['He doesn\'t like video games.','She don\'t have a tablet.','We don\'t want a big TV.'],w:1,e:'Correct: She doesn\'t have a tablet.'},
+ {s:['Did you go to school?','Have you ever lost your phone?','Did you went to the party?'],w:2,e:'Correct: Did you go to the party? (Did + base verb.)'},
+ {s:['I have lived here since 2020.','She has had this laptop for two years.','We have used this app since three months.'],w:2,e:'Correct: We have used this app for three months. (For + period.)'},
+ {s:['The dog wags its tail.','The dog wags it\'s tail.','The dog is hungry.'],w:1,e:'Correct: its tail. ("it\'s" means "it is".)'},
+];
+const FIX = [
+ {s:'I have lost my phone yesterday.',a:['i lost my phone yesterday'],e:'"Yesterday" needs past simple.'},
+ {s:'She have a laptop.',a:['she has a laptop'],e:'He / she / it + has.'},
+ {s:"He don't like video games.",a:["he doesn't like video games","he does not like video games"],e:'He / she / it + doesn\'t.'},
+ {s:"They haven't download the app.",a:["they haven't downloaded the app","they have not downloaded the app"],e:'Haven\'t + participle.'},
+ {s:'I am having this phone since 2024.',a:['i have had this phone since 2024'],e:'Since + present perfect: have had.'},
+ {s:'This is an university.',a:['this is a university'],e:'"University" starts with a "you" sound.'},
+ {s:'Did you went to school?',a:['did you go to school'],e:'Did + base verb.'},
+];
+const CW = {"h": 15, "w": 16, "entries": [{"w": "DOWNLOADED", "r": 10, "c": 3, "d": "A", "clue": "Participle of \"download\"."}, {"w": "EARPHONES", "r": 4, "c": 6, "d": "D", "clue": "You put them in your ears to listen to music."}, {"w": "ALREADY", "r": 6, "c": 9, "d": "D", "clue": "I have ___ eaten, thanks."}, {"w": "WRITTEN", "r": 8, "c": 8, "d": "A", "clue": "Participle of \"write\": He has ___ an email."}, {"w": "BOUGHT", "r": 3, "c": 12, "d": "D", "clue": "Past simple of \"buy\": She ___ a tablet yesterday."}, {"w": "TABLET", "r": 3, "c": 10, "d": "A", "clue": "Device: bigger than a phone, smaller than a laptop."}, {"w": "BROKEN", "r": 8, "c": 4, "d": "D", "clue": "Participle of \"break\": I have ___ my screen."}, {"w": "LAPTOP", "r": 0, "c": 15, "d": "D", "clue": "Portable computer."}, {"w": "NEVER", "r": 4, "c": 5, "d": "A", "clue": "I have ___ played that game. (0 times)"}, {"w": "GIVEN", "r": 0, "c": 5, "d": "D", "clue": "Participle of \"give\": They have ___ me a gift."}, {"w": "THEIR", "r": 1, "c": 2, "d": "A", "clue": "The students love ___ teacher."}, {"w": "SINCE", "r": 12, "c": 0, "d": "A", "clue": "We have lived here ___ 2020."}, {"w": "TAKEN", "r": 1, "c": 2, "d": "D", "clue": "Participle of \"take\": We have ___ many photos."}, {"w": "GONE", "r": 6, "c": 14, "d": "D", "clue": "He has ___ home. (go)"}, {"w": "LOST", "r": 0, "c": 10, "d": "D", "clue": "She has ___ her keys. (lose)"}, {"w": "MINE", "r": 11, "c": 1, "d": "D", "clue": "This phone is not yours. It is ___."}, {"w": "WENT", "r": 5, "c": 0, "d": "A", "clue": "Past simple of \"go\"."}, {"w": "HOUR", "r": 5, "c": 10, "d": "A", "clue": "We say \"an ___\" (60 minutes)."}, {"w": "HEIR", "r": 14, "c": 0, "d": "A", "clue": "We say \"an ___\": the person who gets money from a family."}, {"w": "SEEN", "r": 2, "c": 8, "d": "D", "clue": "I have never ___ that movie. (see)"}, {"w": "FOR", "r": 1, "c": 9, "d": "A", "clue": "I have had this laptop ___ two years."}, {"w": "YET", "r": 12, "c": 9, "d": "A", "clue": "I haven't finished ___."}]};
+
+/* ============ activities ============ */
+function reg(id,title,desc,total,run){ ACT.push({id,title,desc,total,run}); }
+
+reg('mc','Multiple choice','20 questions: tenses, participles, a / an, possessives.',MC.length, p=>sequence(p,'mc','Multiple choice',MC,rMC));
+reg('blank','Fill in the blanks','Type the correct form of the verb or word.',BL.length, p=>sequence(p,'blank','Fill in the blank',BL,rBlank));
+
+function matchGame(id,title,pairs){
+  return panel=>{
+    const sv=cur.data;
+    const found=sv?sv.found.slice():[]; let mistakes=sv?sv.mistakes:0, left=null;
+    const rorder=sv?sv.rorder:shuffle(pairs.map((_,i)=>i));
+    const got=()=>Math.max(0,found.length-mistakes);
+    const persist=()=>cur.save({found,mistakes,rorder},got());
+    if(!sv) persist();
+    panel.innerHTML='';
+    panel.append(el('span',{class:'tag'},title));
+    panel.append(el('p',{class:'hint'},'Tap one item on the left, then its match on the right. Each mistake costs one point. You can leave and come back.'));
+    const L=el('div',{class:'col'}), R=el('div',{class:'col'});
+    const mis=el('span',{class:'pill'},'Mistakes: '+mistakes);
+    pairs.forEach((p,i)=>{
+      const b=el('button',{class:'m'+(found.includes(i)?' done':''),'data-i':i},p[0]);
+      b.onclick=()=>{ if(b.classList.contains('done'))return; [...L.children].forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); left=b; }; L.append(b);
+    });
+    rorder.forEach(i=>{
+      const b=el('button',{class:'m'+(found.includes(i)?' done':''),'data-i':i},pairs[i][1]);
+      b.onclick=()=>{
+        if(b.classList.contains('done')||!left) return;
+        if(left.dataset.i===b.dataset.i){ left.classList.remove('sel'); left.classList.add('done'); b.classList.add('done'); found.push(+b.dataset.i); left=null; persist();
+          if(found.length===pairs.length) setTimeout(()=>summary(panel,id,got(),pairs.length),500);
+        } else { mistakes++; persist(); b.classList.add('shake'); setTimeout(()=>b.classList.remove('shake'),400); mis.textContent='Mistakes: '+mistakes; }
+      }; R.append(b);
+    });
+    panel.append(el('div',{class:'match'},L,R), el('div',{class:'row'},mis));
+    if(found.length===pairs.length) setTimeout(()=>summary(panel,id,got(),pairs.length),0);
+  };
+}
+reg('qa','Match: questions and answers','Connect each question with its natural answer.',MATCH_QA.length, matchGame('qa','Questions and answers',MATCH_QA));
+reg('vp','Match: verbs and participles','Connect the base verb with its past participle.',MATCH_VP.length, matchGame('vp','Verbs and participles',MATCH_VP));
+
+/* ---- crossword ---- */
+reg('cw','Crossword','Verbs, participles, signal words and technology.',CW.entries.length, panel=>{
+  const H=CW.h,W=CW.w, ents=CW.entries;
+  const nums={}; let n=0;
+  const starts=ents.map(e=>[e.r,e.c]).sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
+  starts.forEach(([r,c])=>{ const k=r+','+c; if(!nums[k]) nums[k]=++n; });
+  ents.forEach(e=>{ e.n=nums[e.r+','+e.c]; e.cells=[...e.w].map((_,i)=>e.d==='A'?[e.r,e.c+i]:[e.r+i,e.c]); });
+  const map={}; ents.forEach(e=>e.cells.forEach(([r,c],i)=>{ const k=r+','+c; (map[k]=map[k]||{ch:e.w[i],e:[]}).e.push(e); }));
+  let active=null, dir='A', submitted=false;
+  panel.innerHTML='';
+  panel.append(el('span',{class:'tag'},'Crossword'));
+  panel.append(el('p',{class:'hint'},'Click a square or a clue and type. Click the same square again to switch between across and down. Your letters are saved if you leave. You can submit only once.'));
+  const grid=el('div',{class:'cw',style:`grid-template-columns:repeat(${W},38px)`});
+  const inputs={};
+  const wordOk=e=>e.cells.every(([r,c],i)=>inputs[r+','+c].value.toUpperCase()===e.w[i]);
+  const countOk=()=>ents.filter(wordOk).length;
+  const persist=()=>{ const v={}; Object.keys(inputs).forEach(k=>{ if(inputs[k].value) v[k]=inputs[k].value.toUpperCase(); }); cur.save({v},countOk()); };
+  for(let r=0;r<H;r++)for(let c=0;c<W;c++){
+    const k=r+','+c;
+    if(!map[k]){ grid.append(el('div',{class:'cell blk'})); continue; }
+    const inp=el('input',{maxlength:'1',autocomplete:'off',autocapitalize:'characters',spellcheck:'false','aria-label':'Row '+(r+1)+', column '+(c+1)});
+    if(cur.data&&cur.data.v&&cur.data.v[k]) inp.value=cur.data.v[k];
+    const cell=el('div',{class:'cell'}, nums[k]?el('small',{},nums[k]):'', inp);
+    inputs[k]=inp; grid.append(cell);
+    inp.addEventListener('focus',()=>{ select(k,false); });
+    inp.addEventListener('mousedown',()=>{ if(document.activeElement===inp) select(k,true); });
+    inp.addEventListener('keydown',ev=>{
+      if(submitted) return;
+      const [rr,cc]=k.split(',').map(Number);
+      if(ev.key==='ArrowRight'){goto(rr,cc+1,'A');ev.preventDefault();}
+      else if(ev.key==='ArrowLeft'){goto(rr,cc-1,'A');ev.preventDefault();}
+      else if(ev.key==='ArrowDown'){goto(rr+1,cc,'D');ev.preventDefault();}
+      else if(ev.key==='ArrowUp'){goto(rr-1,cc,'D');ev.preventDefault();}
+      else if(ev.key==='Backspace'){ ev.preventDefault(); if(inp.value){inp.value='';} else step(-1); persist(); }
+      else if(/^[a-zA-Z]$/.test(ev.key)){ ev.preventDefault(); inp.value=ev.key.toUpperCase(); step(1); persist(); }
+    });
+  }
+  if(!cur.data) cur.save({v:{}},0);
+  function goto(r,c,d){ const k=r+','+c; if(inputs[k]){ dir=d; inputs[k].focus(); } }
+  function step(delta){
+    if(!active) return;
+    const idx=active.cells.findIndex(([r,c])=>inputs[r+','+c]===document.activeElement);
+    const nx=active.cells[idx+delta]; if(nx) inputs[nx[0]+','+nx[1]].focus();
+  }
+  function select(k,toggle){
+    const es=map[k].e;
+    if(toggle && es.length>1) dir = dir==='A'?'D':'A';
+    const e=es.find(x=>x.d===dir) || es[0]; dir=e.d; active=e;
+    paint();
+  }
+  function paint(){
+    if(submitted) return;
+    Object.values(inputs).forEach(i=>i.classList.remove('in','cur'));
+    if(active) active.cells.forEach(([r,c])=>inputs[r+','+c].classList.add('in'));
+    const f=document.activeElement; if(f&&f.tagName==='INPUT'&&f.closest('.cw')) f.classList.add('cur');
+    document.querySelectorAll('.clues li').forEach(li=>li.classList.toggle('act',!!active&&li.dataset.id===active.w));
+  }
+  const clueList=(d,label)=>{
+    const ol=el('ol');
+    ents.filter(e=>e.d===d).sort((a,b)=>a.n-b.n).forEach(e=>{
+      ol.append(el('li',{'data-id':e.w,onclick:()=>{ if(submitted) return; active=e; dir=e.d; const [r,c]=e.cells.find(([r,c])=>!inputs[r+','+c].value)||e.cells[0]; inputs[r+','+c].focus(); paint(); }}, el('b',{},e.n+'.'), e.clue+' ('+e.w.length+')'));
+    });
+    return el('div',{}, el('h3',{},label), ol);
+  };
+  const submit=()=>{
+    confirmBox('Submit your crossword now? You cannot change it afterwards.','Yes, submit',()=>{
+      submitted=true; cur.finished=true;
+      Object.keys(inputs).forEach(k=>{ const i=inputs[k]; i.disabled=true; i.classList.remove('in','cur'); i.classList.add(i.value.toUpperCase()===map[k].ch?'ok':'bad'); });
+      const ok=countOk(); const d=finalize('cw',ok,ents.length);
+      document.querySelectorAll('.clues li').forEach(li=>{ li.classList.remove('act'); const e=ents.find(x=>x.w===li.dataset.id); li.classList.toggle('fin',wordOk(e)); });
+      sb.remove();
+      msg.append(el('div',{class:'fb '+(ok===ents.length?'ok':'bad')}, el('b',{},'Grade: '+d.grade.toFixed(1)+' / 10'), ok+' of '+ents.length+' words correct. This activity is now closed.'),
+        el('div',{class:'row'}, el('button',{class:'btn amber',onclick:showHome},'Back to activities')));
+      msg.scrollIntoView({behavior:'smooth'});
+    });
+  };
+  const msg=el('div');
+  const sb=el('button',{class:'btn amber',onclick:submit},'Submit crossword');
+  panel.append(el('div',{class:'cwwrap'},el('div',{},grid),el('div',{class:'clues'},clueList('A','Across'),clueList('D','Down'))));
+  panel.append(el('div',{class:'row'},sb), msg);
+});
+
+/* ---- verb ladder ---- */
+reg('ladder','Verb Ladder','Fill the missing forms: present, past and participle.',LADDER.length*2, panel=>{
+  const sv=cur.data;
+  const rows=sv?sv.rows:shuffle(LADDER.map((_,i)=>i));
+  panel.innerHTML='';
+  panel.append(el('span',{class:'tag'},'Verb Ladder'));
+  panel.append(el('p',{class:'hint'},'One form is given in each row. Type the other two. Your answers are saved if you leave. You can submit only once.'));
+  const t=el('table',{class:'ladder'}); t.append(el('tr',{},el('th',{},'Present'),el('th',{},'Past'),el('th',{},'Participle')));
+  const ins=[];
+  rows.forEach((ri,pos)=>{
+    const r=LADDER[ri]; const g=pos%3; const tr=el('tr');
+    r.forEach((w,c)=>{ if(c===g) tr.append(el('td',{},el('div',{class:'given'},w))); else { const i=el('input',{type:'text',autocomplete:'off',autocapitalize:'off',spellcheck:'false','aria-label':['present','past','participle'][c]+' of '+r[g]}); ins.push([i,w]); tr.append(el('td',{},i)); } });
+    t.append(tr);
+  });
+  if(sv&&sv.vals) ins.forEach(([i],k)=>{ i.value=sv.vals[k]||''; });
+  const countOk=()=>ins.filter(([i,w])=>norm(i.value)===w).length;
+  const persist=()=>cur.save({rows,vals:ins.map(([i])=>i.value)},countOk());
+  if(!sv) persist();
+  ins.forEach(([i])=>i.addEventListener('input',persist));
+  const res=el('div');
+  const sb=el('button',{class:'btn amber',onclick:()=>confirmBox('Submit your answers now? You cannot change them afterwards.','Yes, submit',()=>{
+    cur.finished=true; sb.remove();
+    ins.forEach(([i,w])=>{ i.disabled=true; i.classList.add(norm(i.value)===w?'ok':'bad'); });
+    const ok=countOk(); const d=finalize('ladder',ok,ins.length);
+    res.append(el('div',{class:'fb '+(ok===ins.length?'ok':'bad')},el('b',{},'Grade: '+d.grade.toFixed(1)+' / 10'),ok+' of '+ins.length+' forms correct. This activity is now closed.'),
+      el('div',{class:'row'},el('button',{class:'btn amber',onclick:showHome},'Back to activities')));
+    res.scrollIntoView({behavior:'smooth'});
+  })},'Submit answers');
+  panel.append(t, el('div',{class:'row'},sb), res);
+});
+
+reg('order','Word order','Build correct sentences by tapping the words.',ORDER.length, p=>sequence(p,'order','Word order',ORDER,rOrder));
+reg('sortri','Sort: regular or irregular','Is the past of the verb regular (-ed) or irregular?',SORT_RI.length, p=>sequence(p,'sortri','Regular or irregular',SORT_RI,makeSort({prompt:'Is this verb regular or irregular?',c:['Regular','Irregular']})));
+reg('sortsig','Sort: Present Perfect or Past Simple','Which tense goes with each time word?',SORT_SIG.length, p=>sequence(p,'sortsig','Time words',SORT_SIG,makeSort({prompt:'Which tense do we use with this time word?',c:['Present Perfect','Past Simple']})));
+reg('sortaan','Sort: a or an','Remember: it depends on the SOUND, not the letter.',SORT_AAN.length, p=>sequence(p,'sortaan','a or an',SORT_AAN,makeSort({prompt:'Choose a or an.',c:['a','an']})));
+reg('wrong','Find the wrong sentence','Three sentences. One has a mistake.',WRONG.length, p=>sequence(p,'wrong','Find the mistake',WRONG,rWrong));
+reg('fix','Fix the mistake','Rewrite the sentence correctly.',FIX.length, p=>sequence(p,'fix','Fix it',FIX,rTyped));
+
+/* ---- cheat sheet ---- */
+function rulesPanel(){
+  const d=el('details',{class:'panel rules',style:'margin-top:22px'});
+  d.append(el('summary',{},'Quick rules (open if you need help)'));
+  d.append(el('div',{html:`
+  <table>
+   <tr><th>Topic</th><th>Rule</th><th>Example</th></tr>
+   <tr><td>Present perfect</td><td><span class="k">have / has</span> + participle. Experiences, recent results, for / since.</td><td>I have lost my phone. She has had it for two years.</td></tr>
+   <tr><td>Past simple</td><td>Verb + <span class="k">-ed</span> or irregular past. Finished time: yesterday, last week, ago.</td><td>I lost my phone yesterday.</td></tr>
+   <tr><td>Questions / negatives</td><td>Past: <span class="k">Did / didn't</span> + base verb. Present perfect: <span class="k">Have / haven't</span> + participle.</td><td>Did you go? Have you gone? I didn't go.</td></tr>
+   <tr><td>Participles</td><td>Regular: -ed. Irregular: learn them.</td><td>break – broke – broken</td></tr>
+   <tr><td>a / an</td><td>Use <span class="k">an</span> before a vowel SOUND, <span class="k">a</span> before a consonant sound.</td><td>an hour, an honest man, a university</td></tr>
+   <tr><td>Possessives</td><td>Adjectives: my, your, his, her, its, our, their (+ noun). Pronouns: mine, yours, his, hers, ours, theirs (no noun). Owner: 's.</td><td>This is my phone. It is mine. Maria's bag.</td></tr>
+   <tr><td>Simple present</td><td>I / you / we / they + verb. He / she / it + <span class="k">-s</span> (has). Negative: don't / doesn't.</td><td>We don't want a big TV. She has a laptop.</td></tr>
+  </table>`}));
+  return d;
+}
+
+showGate();
+</script>
+</body>
+</html>
