@@ -171,7 +171,7 @@ const QUIZ_ID = "diag";
 const REVEAL = false;
 const SHOW_SCORES = false;
 // 2) Optional time limit in minutes (0 = no limit). When time is up, the quiz is sent automatically.
-const TIME_LIMIT_MIN = 60;
+const TIME_LIMIT_MIN = 30;
 
 const ACT = [];      // registered activities (in column order)
 const store = (()=>{ try{ localStorage.setItem('_t','1'); localStorage.removeItem('_t'); return localStorage; }catch(e){ const m={}; return {getItem:k=>(k in m?m[k]:null),setItem:(k,v)=>{m[k]=String(v)},removeItem:k=>{delete m[k]}}; } })();
