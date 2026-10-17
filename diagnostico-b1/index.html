@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagnostic Test B1+ · Units 7–12</title>
+<style>
+:root{
+  --ink:#1B1F3B; --paper:#F3F5F9; --card:#FFFFFF; --soft:#E1E7F5; --line:#C9D1E8;
+  --amber:#FFC247; --blue:#2C5BE0; --muted:#4A5272; --green:#0E7A5F; --red:#C62F3A;
+  --greenbg:#DDF3EC; --redbg:#FBE3E5; --onamber:#1B1F3B; --onblue:#FFFFFF;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#F3F5F9; --paper:#14172B; --card:#1D2142; --soft:#272D58; --line:#3A4175;
+    --amber:#FFC247; --blue:#8FA8FF; --muted:#B8C0E0; --green:#5FD3B5; --red:#FF8A6B;
+    --greenbg:#17433A; --redbg:#4D2733; --onamber:#1B1F3B; --onblue:#14172B;
+  }
+}
+:root[data-theme="dark"]{--ink:#F3F5F9; --paper:#14172B; --card:#1D2142; --soft:#272D58; --line:#3A4175; --amber:#FFC247; --blue:#8FA8FF; --muted:#B8C0E0; --green:#5FD3B5; --red:#FF8A6B; --greenbg:#17433A; --redbg:#4D2733; --onamber:#1B1F3B; --onblue:#14172B;}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:18px;line-height:1.45}
+h1,h2,h3{font-family:Cambria,Georgia,"Times New Roman",serif;margin:0;line-height:1.15}
+button{font:inherit;color:inherit;cursor:pointer}
+.wrap{max-width:1000px;margin:0 auto;padding:20px 20px 60px}
+header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+header.top h1{font-size:30px;flex:1;min-width:220px}
+.pill{display:inline-flex;align-items:center;gap:8px;background:var(--soft);border-radius:999px;padding:8px 16px;font-weight:700;font-size:16px}
+.btn{background:var(--ink);color:var(--paper);border:0;border-radius:12px;padding:12px 22px;font-weight:700}
+.btn.amber{background:var(--amber);color:var(--onamber)}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:focus-visible,.opt:focus-visible,.tile:focus-visible,.cell:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.hero{background:#1B1F3B;color:#F3F5F9;border-radius:22px;padding:28px 30px;margin-bottom:24px;display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.hero h2{font-size:34px;margin-bottom:6px}
+.hero p{margin:0;color:#B8C0E0;max-width:560px}
+.hero .big{margin-left:auto;text-align:center;background:var(--amber);color:#1B1F3B;border-radius:18px;padding:14px 26px}
+.hero .big b{display:block;font-family:Cambria,Georgia,serif;font-size:40px;line-height:1}
+.hero .big span{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.tile{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:18px;text-align:left;display:flex;flex-direction:column;gap:6px;min-height:128px}
+.tile:hover{border-color:var(--blue)}
+.tile .n{width:34px;height:34px;border-radius:50%;background:var(--amber);color:var(--onamber);font-weight:800;display:grid;place-items:center;font-size:15px}
+.tile h3{font-size:21px}
+.tile p{margin:0;color:var(--muted);font-size:15px}
+.tile .sc{margin-top:auto;font-weight:700;font-size:14px;color:var(--muted)}
+.tile.done{border-color:var(--green)}
+.tile.done .sc{color:var(--green)}
+.panel{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:26px}
+.bar{height:10px;border-radius:99px;background:var(--soft);overflow:hidden;margin-bottom:18px}
+.bar i{display:block;height:100%;background:var(--blue);width:0;transition:width .3s}
+.q{font-family:Cambria,Georgia,serif;font-size:30px;font-weight:700;line-height:1.25;margin:6px 0 20px}
+.tag{display:inline-block;background:var(--soft);color:var(--muted);border-radius:8px;padding:3px 10px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.opts{display:grid;gap:12px}
+.opt{background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:14px 18px;text-align:left;font-size:21px;font-weight:600}
+.opt:hover:not(:disabled){border-color:var(--blue)}
+.opt.ok{background:var(--greenbg);border-color:var(--green)}
+.opt.bad{background:var(--redbg);border-color:var(--red)}
+.opt:disabled{cursor:default}
+.fb{margin-top:18px;border-radius:14px;padding:14px 18px;font-size:18px}
+.fb.ok{background:var(--greenbg);border-left:6px solid var(--green)}
+.fb.bad{background:var(--redbg);border-left:6px solid var(--red)}
+.fb b{display:block;margin-bottom:2px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:18px}
+input.txt{font:inherit;font-size:24px;font-weight:700;border:0;border-bottom:3px solid var(--blue);background:var(--soft);color:var(--ink);padding:4px 10px;border-radius:8px 8px 0 0;width:210px;text-align:center}
+input.txt.wide{width:100%;text-align:left;font-size:22px;border-radius:10px;border:2px solid var(--line);padding:12px 14px}
+input.txt.ok{background:var(--greenbg);border-color:var(--green)}
+input.txt.bad{background:var(--redbg);border-color:var(--red)}
+.chips{display:flex;flex-wrap:wrap;gap:10px;min-height:56px}
+.chip{background:var(--blue);color:var(--onblue);border:0;border-radius:12px;padding:10px 16px;font-size:21px;font-weight:700}
+.chip.used{opacity:.25}
+.drop{border:2px dashed var(--line);border-radius:14px;padding:10px;min-height:68px;margin-bottom:14px;background:var(--paper)}
+.drop .chip{background:var(--ink);color:var(--paper)}
+.match{display:grid;grid-template-columns:1fr 1fr;gap:12px 28px}
+.match .col{display:grid;gap:10px;align-content:start}
+.m{background:var(--paper);border:2px solid var(--line);border-radius:12px;padding:12px 14px;text-align:left;font-size:18px;font-weight:600}
+.m.sel{border-color:var(--blue);background:var(--soft)}
+.m.done{background:var(--greenbg);border-color:var(--green);cursor:default}
+.m.shake{animation:sh .35s;border-color:var(--red)}
+@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.cards{display:flex;gap:12px;margin-top:6px;flex-wrap:wrap}
+.cards .opt{flex:1;min-width:150px;text-align:center}
+.bigword{font-family:Cambria,Georgia,serif;font-size:46px;font-weight:700;text-align:center;background:var(--soft);border-radius:18px;padding:30px 10px;margin:8px 0 18px}
+.ladder{width:100%;border-collapse:separate;border-spacing:0 8px}
+.ladder th{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:0 8px}
+.ladder td{padding:0 6px 0 0}
+.ladder .given{background:var(--ink);color:var(--paper);font-weight:700;border-radius:10px;padding:10px 14px;font-size:20px}
+.ladder input{width:100%;font:inherit;font-size:20px;font-weight:700;padding:9px 12px;border-radius:10px;border:2px dashed var(--muted);background:var(--soft);color:var(--ink)}
+.ladder input.ok{border:2px solid var(--green);background:var(--greenbg)}
+.ladder input.bad{border:2px solid var(--red);background:var(--redbg)}
+.cwwrap{display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:start}
+@media (max-width:860px){.cwwrap{grid-template-columns:1fr}.match{grid-template-columns:1fr}}
+.cw{display:grid;gap:2px;width:max-content;max-width:100%}
+.cell{position:relative;width:38px;height:38px}
+.cell.blk{background:transparent}
+.cell input{width:100%;height:100%;border:2px solid var(--line);background:var(--card);color:var(--ink);text-align:center;font:inherit;font-weight:800;font-size:20px;text-transform:uppercase;padding:0;border-radius:6px;caret-color:transparent}
+.cell input.in{background:var(--soft)}
+.cell input.cur{background:var(--amber);color:var(--onamber);border-color:var(--amber)}
+.cell input.ok{background:var(--greenbg);border-color:var(--green)}
+.cell input.bad{background:var(--redbg);border-color:var(--red)}
+.cell small{position:absolute;top:1px;left:3px;font-size:10px;font-weight:700;color:var(--muted);pointer-events:none;z-index:1}
+.clues h3{font-size:19px;margin:0 0 6px}
+.clues ol{margin:0 0 14px;padding:0;list-style:none}
+.clues li{padding:6px 10px;border-radius:8px;font-size:16px;cursor:pointer}
+.clues li b{display:inline-block;min-width:34px}
+.clues li:hover{background:var(--soft)}
+.clues li.act{background:var(--amber);color:var(--onamber)}
+.clues li.fin{text-decoration:line-through;opacity:.55}
+.sum{text-align:center;padding:10px 0}
+.sum .score{font-family:Cambria,Georgia,serif;font-size:72px;font-weight:700;line-height:1}
+.sum p{color:var(--muted)}
+.rules summary{cursor:pointer;font-weight:700;padding:10px 0}
+.rules table{border-collapse:collapse;width:100%;font-size:16px;margin:6px 0 14px}
+.rules td,.rules th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.rules th{color:var(--muted);font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+.k{font-weight:800;color:var(--blue)}
+.hint{color:var(--muted);font-size:16px}
+[hidden]{display:none!important}
+.pill:empty{display:none}
+.pill.paused{background:var(--redbg);color:var(--red)}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.12em}
+input.txt.mono{text-transform:uppercase}
+.idbig{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:64px;font-weight:800;letter-spacing:.2em;background:var(--amber);color:#1B1F3B;border-radius:18px;padding:18px 10px 18px 28px;margin:14px 0}
+.hint.err{color:var(--red);min-height:1.4em;margin:6px 0}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tab{flex:1;background:var(--paper);border:2px solid var(--line);border-radius:12px;padding:10px;font-weight:700}
+.tab.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.tile.prog{border-color:var(--amber)}
+.tile.prog .sc{color:var(--blue)}
+.ov{position:fixed;inset:0;background:rgba(10,12,30,.6);display:grid;place-items:center;z-index:50;padding:20px}
+.dlg{background:var(--card);color:var(--ink);border-radius:18px;padding:26px;max-width:460px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.dlg p{margin:0 0 6px;font-size:19px}
+.opt.sel{border-color:var(--blue);background:var(--soft)}
+.fb.neu{background:var(--soft);border-left:6px solid var(--blue)}
+.passage{background:var(--soft);border-radius:14px;padding:14px 18px;margin:14px 0 18px;font-size:18px}
+.passage b{display:block;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.passage p{margin:0}
+textarea.area{width:100%;font:inherit;font-size:20px;border:2px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);padding:12px 14px;resize:vertical}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>Diagnostic Test B1+</h1>
+    <span class="pill" id="timerPill" hidden></span>
+    <span class="pill" id="idPill" hidden></span>
+    <span class="pill" id="totalPill" hidden></span>
+    <span class="pill" id="syncPill" hidden aria-live="polite"></span>
+    <button class="btn ghost" id="homeBtn" hidden>All activities</button>
+    <button class="btn ghost" id="themeBtn" aria-label="Toggle light and dark">Light / Dark</button>
+  </header>
+  <main id="app"></main>
+</div>
+
+<script>
+/* ============ helpers ============ */
+const $ = (s, r=document) => r.querySelector(s);
+const el = (t, props={}, ...kids) => { const e=document.createElement(t); for(const k in props){ if(k==='class') e.className=props[k]; else if(k==='html') e.innerHTML=props[k]; else if(k.startsWith('on')) e.addEventListener(k.slice(2),props[k]); else e.setAttribute(k,props[k]); } kids.flat().forEach(c=>e.append(c&&c.nodeType?c:document.createTextNode(c??''))); return e; };
+const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const norm = s => String(s).toLowerCase().replace(/[’‘`]/g,"'").replace(/\s+/g,' ').trim().replace(/[.?!]+$/,'').trim();
+const normC = s => norm(s).replace(/[,;]/g,'').replace(/\s+/g,' ').trim();
+const app = $('#app');
+/* ============ configuration ============ */
+// 1) Paste the web-app URL of the teacher's Google Apps Script between the quotes.
+//    Leave empty to run in offline mode (results are only kept on this device).
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxd5HASD9Y3_5OLQv8o3YrBOYT5Cxh2rl8EIDxhqaLy-mNS6zNVqcjDJaq8CE7cOMRbiw/exec";
+// Quiz identifier. It tells the shared Apps Script which sheet to use. Do not change it.
+const QUIZ_ID = "diag";
+// false = students do NOT see right/wrong or scores (recommended for a diagnostic). true = feedback after each answer.
+const REVEAL = false;
+const SHOW_SCORES = false;
+// 2) Optional time limit in minutes (0 = no limit). When time is up, the quiz is sent automatically.
+const TIME_LIMIT_MIN = 60;
+
+const ACT = [];      // registered activities (in column order)
+const store = (()=>{ try{ localStorage.setItem('_t','1'); localStorage.removeItem('_t'); return localStorage; }catch(e){ const m={}; return {getItem:k=>(k in m?m[k]:null),setItem:(k,v)=>{m[k]=String(v)},removeItem:k=>{delete m[k]}}; } })();
+const blankSt=()=>({id:'',name:'',done:{},prog:{},texts:{},t:0,sent:false,u:0});
+let st=null;         // current student's state
+let cur=null;        // current activity {id,data,finished,save()}
+let dirty=false, saving=false, netFail=false, sendError='', timedOut=false;
+const lsKey=id=>'q:'+QUIZ_ID+':'+id;
+const normId=s=>String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+function saveSt(touch=true){ if(!st||!st.id) return; if(touch) st.u=Date.now(); try{ store.setItem(lsKey(st.id),JSON.stringify(st)); }catch(e){} if(touch) dirty=true; }
+function readLocal(id){ try{ const j=store.getItem(lsKey(id)); return j?JSON.parse(j):null; }catch(e){ return null; } }
+function fixSt(s){ s.texts=s.texts||{}; s.done=s.done||{}; s.prog=s.prog||{}; s.t=s.t||0; s.u=s.u||0; s.sent=!!s.sent; return s; }
+function mergeStates(a,b){
+  if(!a) return b?fixSt(b):null; if(!b) return fixSt(a);
+  a=fixSt(a); b=fixSt(b);
+  const base=a.u>=b.u?a:b, other=base===a?b:a;
+  base.t=Math.max(a.t,b.t); base.sent=a.sent||b.sent; base.texts=Object.assign({},other.texts||{},base.texts||{});
+  for(const id in other.done) if(!base.done[id]) base.done[id]=other.done[id];
+  for(const id in base.done) delete base.prog[id];
+  return base;
+}
+const fmt=s=>{ s=Math.max(0,Math.floor(s)); const m=Math.floor(s/60), r=s%60; return String(m).padStart(2,'0')+':'+String(r).padStart(2,'0'); };
+
+/* ---------- grades ---------- */
+const gradeOf=(got,total)=>Math.round(got/total*100)/10;
+function average(){ let s=0; ACT.forEach(a=>{ if(st.done[a.id]) s+=st.done[a.id].grade; }); return Math.round(s/ACT.length*10)/10; }
+function finalize(id,got,total,tp){
+  if(st.done[id]) return st.done[id];
+  got=Math.max(0,Math.min(total,got));
+  const grade=gradeOf(got,total);
+  st.done[id]={grade,got,total}; if(tp) st.done[id].tp=tp; delete st.prog[id];
+  saveSt(); updateHeader();
+  return st.done[id];
+}
+function finalizeAll(){ ACT.forEach(a=>{ if(!st.done[a.id]&&st.prog[a.id]) finalize(a.id,st.prog[a.id].got||0,a.total,st.prog[a.id].data&&st.prog[a.id].data.tp); }); }
+
+/* ---------- server sync ---------- */
+async function api(payload,keepalive=false){
+  const r=await fetch(SCRIPT_URL,{method:'POST',keepalive,headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({quiz:QUIZ_ID},payload))});
+  const txt=await r.text();
+  try{ return JSON.parse(txt); }catch(e){ const err=new Error('NOT_JSON'); err.detail='HTTP '+r.status+' · '+txt.replace(/\s+/g,' ').slice(0,80); throw err; }
+}
+function netMsg(e){
+  if(e&&e.message==='NOT_JSON') return 'The server answered, but not with data ('+e.detail+'). Tell your teacher: the Apps Script deployment must allow access to "Anyone" and the URL must end in /exec.';
+  return 'Could not connect to the server. Check your internet. If it keeps failing, tell your teacher ('+((e&&e.message)||'network error')+').';
+}
+async function checkServer(el2){
+  if(!SCRIPT_URL){ el2.textContent='Offline mode: results are only kept on this device.'; return; }
+  el2.textContent='Checking connection…';
+  try{
+    const r=await fetch(SCRIPT_URL); const txt=await r.text(); let j=null; try{ j=JSON.parse(txt); }catch(e){}
+    if(j&&j.ok){ el2.textContent='Server connected ✓'; el2.style.color='var(--green)'; }
+    else { el2.textContent='Server problem: it answered but not with data (HTTP '+r.status+'). Check the deployment: access must be "Anyone" and the URL must end in /exec.'; el2.style.color='var(--red)'; }
+  }catch(e){ el2.textContent='Cannot reach the server ('+((e&&e.message)||'network error')+'). Check your internet or the script URL.'; el2.style.color='var(--red)'; }
+}
+function mergeServerDone(j){
+  for(const id in (j.done||{})){ st.done[id]=Object.assign(st.done[id]||{},{grade:j.done[id]}); delete st.prog[id]; }
+  if(j.sent||j.alreadySent) st.sent=true;
+}
+async function pushState(final=false,keepalive=false){
+  if(!SCRIPT_URL||!st||!st.id||saving) return false;
+  saving=true;
+  try{
+    const grades={}; ACT.forEach(a=>{ const d=st.done[a.id]; if(d&&d.got!==undefined) grades[a.id]={grade:d.grade,got:d.got,total:d.total,tp:d.tp}; });
+    const j=await api({action:'save',id:st.id,final,grades,texts:st.texts,time:st.t,state:{done:st.done,prog:st.prog,texts:st.texts,t:st.t,u:st.u,sent:st.sent||final}},keepalive&&JSON.stringify(st).length<30000);
+    saving=false;
+    if(j&&j.ok){ netFail=false; mergeServerDone(j); dirty=false; if(final) st.sent=true; saveSt(false); updateHeader(); return true; }
+    sendError=(j&&j.error)||'The server did not accept the data.'; updateHeader(); return false;
+  }catch(e){ saving=false; netFail=true; dirty=true; sendError=netMsg(e); updateHeader(); return false; }
+}
+setInterval(()=>{ if(st&&st.id&&SCRIPT_URL&&!st.sent&&(dirty||netFail)&&!document.hidden) pushState(false); },8000);
+window.addEventListener('online',()=>{ if(st&&SCRIPT_URL&&!st.sent) pushState(false); updateHeader(); });
+window.addEventListener('offline',updateHeader);
+
+/* ---------- timer: runs only while the page is visible and online ---------- */
+function running(){ return !!st&&!!st.id&&!st.sent&&document.visibilityState==='visible'&&navigator.onLine!==false&&!(SCRIPT_URL&&netFail); }
+setInterval(()=>{
+  if(!st||!st.id) return;
+  if(running()){
+    st.t++;
+    if(st.t%5===0) saveSt(false);
+    if(st.t%30===0) dirty=true;
+    if(TIME_LIMIT_MIN>0&&st.t>=TIME_LIMIT_MIN*60&&!timedOut) timeUp();
+  }
+  updateHeader();
+},1000);
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'){ saveSt(false); if(SCRIPT_URL&&st&&st.id&&!st.sent) pushState(false,true); } updateHeader(); });
+window.addEventListener('pagehide',()=>{ saveSt(false); if(SCRIPT_URL&&st&&st.id&&!st.sent) pushState(false,true); });
+async function timeUp(){
+  timedOut=true; cur=null; finalizeAll();
+  app.innerHTML='';
+  app.append(el('section',{class:'panel',style:'max-width:640px;margin:30px auto;text-align:center'},el('h2',{},'Time is up!'),el('p',{},'Your answers are being sent to your teacher…')));
+  if(SCRIPT_URL){ await pushState(true); }
+  showHome();
+}
+
+/* ---------- header ---------- */
+function updateHeader(){
+  const tp=$('#timerPill'), ap=$('#totalPill'), ip=$('#idPill'), sp=$('#syncPill');
+  if(!st||!st.id){ [tp,ap,ip,sp].forEach(x=>x.hidden=true); return; }
+  [tp,ap,ip,sp].forEach(x=>x.hidden=false);
+  if(SHOW_SCORES) ap.textContent='Average '+average().toFixed(1)+' / 10'; else ap.hidden=true;
+  ip.textContent='ID '+st.id;
+  const left=TIME_LIMIT_MIN>0?TIME_LIMIT_MIN*60-st.t:null;
+  const paused=!st.sent&&!running();
+  tp.textContent=(paused?'⏸ ':'⏱ ')+(left!==null?'Left '+fmt(left):fmt(st.t))+(paused?' paused':'');
+  tp.classList.toggle('paused',paused);
+  if(!SCRIPT_URL) sp.textContent='Offline mode';
+  else if(st.sent) sp.textContent='Sent ✓';
+  else if(netFail||navigator.onLine===false) sp.textContent='No connection';
+  else if(saving) sp.textContent='Saving…';
+  else sp.textContent=dirty?'Saving soon…':'Saved ✓';
+}
+const updateTotal=updateHeader;
+
+/* ---------- screens ---------- */
+function confirmBox(msg,yes,onYes){
+  const ov=el('div',{class:'ov'},el('div',{class:'dlg',role:'dialog'},el('p',{},msg),
+    el('div',{class:'row'},el('button',{class:'btn amber',onclick:()=>{ov.remove();onYes();}},yes),el('button',{class:'btn ghost',onclick:()=>ov.remove()},'Keep working'))));
+  document.body.append(ov);
+}
+function lastUsed(){ try{ return JSON.parse(store.getItem('q:'+QUIZ_ID+':last')||'null'); }catch(e){ return null; } }
+function rememberLast(){ try{ store.setItem('q:'+QUIZ_ID+':last',JSON.stringify({id:st.id,name:st.name})); }catch(e){} }
+
+function showGate(){
+  st=null; cur=null; updateHeader(); $('#homeBtn').hidden=true; app.innerHTML='';
+  const last=lastUsed();
+  const connLine=el('p',{class:'hint',style:'margin-top:16px;font-size:14px'}); checkServer(connLine);
+  const errNew=el('p',{class:'hint err'}), errId=el('p',{class:'hint err'});
+  const nameIn=el('input',{class:'txt wide',type:'text',autocomplete:'name',placeholder:'First name and last name','aria-label':'Full name'});
+  const idIn=el('input',{class:'txt wide mono',type:'text',autocomplete:'off',autocapitalize:'characters',spellcheck:'false',placeholder:'ID (5 characters)','aria-label':'ID',maxlength:'8'});
+  if(last) idIn.value=last.id;
+
+  const goNew=async()=>{
+    const name=nameIn.value.replace(/\s+/g,' ').trim();
+    if(name.split(' ').filter(w=>w.length>1).length<2){ errNew.textContent='Please write your full name (first name and last name).'; return; }
+    bNew.disabled=true; bNew.textContent='One moment…'; errNew.textContent='';
+    let id;
+    if(SCRIPT_URL){
+      try{
+        const j=await api({action:'register',name});
+        if(j&&j.exists){ errNew.textContent='This name is already registered. Use "I have an ID" to continue. If you lost your ID, ask your teacher.'; bNew.disabled=false; bNew.textContent='Get my ID'; return; }
+        if(!(j&&j.ok&&j.id)){ errNew.textContent=(j&&j.error)||'Could not register. Try again.'; bNew.disabled=false; bNew.textContent='Get my ID'; return; }
+        id=j.id;
+      }catch(e){ errNew.textContent=netMsg(e); bNew.disabled=false; bNew.textContent='Get my ID'; return; }
+    } else {
+      const al='ABCDEFGHJKMNPQRSTUVWXYZ23456789'; id='X'; for(let i=0;i<4;i++) id+=al[Math.floor(Math.random()*al.length)];
+    }
+    st=blankSt(); st.id=id; st.name=name; saveSt(); rememberLast(); showIdCard();
+  };
+  const goId=async()=>{
+    const id=normId(idIn.value);
+    if(id.length<4){ errId.textContent='Write your ID.'; return; }
+    bId.disabled=true; bId.textContent='One moment…'; errId.textContent='';
+    const local=readLocal(id); let server=null, name=local?local.name:'';
+    if(SCRIPT_URL){
+      try{
+        const j=await api({action:'login',id});
+        if(!(j&&j.ok)){ errId.textContent='ID not found. Check it and try again, or ask your teacher.'; bId.disabled=false; bId.textContent='Continue'; return; }
+        name=j.name; server=j.state||blankSt(); server.id=id; server.name=name;
+        for(const k in (j.done||{})){ server.done=server.done||{}; if(!server.done[k]) server.done[k]={grade:j.done[k]}; }
+        if(j.sent) server.sent=true;
+      }catch(e){ errId.textContent=netMsg(e); bId.disabled=false; bId.textContent='Continue'; return; }
+    } else if(!local){ errId.textContent='ID not found on this device.'; bId.disabled=false; bId.textContent='Continue'; return; }
+    st=mergeStates(local,server); st.id=id; st.name=name; saveSt(false); dirty=true; rememberLast(); showHome();
+  };
+  const bNew=el('button',{class:'btn amber',onclick:goNew},'Get my ID');
+  const bId=el('button',{class:'btn amber',onclick:goId},'Continue');
+  nameIn.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); goNew(); } });
+  idIn.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); goId(); } });
+  const pNew=el('div',{},el('p',{},'Write your full name. You will get a personal ID.'),nameIn,errNew,el('div',{class:'row'},bNew));
+  const pId=el('div',{hidden:true},el('p',{},'Write the ID you received. You will continue where you stopped.'),idIn,errId,el('div',{class:'row'},bId));
+  const tabNew=el('button',{class:'tab on',onclick:()=>sw(true)},'I am new');
+  const tabId=el('button',{class:'tab',onclick:()=>sw(false)},'I have an ID');
+  const sw=n=>{ pNew.hidden=!n; pId.hidden=n; tabNew.classList.toggle('on',n); tabId.classList.toggle('on',!n); setTimeout(()=>(n?nameIn:idIn).focus(),20); };
+  app.append(el('section',{class:'panel',style:'max-width:640px;margin:30px auto'},
+    el('span',{class:'tag'},'Diagnostic test · Units 7–12'), el('h2',{style:'font-size:34px;margin:10px 0'},'Welcome!'),
+    el('div',{class:'fb bad',style:'margin:10px 0 16px'},el('b',{},'Important'),'This is a diagnostic test: do not use dictionaries or translators, and do not worry if you do not know an answer. Each activity can be answered only ONE time. The timer runs only while this page is open and you are online. When you press Send results, you cannot change anything.'),
+    el('div',{class:'tabs'},tabNew,tabId), pNew, pId, connLine));
+  if(last){ sw(false); } else setTimeout(()=>nameIn.focus(),30);
+}
+function showIdCard(){
+  app.innerHTML='';
+  app.append(el('section',{class:'panel',style:'max-width:640px;margin:30px auto;text-align:center'},
+    el('span',{class:'tag'},'Welcome, '+st.name.split(' ')[0]), el('h2',{style:'font-size:30px;margin:10px 0'},'This is your personal ID'),
+    el('div',{class:'idbig'},st.id),
+    el('p',{},'Write it down or take a screenshot. If you leave, lose your connection or change computers, use this ID to continue where you stopped.'),
+    el('div',{class:'row',style:'justify-content:center'},el('button',{class:'btn amber',onclick:()=>showHome()},'I saved my ID. Start!'))));
+}
+function csvText(){
+  const q=s=>'"'+String(s).replace(/"/g,'""')+'"';
+  const head=['ID','Name',...ACT.map(a=>a.title),'Average','Time (min)','Writing sample'];
+  const row=[st.id,st.name,...ACT.map(a=>st.done[a.id]?st.done[a.id].grade:''),average(),(st.t/60).toFixed(1),st.texts.writing||''];
+  return head.map(q).join(',')+'\n'+row.map(q).join(',')+'\n';
+}
+function downloadCsv(){
+  const blob=new Blob(['﻿'+csvText()],{type:'text/csv;charset=utf-8'});
+  const a=el('a',{href:URL.createObjectURL(blob),download:'results-'+st.id+'.csv'}); document.body.append(a); a.click(); a.remove();
+}
+function actStatus(a){
+  const d=st.done[a.id];
+  if(d) return SHOW_SCORES?'Completed · '+d.grade.toFixed(1)+' / 10':'Completed ✓';
+  if(st.sent) return 'Not completed';
+  return st.prog[a.id]?'In progress · tap to resume':'Not started';
+}
+async function doSend(){
+  finalizeAll();
+  const ok=await pushState(true);
+  if(ok){ st.sent=true; saveSt(false); }
+  showHome();
+}
+function showHome(){
+  cur=null; $('#homeBtn').hidden=true; app.innerHTML='';
+  const doneN=ACT.filter(a=>st.done[a.id]).length, first=st.name.split(' ')[0];
+  const title = st.sent ? 'Results sent, '+first+'!' : 'Hello, '+first+'!';
+  const text = st.sent ? 'Your teacher already has your answers. You cannot change or repeat the activities.'
+    : 'Choose an activity. You can leave one unfinished and come back later. Each activity can be answered only once. Do the writing sample too. When you are ready, press Send results.';
+  app.append(el('section',{class:'hero'},
+    el('div',{}, el('h2',{},title), el('p',{},text), el('p',{style:'margin-top:8px'},'Your ID: ',el('b',{class:'mono'},st.id),' · Time: '+fmt(st.t))),
+    el('div',{class:'big'}, el('b',{}, SHOW_SCORES?average().toFixed(1):doneN+'/'+ACT.length), el('span',{}, SHOW_SCORES?doneN+' of '+ACT.length+' done':'activities done'))
+  ));
+  if(sendError&&!st.sent) app.append(el('div',{class:'fb bad',style:'margin:0 0 18px'},el('b',{},'Not sent.'),sendError+' Your answers are saved on this device. Press Send results again.'));
+  const grid=el('div',{class:'grid'});
+  ACT.forEach((a,i)=>{
+    const d=st.done[a.id], inprog=!d&&st.prog[a.id];
+    const b=el('button',{class:'tile'+(d?' done':'')+(inprog?' prog':''),onclick:()=>openAct(a)},
+      el('span',{class:'n'},i+1), el('h3',{},a.title), el('p',{},a.desc), el('span',{class:'sc'},actStatus(a)));
+    if(d||st.sent) b.disabled=true;
+    grid.append(b);
+  });
+  const wr=(st.texts.writing||'').trim(), wn=(wr.match(/\S+/g)||[]).length;
+  const wb=el('button',{class:'tile'+(wn?' done':'')+(wn&&!st.sent?' prog':''),onclick:openWriting},
+    el('span',{class:'n'},'✎'), el('h3',{},'Writing sample'), el('p',{},'Write a short paragraph about your own experience.'), el('span',{class:'sc'},wn?'Written · '+wn+' words · tap to edit':(st.sent?'Not written':'Not started · not graded, but your teacher reads it')));
+  if(st.sent) wb.disabled=true;
+  grid.append(wb);
+  app.append(grid);
+  const row=el('div',{class:'row',style:'margin-top:24px'});
+  if(SCRIPT_URL && !st.sent){
+    const sb=el('button',{class:'btn amber',style:'font-size:20px;padding:16px 30px',onclick:()=>{
+      const left=ACT.length-doneN, started=ACT.filter(a=>!st.done[a.id]&&st.prog[a.id]).length;
+      let m='Send your results to your teacher now?';
+      if(started) m+=' '+started+' activit'+(started===1?'y is':'ies are')+' unfinished and will be graded with the answers you gave so far.';
+      if(left-started>0) m+=' '+(left-started)+' not started will count as 0.';
+      m+=' After sending you cannot change anything.';
+      confirmBox(m,'Yes, send',async()=>{ sb.disabled=true; sb.textContent='Sending…'; await doSend(); });
+    }},'Send results');
+    row.append(sb, el('span',{class:'hint'},'You can send even if you have not finished everything.'));
+  }
+  row.append(el('button',{class:'btn ghost',onclick:downloadCsv},'Download my results (CSV)'));
+  if(!SCRIPT_URL) row.append(el('span',{class:'hint'},'Offline mode: results are not sent to the teacher. Download the file and send it to your teacher.'));
+  app.append(row);
+  updateHeader();
+}
+function openAct(a){
+  if(st.done[a.id]||st.sent) return;
+  $('#homeBtn').hidden=false; app.innerHTML='';
+  if(!st.prog[a.id]){ st.prog[a.id]={got:0,total:a.total,data:null}; saveSt(); }
+  const p=st.prog[a.id];
+  cur={id:a.id,data:p.data,finished:false,save:(data,got)=>{ p.data=data; p.got=got; saveSt(); }};
+  const panel=el('section',{class:'panel'}); app.append(panel);
+  a.run(panel);
+  window.scrollTo({top:0});
+}
+$('#homeBtn').onclick = ()=>showHome();
+$('#themeBtn').onclick = () => {
+  const r=document.documentElement;
+  const c = r.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  r.setAttribute('data-theme', c==='dark' ? 'light' : 'dark');
+};
+
+function summary(panel,id,got,total,tp){
+  const a=ACT.find(x=>x.id===id);
+  if(cur&&cur.id===id) cur.finished=true;
+  const d=finalize(id,got,total,tp);
+  const pct=Math.round(100*got/total);
+  const msg = pct===100?'Perfect! Excellent work.':pct>=80?'Very good!':pct>=60?'Good effort.':'Keep practicing in class. You can do it!';
+  panel.innerHTML='';
+  panel.append(el('div',{class:'sum'}, el('span',{class:'tag'},'Results · '+a.title), SHOW_SCORES?el('div',{class:'score'}, d.grade.toFixed(1)+' / 10'):el('div',{class:'score'},'✓'), el('p',{}, SHOW_SCORES?got+' correct out of '+total+'. '+msg:'Activity completed. Your answers were saved.'),
+    el('p',{class:'hint'},'This activity is now closed. When you are ready, press Send results on the main screen.'),
+    el('div',{class:'row',style:'justify-content:center'}, el('button',{class:'btn amber',onclick:showHome},'Back to activities'))));
+}
+
+/* generic sequence with pause and resume */
+function sequence(panel,id,title,items,renderer){
+  const saved=cur.data;
+  const order=saved?saved.order:shuffle(items.map((_,k)=>k));
+  let i=saved?saved.i:0, score=saved?saved.score:0;
+  const tp=saved&&saved.tp?saved.tp:{};
+  if(!saved) items.forEach(it=>{ if(it.tp){ tp[it.tp]=tp[it.tp]||[0,0]; tp[it.tp][1]++; } });
+  const persist=(next)=>cur.save({order,i:next,score,tp},score);
+  if(!saved) persist(0);
+  const step=()=>{
+    if(i>=order.length) return summary(panel,id,score,order.length,tp);
+    panel.innerHTML='';
+    panel.append(el('div',{class:'bar'}, el('i',{style:'width:'+(100*i/order.length)+'%'})));
+    panel.append(el('span',{class:'tag'}, title+' · '+(i+1)+' of '+order.length));
+    const box=el('div'); panel.append(box);
+    let answered=false;
+    renderer(items[order[i]], box, (ok,expl,correctText)=>{
+      if(answered) return; answered=true; if(ok){ score++; const tg=items[order[i]].tp; if(tg&&tp[tg]) tp[tg][0]++; } persist(i+1);
+      box.append(REVEAL?el('div',{class:'fb '+(ok?'ok':'bad')}, el('b',{}, ok?'Correct!':'Not quite.'), (!ok&&correctText?('Answer: '+correctText+'. '):'')+(expl||'')):el('div',{class:'fb neu'},el('b',{},'Answer saved.'),'Go to the next question.'));
+      const last = i===order.length-1;
+      const nb = el('button',{class:'btn amber',onclick:()=>{i++;step();}}, last?'See results':'Next');
+      box.append(el('div',{class:'row'}, nb)); nb.focus();
+    });
+  };
+  step();
+}
+
+/* ============ renderers ============ */
+function rMC(it,box,done){
+  box.append(el('div',{class:'q'}, it.q));
+  const correct = it.o[it.a];
+  const opts = shuffle(it.o);
+  const wrap = el('div',{class:'opts'});
+  opts.forEach((o,idx)=>{
+    const b=el('button',{class:'opt',onclick:()=>{
+      [...wrap.children].forEach(c=>{c.disabled=true; if(REVEAL&&c.dataset.v===correct) c.classList.add('ok');});
+      const ok = o===correct; if(REVEAL){ if(!ok) b.classList.add('bad'); } else b.classList.add('sel');
+      done(ok,it.e,correct);
+    },'data-v':o}, String.fromCharCode(65+idx)+')  '+o);
+    wrap.append(b);
+  });
+  box.append(wrap);
+}
+function rBlank(it,box,done){
+  const parts = it.t.split('___');
+  const inp = el('input',{class:'txt',type:'text',autocomplete:'off',autocapitalize:'off',spellcheck:'false','aria-label':'Your answer'});
+  const q = el('div',{class:'q'}, parts[0], inp, parts[1]||'');
+  box.append(q);
+  box.append(el('p',{class:'hint'}, 'Type your answer in the gap.'));
+  const check = ()=>{
+    if(!inp.value.trim()) return;
+    const ok = it.a.map(normC).includes(normC(inp.value));
+    if(REVEAL) inp.classList.add(ok?'ok':'bad'); inp.disabled=true; btn.disabled=true;
+    done(ok,it.e,it.a[0]);
+  };
+  const btn=el('button',{class:'btn',onclick:check},'Submit answer');
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();check();}});
+  box.append(el('div',{class:'row'},btn));
+  setTimeout(()=>inp.focus(),30);
+}
+function rTyped(it,box,done){ // whole-sentence correction
+  box.append(el('div',{class:'q'}, 'Find the mistake and write the correct sentence.'));
+  box.append(el('div',{class:'bigword',style:'font-size:32px;text-decoration:underline wavy var(--red)'}, it.s));
+  const inp=el('input',{class:'txt wide',type:'text',autocomplete:'off',autocapitalize:'off',spellcheck:'false','aria-label':'Corrected sentence'});
+  box.append(inp);
+  const check=()=>{ if(!inp.value.trim())return; const ok=it.a.map(norm).includes(norm(inp.value)); inp.classList.add(ok?'ok':'bad'); inp.disabled=true; btn.disabled=true; done(ok,it.e,it.a[0].charAt(0).toUpperCase()+it.a[0].slice(1)); };
+  const btn=el('button',{class:'btn',onclick:check},'Submit answer');
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();check();}});
+  box.append(el('div',{class:'row'},btn)); setTimeout(()=>inp.focus(),30);
+}
+function rOrder(it,box,done){
+  box.append(el('div',{class:'q'}, 'Put the words in order.'));
+  const drop=el('div',{class:'drop','aria-label':'Your sentence'}), pool=el('div',{class:'chips'});
+  const chips = shuffle(it.w).map((w,i)=>({w,i,used:false}));
+  const built=[];
+  const draw=()=>{
+    drop.innerHTML=''; pool.innerHTML='';
+    built.forEach((c,bi)=>drop.append(el('button',{class:'chip',onclick:()=>{c.used=false;built.splice(bi,1);draw();}},c.w)));
+    chips.forEach(c=>{ const b=el('button',{class:'chip'+(c.used?' used':''),onclick:()=>{if(c.used)return;c.used=true;built.push(c);draw();}},c.w); if(c.used) b.disabled=true; pool.append(b); });
+    btn.disabled = built.length!==chips.length;
+  };
+  const btn=el('button',{class:'btn',onclick:()=>{
+    const ans = built.map(c=>c.w).join(' ');
+    const ok = it.a.map(norm).includes(norm(ans));
+    drop.querySelectorAll('button').forEach(b=>b.disabled=true); pool.querySelectorAll('button').forEach(b=>b.disabled=true); btn.disabled=true; reset.disabled=true;
+    done(ok,it.e,it.a[0]);
+  }},'Check');
+  const reset=el('button',{class:'btn ghost',onclick:()=>{built.length=0;chips.forEach(c=>c.used=false);draw();}},'Reset');
+  box.append(drop,pool,el('div',{class:'row'},btn,reset)); draw();
+}
+function rWrong(it,box,done){
+  box.append(el('div',{class:'q'}, 'Which sentence has a mistake?'));
+  const wrap=el('div',{class:'opts'});
+  it.s.forEach((s,idx)=>{
+    const b=el('button',{class:'opt',onclick:()=>{
+      [...wrap.children].forEach((c,ci)=>{c.disabled=true; if(ci===it.w) c.classList.add('ok');});
+      const ok=idx===it.w; if(!ok) b.classList.add('bad'); done(ok,it.e,null);
+    }}, (idx+1)+')  '+s);
+    wrap.append(b);
+  });
+  box.append(wrap);
+}
+function makeSort(cats){
+  return (it,box,done)=>{
+    box.append(el('div',{class:'q'}, cats.prompt));
+    box.append(el('div',{class:'bigword'}, it.t));
+    const wrap=el('div',{class:'cards'});
+    cats.c.forEach(c=>{
+      const b=el('button',{class:'opt',onclick:()=>{
+        [...wrap.children].forEach(x=>{x.disabled=true; if(x.dataset.c===it.k) x.classList.add('ok');});
+        const ok=c===it.k; if(!ok) b.classList.add('bad'); done(ok,it.e,null);
+      },'data-c':c}, c);
+      wrap.append(b);
+    });
+    box.append(wrap);
+  };
+}
+
+/* ============ data ============ */
+const D = /*DATA*/{"GMC":[{"q":"When I was a child, I ___ play the piano, but now I don't.","o":["used to","use to","was used to","using to"],"a":0,"tp":"used to"},{"q":"Did you ___ listen to rock music when you were a teenager?","o":["use to","used to","using to","be used to"],"a":0,"tp":"used to"},{"q":"My new phone isn't ___ expensive as my old one.","o":["as","than","much","like"],"a":0,"tp":"as…as"},{"q":"Which sentence means the same as \"Tom is taller than Ben\"?","o":["Ben isn't as tall as Tom.","Ben is as tall as Tom.","Tom isn't as tall as Ben.","Ben is taller than Tom."],"a":0,"tp":"as…as"},{"q":"She ___ for the bus for twenty minutes, and it still hasn't come.","o":["has been waiting","waits","waited","is waiting"],"a":0,"tp":"present perfect continuous"},{"q":"I ___ for a new job since March.","o":["have been looking","am looking","looked","look"],"a":0,"tp":"present perfect continuous"},{"q":"I ___ three emails so far today.","o":["have written","have been writing","write","am written"],"a":0,"tp":"present perfect vs continuous"},{"q":"She has been reading that novel for weeks, but she ___ it yet.","o":["hasn't finished","hasn't been finishing","doesn't finish","didn't finished"],"a":0,"tp":"present perfect vs continuous"},{"q":"Students ___ wear a uniform at my school; it's the rule.","o":["have to","can","might","are able"],"a":0,"tp":"modals of necessity"},{"q":"You ___ bring your passport tomorrow. It isn't necessary; we already have your details.","o":["don't have to","mustn't","can't","must"],"a":0,"tp":"modals of necessity"},{"q":"You ___ use your phone during the exam. It's forbidden.","o":["mustn't","don't have to","may","should"],"a":0,"tp":"modals of prohibition / permission"},{"q":"Visitors ___ take photos inside the museum, but without flash.","o":["are allowed to","are able","must","have to"],"a":0,"tp":"modals of prohibition / permission"},{"q":"In this factory, the parts ___ by robots.","o":["are assembled","assemble","are assembling","is assembled"],"a":0,"tp":"present passive"},{"q":"How often ___?","o":["is the office cleaned","does the office cleaned","the office is cleaned","is cleaned the office"],"a":0,"tp":"present passive"},{"q":"The Eiffel Tower ___ in 1889.","o":["was built","built","is built","was build"],"a":0,"tp":"past passive"},{"q":"My bike ___ last night, so I walked to school.","o":["was stolen","stole","has stolen","was stole"],"a":0,"tp":"past passive"},{"q":"I'm trying to ___ smoking, but it's very hard.","o":["give up","give in","give away","give off"],"a":0,"tp":"phrasal verbs"},{"q":"Don't worry about the problem; we'll ___ a solution together.","o":["work out","work off","work up","work over"],"a":0,"tp":"phrasal verbs"},{"q":"If I ___ more money, I would travel around the world.","o":["had","have","will have","would have"],"a":0,"tp":"unreal conditionals"},{"q":"What would you do if you ___ your keys?","o":["lost","lose","will lose","would lose"],"a":0,"tp":"unreal conditionals"},{"q":"There's ___ in the box. It's completely empty.","o":["nothing","anything","something","everything"],"a":0,"tp":"indefinite pronouns"},{"q":"I looked everywhere, but I couldn't find my glasses ___.","o":["anywhere","somewhere","nowhere","everywhere"],"a":0,"tp":"indefinite pronouns"},{"q":"\"I am tired,\" said Anna. → Anna said that she ___ tired.","o":["was","is","has been","will be"],"a":0,"tp":"reported speech"},{"q":"\"Will you help me?\" he asked me. → He asked me ___.","o":["if I would help him","will I help him","that I help him","if I will help him"],"a":0,"tp":"reported speech"}],"VMC":[{"q":"I love that new crime ___ on TV. I've watched all ten episodes.","o":["series","channel","trailer","screen"],"a":0,"tp":"music & TV"},{"q":"The film got great ___ from critics, and most gave it five stars.","o":["reviews","reports","rehearsals","revisions"],"a":0,"tp":"music & TV"},{"q":"My favorite band is going on ___ next month. They'll play in twelve cities.","o":["tour","trip","travel","route"],"a":0,"tp":"music & TV"},{"q":"Climbing the mountain was an unforgettable but ___ experience. It was physically very difficult.","o":["exhausting","relaxing","dull","effortless"],"a":0,"tp":"experiences & progress"},{"q":"I've made a lot of ___ in my English this year. I understand much more now.","o":["progress","process","proceeds","promote"],"a":0,"tp":"experiences & progress"},{"q":"My sister studies ___ at university. She wants to become a doctor.","o":["medicine","architecture","philosophy","law"],"a":0,"tp":"college & employment"},{"q":"A ___ is a short document that lists your education and work experience.","o":["résumé","salary","interview","deadline"],"a":0,"tp":"college & employment"},{"q":"She was ___ last month because the company closed, and now she's looking for a new job.","o":["laid off","promoted","hired","retired"],"a":0,"tp":"college & employment"},{"q":"The T-shirts are ___ in Bangladesh and then shipped to Europe.","o":["manufactured","invented","harvested","discovered"],"a":0,"tp":"materials & production"},{"q":"A warm sweater is often made of ___, which comes from sheep.","o":["wool","leather","cotton","silk"],"a":0,"tp":"materials & production"},{"q":"If you want to ___ in your career, you need to work hard and take chances.","o":["succeed","fail","avoid","refuse"],"a":0,"tp":"success & risk"},{"q":"Starting your own business is a big ___. You could lose all your money.","o":["risk","reward","salary","habit"],"a":0,"tp":"success & risk"},{"q":"She fell off her bike and ___ her wrist, so she had to wear a cast.","o":["broke","burned","lost","dropped"],"a":0,"tp":"accidents & extremes"},{"q":"It's an ___ sport: skiing down a very steep mountain at high speed.","o":["extreme","ordinary","calm","common"],"a":0,"tp":"accidents & extremes"}],"RMC":[{"q":"What is the main idea of the text?","o":["Trying something new can change the way we feel.","Accountants need more hobbies.","Pottery is an easy hobby to learn.","Clara quit her job to sell bowls."],"a":0,"tp":"reading comprehension"},{"q":"Why did Clara almost say no to the class?","o":["She was afraid of looking silly.","She had no free time.","It was too expensive.","She didn't like pottery."],"a":0,"tp":"reading comprehension"},{"q":"How were the first lessons?","o":["Difficult.","Boring.","Very easy.","Too short."],"a":0,"tp":"reading comprehension"},{"q":"What happened after six months?","o":["A shop started selling her work.","She changed jobs.","She stopped going to class.","Her friend quit the class."],"a":0,"tp":"reading comprehension"},{"q":"\"Clara hasn't left her job yet\" means that ___.","o":["she still works at the office","she was fired","she has a new job in a shop","she will quit tomorrow"],"a":0,"tp":"reading comprehension"},{"q":"How does Clara see mistakes now?","o":["As a normal part of learning.","As a reason to stop.","As something to hide.","As the teacher's fault."],"a":0,"tp":"reading comprehension"}],"FMC":[{"q":"A friend asks: \"Would you like to come to the cinema tonight?\" You can't go. What do you say?","o":["I'd love to, but I'm afraid I can't. I have to study.","No, I don't want.","Maybe I will not.","That's a bad idea."],"a":0,"tp":"functional language"},{"q":"You want to soften a negative comment about a presentation. Which is the best choice?","o":["It could have been a bit more interesting.","It was awful.","It was boring.","I didn't like it, period."],"a":0,"tp":"functional language"},{"q":"\"How long have you lived here?\"","o":["For about five years.","Since five years.","Before five years.","Five years ago I live."],"a":0,"tp":"functional language"},{"q":"Which sentence shows confidence?","o":["I'm sure I can do it.","I doubt I'll manage.","I'm not sure I'm ready.","I can't do this."],"a":0,"tp":"functional language"},{"q":"You say: \"I think we should start earlier.\" How do you ask for agreement?","o":["Do you agree?","Are you agree?","You are agree?","Agree you?"],"a":0,"tp":"functional language"},{"q":"\"How did you feel when you lost your phone?\"","o":["I was really frustrated.","I was frustrating.","I felt frustrate.","I frustrated."],"a":0,"tp":"functional language"}],"READING":"Last year, Clara, a 34-year-old accountant, decided to leave her comfort zone. She had been working in the same office for ten years, and although her job was stable, she felt bored. When a friend suggested a pottery class, Clara almost said no because she was afraid of looking silly. In the end, she went, and the first lessons were difficult: her bowls kept falling apart. However, she didn't give up. She practised every weekend, and after six months a local shop started selling her work. Clara hasn't left her job yet, but she says that trying something new has changed her attitude. \"I used to worry about failing,\" she explains. \"Now I know that making mistakes is part of learning.\"","GFILL":[{"t":"When I was a child, I ___ (live) in a small town, but now I live in the city.","a":["used to live"],"tp":"used to"},{"t":"This exam wasn't as difficult ___ I expected.","a":["as"],"tp":"as…as"},{"t":"I'm exhausted. I ___ (run) for an hour.","a":["have been running","'ve been running"],"tp":"present perfect continuous"},{"t":"She has ___ (write) six chapters of her novel so far.","a":["written"],"tp":"present perfect vs continuous"},{"t":"We ___ (not / have to) pay to enter the museum. It's free.","a":["don't have to","do not have to"],"tp":"modals of necessity"},{"t":"You ___ (not / be allowed to) park here. It's forbidden.","a":["aren't allowed to","are not allowed to"],"tp":"modals of prohibition / permission"},{"t":"English ___ (speak) in more than sixty countries.","a":["is spoken"],"tp":"present passive"},{"t":"The pyramids ___ (build) more than 4,000 years ago.","a":["were built"],"tp":"past passive"},{"t":"I don't know this word. I'll look it ___ in the dictionary.","a":["up"],"tp":"phrasal verbs"},{"t":"If I ___ (be) you, I would apply for that job.","a":["were","was"],"tp":"unreal conditionals"},{"t":"Does ___ know where Sara is?","a":["anyone","anybody"],"tp":"indefinite pronouns"},{"t":"\"I'm leaving tomorrow,\" Tom said. → Tom said he ___ (leave) the next day.","a":["was leaving","would leave"],"tp":"reported speech"}],"GREW":[{"i":"Rewrite with \"used to\".","s":"I played the guitar when I was a child.","a":["i used to play the guitar when i was a child"],"tp":"used to"},{"i":"Rewrite with \"as … as\" (negative). Start with \"My car\".","s":"Her car is faster than mine.","a":["my car isn't as fast as hers","my car is not as fast as hers","my car isn't as fast as her car","my car is not as fast as her car"],"tp":"as…as"},{"i":"Rewrite the sentence. Start with \"I have\".","s":"I started learning English three years ago and I still learn it.","a":["i have been learning english for three years","i've been learning english for three years"],"tp":"present perfect continuous"},{"i":"Rewrite the sentence. Start with \"It has\".","s":"It started raining two hours ago and it's still raining.","a":["it has been raining for two hours","it's been raining for two hours"],"tp":"present perfect vs continuous"},{"i":"Rewrite with \"allowed to\". Start with \"You\".","s":"You can't use phones in class.","a":["you aren't allowed to use phones in class","you are not allowed to use phones in class"],"tp":"modals of prohibition / permission"},{"i":"Rewrite in the passive.","s":"They make these shoes in Italy.","a":["these shoes are made in italy"],"tp":"present passive"},{"i":"Rewrite in the passive.","s":"Someone stole my wallet yesterday.","a":["my wallet was stolen yesterday"],"tp":"past passive"},{"i":"Rewrite with \"If\". Start with \"If I\".","s":"I don't have time, so I don't learn the piano.","a":["if i had time, i would learn the piano","if i had more time, i would learn the piano","if i had the time, i would learn the piano"],"tp":"unreal conditionals"},{"i":"Rewrite in reported speech. Start with \"She said\".","s":"\"I'm studying,\" she said.","a":["she said she was studying","she said that she was studying"],"tp":"reported speech"},{"i":"Rewrite in reported speech. Start with \"He asked me\".","s":"\"Where do you live?\" he asked me.","a":["he asked me where i lived"],"tp":"reported speech"}],"VFILL":[{"t":"The band is on a world ___ this summer. (t _ _ _)","a":["tour"],"tp":"music & TV"},{"t":"Critics gave the movie excellent ___. (r _ _ _ _ _ s)","a":["reviews"],"tp":"music & TV"},{"t":"She has made great ___ in English this year. (p _ _ _ _ _ _ _)","a":["progress"],"tp":"experiences & progress"},{"t":"He wants to work in a hospital, so he is studying ___. (m _ _ _ _ _ _ _)","a":["medicine"],"tp":"college & employment"},{"t":"I sent my ___ to the company with a cover letter. (r _ _ _ _ _)","a":["résumé","resume"],"tp":"college & employment"},{"t":"Most of our clothes are ___ in Asia. (m _ _ _ _ _ _ _ _ _ _ _)","a":["manufactured"],"tp":"materials & production"},{"t":"Skydiving is an ___ sport. (e _ _ _ _ _ _)","a":["extreme"],"tp":"accidents & extremes"},{"t":"Starting a business is a ___ because you can lose money. (r _ _ _)","a":["risk"],"tp":"success & risk"}],"RCLOZE":[{"t":"Clara works as an ___.","a":["accountant"],"tp":"reading comprehension"},{"t":"She had worked in the same office for ___ years.","a":["ten","10"],"tp":"reading comprehension"},{"t":"A friend suggested a ___ class.","a":["pottery"],"tp":"reading comprehension"},{"t":"After six months, a local ___ started selling her work.","a":["shop","store"],"tp":"reading comprehension"},{"t":"Clara now knows that making ___ is part of learning.","a":["mistakes"],"tp":"reading comprehension"}],"TOPICS":["used to","as…as","present perfect continuous","present perfect vs continuous","modals of necessity","modals of prohibition / permission","present passive","past passive","phrasal verbs","unreal conditionals","indefinite pronouns","reported speech","music & TV","experiences & progress","college & employment","materials & production","success & risk","accidents & extremes","reading comprehension","functional language"]}/*END*/;
+const {GMC,VMC,RMC,FMC,GFILL,GREW,VFILL,RCLOZE}=D;
+
+/* ============ extra renderers ============ */
+function rRewrite(it,box,done){
+  box.append(el('div',{class:'q'}, it.i));
+  box.append(el('div',{class:'bigword',style:'font-size:30px'}, it.s));
+  const inp=el('input',{class:'txt wide',type:'text',autocomplete:'off',autocapitalize:'off',spellcheck:'false','aria-label':'Your sentence'});
+  box.append(inp);
+  const check=()=>{ if(!inp.value.trim()) return; const ok=it.a.map(normC).includes(normC(inp.value)); if(REVEAL) inp.classList.add(ok?'ok':'bad'); inp.disabled=true; btn.disabled=true; done(ok,it.e,it.a[0].charAt(0).toUpperCase()+it.a[0].slice(1)); };
+  const btn=el('button',{class:'btn',onclick:check},'Submit answer');
+  inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); check(); } });
+  box.append(el('div',{class:'row'},btn)); setTimeout(()=>inp.focus(),30);
+}
+const passageBox=()=>el('div',{class:'passage'},el('b',{},'Read the text'),el('p',{},D.READING));
+const rRead=(it,box,done)=>{ box.append(passageBox()); rMC(it,box,done); };
+const rReadBlank=(it,box,done)=>{ box.append(passageBox()); box.append(el('p',{class:'hint'},'Complete with ONE word from the text.')); rBlank(it,box,done); };
+
+/* ============ activities ============ */
+function reg(id,title,desc,total,run){ ACT.push({id,title,desc,total,run}); }
+reg('gmc','Grammar · multiple choice','Choose the best answer. Units 7–12 grammar.',GMC.length, p=>sequence(p,'gmc','Grammar · multiple choice',GMC,rMC));
+reg('gfill','Grammar · fill in the blanks','Type the missing word or the correct verb form.',GFILL.length, p=>sequence(p,'gfill','Grammar · fill in the blank',GFILL,rBlank));
+reg('grew','Grammar · rewrite the sentence','Write the sentence again using the structure you are asked to use.',GREW.length, p=>sequence(p,'grew','Grammar · rewrite',GREW,rRewrite));
+reg('vmc','Vocabulary · multiple choice','Choose the word that fits best.',VMC.length, p=>sequence(p,'vmc','Vocabulary · multiple choice',VMC,rMC));
+reg('vfill','Vocabulary · fill in the blanks','Write the missing word. The first letter and the number of letters help you.',VFILL.length, p=>sequence(p,'vfill','Vocabulary · fill in the blank',VFILL,rBlank));
+reg('rmc','Reading · multiple choice','Read a short text and answer the questions.',RMC.length, p=>sequence(p,'rmc','Reading · multiple choice',RMC,rRead));
+reg('rcloze','Reading · complete the sentences','Complete each sentence with one word from the text.',RCLOZE.length, p=>sequence(p,'rcloze','Reading · complete',RCLOZE,rReadBlank));
+reg('fmc','Functional language','Choose the best thing to say in each situation.',FMC.length, p=>sequence(p,'fmc','Functional language',FMC,rMC));
+
+/* ---- writing sample (open question, not graded: the teacher reads it) ---- */
+function openWriting(){
+  if(st.sent) return;
+  $('#homeBtn').hidden=false; cur=null; app.innerHTML='';
+  const ta=el('textarea',{class:'area',rows:'9',placeholder:'Write here…','aria-label':'Writing sample'}); ta.value=st.texts.writing||'';
+  const wc=el('span',{class:'hint'});
+  const upd=()=>{ const n=(ta.value.trim().match(/\S+/g)||[]).length; wc.textContent=n+' words'; };
+  ta.addEventListener('input',()=>{ st.texts.writing=ta.value.slice(0,4000); saveSt(); upd(); }); upd();
+  app.append(el('section',{class:'panel'},
+    el('span',{class:'tag'},'Open question · not graded'), el('h2',{style:'font-size:30px;margin:10px 0'},'Writing sample'),
+    el('p',{},'Write 5 to 8 sentences. Describe something new you tried recently that took you out of your comfort zone. What happened, and how did you feel? Your teacher will read it.'),
+    ta, el('div',{class:'row'}, el('button',{class:'btn amber',onclick:showHome},'Save and go back'), wc)));
+  window.scrollTo({top:0}); setTimeout(()=>ta.focus(),30);
+}
+
+showGate();
+</script>
+</body>
+</html>
