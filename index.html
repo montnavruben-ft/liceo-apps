@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Liceo Apps · English quizzes</title>
+<style>
+:root{--ink:#1B1F3B;--paper:#F3F5F9;--card:#FFFFFF;--soft:#E1E7F5;--line:#C9D1E8;--amber:#FFC247;--blue:#2C5BE0;--muted:#4A5272;--onamber:#1B1F3B}
+@media (prefers-color-scheme:dark){:root{--ink:#F3F5F9;--paper:#14172B;--card:#1D2142;--soft:#272D58;--line:#3A4175;--blue:#8FA8FF;--muted:#B8C0E0}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:18px;line-height:1.45}
+h1,h2,h3{font-family:Cambria,Georgia,"Times New Roman",serif;margin:0;line-height:1.15}
+.wrap{max-width:900px;margin:0 auto;padding:36px 20px 60px}
+.hero{background:#1B1F3B;color:#F3F5F9;border-radius:22px;padding:30px;margin-bottom:26px}
+.hero h1{font-size:38px;margin-bottom:8px}
+.hero p{margin:0;color:#B8C0E0;max-width:560px}
+.lvl{margin:28px 0 12px;display:flex;align-items:center;gap:12px}
+.lvl h2{font-size:26px}
+.badge{background:var(--amber);color:var(--onamber);font-weight:800;border-radius:10px;padding:4px 12px;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+a.card,div.card{display:flex;flex-direction:column;gap:6px;background:var(--card);border:2px solid var(--line);border-radius:16px;padding:20px;text-decoration:none;color:inherit;min-height:130px}
+a.card:hover,a.card:focus-visible{border-color:var(--blue);outline:none}
+.card h3{font-size:21px}
+.card p{margin:0;color:var(--muted);font-size:15px}
+.card .go{margin-top:auto;font-weight:700;color:var(--blue);font-size:15px}
+div.card{opacity:.6;border-style:dashed}
+div.card .go{color:var(--muted)}
+footer{margin-top:34px;color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <h1>Liceo Apps</h1>
+    <p>English quizzes for class. Choose your level and open your quiz. You will need your personal ID if you already started.</p>
+  </section>
+
+  <div class="lvl"><span class="badge">A1</span><h2>Level A1</h2></div>
+  <div class="grid">
+    <a class="card" href="a1/integrative-quiz-units-3-4/">
+      <h3>Integrative quiz · Units 3 and 4</h3>
+      <p>Present perfect, past simple, participles, a / an and possessives.</p>
+      <span class="go">Open quiz →</span>
+    </a>
+  </div>
+
+  <div class="lvl"><span class="badge">B1</span><h2>Level B1</h2></div>
+  <div class="grid">
+    <div class="card" aria-disabled="true">
+      <h3>Integrative quiz</h3>
+      <p>Coming soon.</p>
+      <span class="go">Not available yet</span>
+    </div>
+  </div>
+
+  <div class="lvl"><span class="badge">B1+</span><h2>Level B1 Plus</h2></div>
+  <div class="grid">
+    <a class="card" href="b1-plus/diagnostic-quiz/">
+      <h3>Diagnostic test · Units 7–12</h3>
+      <p>Grammar, vocabulary, reading, functional language and a short writing sample.</p>
+      <span class="go">Open test →</span>
+    </a>
+  </div>
+
+  <footer>If a page does not open, check your internet connection and try again.</footer>
+</div>
+</body>
+</html>
