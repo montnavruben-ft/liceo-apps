@@ -1,0 +1,444 @@
+<title>Past Perfect Games</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Domine:wght@600;700&family=Nunito+Sans:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: title, game tabs, stage on the left, class panel on the right. */
+:root{
+  --bg:#F3F5F9; --fg:#1B1F3B; --card:#FFFFFF; --soft:#E1E7F5; --muted:#4A5272;
+  --accent:#2C5BE0; --amber:#FFC247; --onamber:#1B1F3B; --green:#0E7A5F; --red:#C62F3A; --line:#D5DCEB;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141834; --fg:#F3F5F9; --card:#1F2548; --soft:#262C52; --muted:#C9D3EE;
+    --accent:#8FB0FF; --amber:#FFC247; --onamber:#1B1F3B; --green:#5BD1AE; --red:#FF8A93; --line:#343B66;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141834; --fg:#F3F5F9; --card:#1F2548; --soft:#262C52; --muted:#C9D3EE;
+  --accent:#8FB0FF; --amber:#FFC247; --onamber:#1B1F3B; --green:#5BD1AE; --red:#FF8A93; --line:#343B66;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:'Nunito Sans',system-ui,Arial,sans-serif;font-size:18px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px;min-height:100vh}
+h1,h2{font-family:'Domine',Georgia,serif;margin:0;text-wrap:balance}
+h1{font-size:clamp(28px,4vw,44px);line-height:1.1}
+h2{font-size:24px}
+p{margin:0}
+.eyebrow{font-size:14px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.wrap{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.btn{font:inherit;font-weight:700;font-size:20px;padding:12px 20px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer;min-height:48px}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#FFFFFF}
+.btn.amber{background:var(--amber);border-color:var(--amber);color:var(--onamber)}
+.btn:focus-visible,.chip:focus-visible,.tab:focus-visible,.score button:focus-visible,.opt:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btn:disabled,.chip:disabled,.opt:disabled{opacity:.4;cursor:default}
+.tabs{display:flex;gap:10px;flex-wrap:wrap}
+.tab{font:inherit;font-weight:700;font-size:18px;padding:12px 18px;border-radius:999px;border:2px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
+.tab[aria-selected="true"]{background:var(--fg);border-color:var(--fg);color:var(--bg)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:24px;align-items:start}
+@media (max-width:900px){.layout{grid-template-columns:minmax(0,1fr)}}
+.stage{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:clamp(20px,4vw,48px);min-height:460px;display:flex;flex-direction:column;gap:24px;min-width:0}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.big{font-family:'Domine',Georgia,serif;font-size:clamp(48px,9vw,112px);line-height:1.05;font-weight:700;text-wrap:balance;overflow-wrap:anywhere}
+.big2{font-family:'Domine',Georgia,serif;font-size:clamp(28px,4.4vw,48px);line-height:1.15;font-weight:600;overflow-wrap:anywhere}
+.sub{font-size:clamp(20px,2.6vw,28px);color:var(--muted)}
+.hint{font-size:20px;color:var(--muted)}
+.example{font-size:clamp(24px,3.4vw,36px);line-height:1.35;overflow-wrap:anywhere}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.chip{font:inherit;font-size:clamp(22px,3vw,30px);font-weight:700;padding:12px 18px;border-radius:12px;background:var(--soft);border:2px solid var(--line);color:var(--fg);cursor:pointer}
+.answer{min-height:84px;display:flex;flex-wrap:wrap;gap:10px;padding:14px;border:2px dashed var(--line);border-radius:16px;align-items:center}
+.msg{font-size:clamp(20px,2.6vw,26px);font-weight:700;min-height:1.4em}
+.msg.ok{color:var(--green)} .msg.bad{color:var(--red)}
+.pair{flex:1;min-width:240px;text-align:left;font:inherit;font-size:clamp(24px,3.4vw,36px);line-height:1.25;padding:32px;border-radius:18px;border:3px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer;font-weight:700}
+.pair:disabled{cursor:default}
+.pair.right{border-color:var(--green)}
+.pair.wrong{border-color:var(--red)}
+.cards{display:flex;gap:20px;flex-wrap:wrap}
+/* Multiple choice */
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:640px){.opts{grid-template-columns:minmax(0,1fr)}}
+.opt{font:inherit;font-size:clamp(22px,3vw,30px);font-weight:700;text-align:left;padding:22px 24px;border-radius:16px;border:3px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer;min-width:0;overflow-wrap:anywhere}
+.opt.right{border-color:var(--green);background:var(--card)}
+.opt.wrong{border-color:var(--red);background:var(--card)}
+.qnum{font-family:'Domine',Georgia,serif;font-size:clamp(30px,4vw,44px);font-weight:700;line-height:1.2;overflow-wrap:anywhere}
+/* Crossword */
+.cwwrap{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start}
+.cwgrid{display:grid;gap:3px;width:100%;max-width:520px;flex:0 1 520px}
+.cell{position:relative;aspect-ratio:1/1;min-width:0}
+.cell.blk{background:transparent}
+.cell input{width:100%;height:100%;box-sizing:border-box;border:2px solid var(--line);background:var(--card);color:var(--fg);text-align:center;font:inherit;font-weight:800;font-size:clamp(16px,2.6vw,26px);text-transform:uppercase;padding:0;border-radius:6px}
+.cell input.in{background:var(--soft)}
+.cell input.cur{background:var(--amber);color:var(--onamber);border-color:var(--amber)}
+.cell input.ok{border-color:var(--green);color:var(--green)}
+.cell input.bad{border-color:var(--red);color:var(--red)}
+.cell small{position:absolute;top:1px;left:3px;font-size:10px;font-weight:700;color:var(--muted);pointer-events:none;z-index:1}
+.clues{flex:1 1 260px;min-width:0;display:flex;flex-direction:column;gap:14px}
+.clues h3{font-size:20px;margin:0;font-weight:800}
+.clues ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px}
+.clues li{cursor:pointer;font-size:18px;line-height:1.35;border-radius:6px;padding:2px 4px}
+.clues li.act{background:var(--soft);font-weight:700}
+.clues li.fin{color:var(--muted);text-decoration:line-through}
+textarea{width:100%;font:inherit;font-size:18px;padding:12px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--fg);resize:vertical}
+.now{border-top:1px solid var(--line);padding-top:16px;display:flex;flex-direction:column;gap:10px}
+.nowname{font-family:'Domine',Georgia,serif;font-size:clamp(28px,3.4vw,36px);font-weight:700;overflow-wrap:anywhere}
+.score{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.score button{width:100%;display:flex;justify-content:space-between;gap:12px;font:inherit;font-size:20px;font-weight:700;padding:10px 14px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer;text-align:left}
+.score button[aria-current="true"]{border-color:var(--amber);background:var(--amber);color:var(--onamber)}
+.score .pts{font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">Past Perfect · A1 · for the big screen</p>
+      <h1>Past Perfect Games</h1>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Games"></nav>
+
+  <div class="layout">
+    <section class="stage" id="stage" aria-live="polite"></section>
+
+    <aside class="panel" aria-label="Class">
+      <h2>Class</h2>
+      <p class="hint">One name per line. Names stay on this device.</p>
+      <textarea id="names" rows="7" placeholder="Ana&#10;Luis&#10;Sofia"></textarea>
+      <div class="row">
+        <button class="btn" id="saveNames">Save names</button>
+        <button class="btn amber" id="pick">Pick a student</button>
+      </div>
+      <div class="now">
+        <p class="eyebrow">Now playing</p>
+        <p class="nowname" id="nowName">—</p>
+        <div class="row">
+          <button class="btn primary" id="plus">+1 point</button>
+          <button class="btn" id="minus">−1</button>
+        </div>
+      </div>
+      <ol class="score" id="score" aria-label="Scores"></ol>
+    </aside>
+  </div>
+</div>
+
+<script>
+(function(){
+const $ = s => document.querySelector(s);
+function h(tag, attrs, ...kids){
+  const e = document.createElement(tag);
+  if (attrs) for (const k in attrs){
+    if (k === 'class') e.className = attrs[k];
+    else if (k.slice(0,2) === 'on') e.addEventListener(k.slice(2), attrs[k]);
+    else if (k === 'disabled') { if (attrs[k]) e.disabled = true; }
+    else e.setAttribute(k, attrs[k]);
+  }
+  kids.forEach(c => { if (c == null || c === false) return; e.append(c.nodeType ? c : document.createTextNode(String(c))); });
+  return e;
+}
+const shuffle = a => { a = a.slice(); for (let i = a.length-1; i > 0; i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } return a; };
+
+/* ---------- content (edit here to change the games) ---------- */
+// Crossword generated from the past perfect vocabulary (18 words, 14 x 14)
+const CW = {"h": 14, "w": 14, "entries": [{"w": "WRITTEN", "r": 10, "c": 2, "d": "A", "clue": "Participle of \"write\"."}, {"w": "ALREADY", "r": 7, "c": 7, "d": "D", "clue": "Before now. I had ___ eaten."}, {"w": "BEFORE", "r": 6, "c": 3, "d": "D", "clue": "Earlier than something else."}, {"w": "BOUGHT", "r": 5, "c": 5, "d": "D", "clue": "Past and participle of \"buy\"."}, {"w": "BROKEN", "r": 5, "c": 5, "d": "A", "clue": "Participle of \"break\"."}, {"w": "TAKEN", "r": 1, "c": 10, "d": "D", "clue": "Participle of \"take\"."}, {"w": "NEVER", "r": 1, "c": 6, "d": "D", "clue": "At no time. She had ___ flown."}, {"w": "DRUNK", "r": 12, "c": 7, "d": "A", "clue": "Participle of \"drink\"."}, {"w": "EATEN", "r": 8, "c": 10, "d": "D", "clue": "Participle of \"eat\"."}, {"w": "TOLD", "r": 10, "c": 10, "d": "A", "clue": "Past and participle of \"tell\"."}, {"w": "SEEN", "r": 2, "c": 4, "d": "A", "clue": "Participle of \"see\"."}, {"w": "JUST", "r": 0, "c": 4, "d": "D", "clue": "A moment earlier. They had ___ left."}, {"w": "GONE", "r": 7, "c": 0, "d": "A", "clue": "Participle of \"go\": She had ___ home."}, {"w": "MADE", "r": 2, "c": 9, "d": "A", "clue": "Past and participle of \"make\"."}, {"w": "EVER", "r": 4, "c": 10, "d": "A", "clue": "At any time. Had you ___ been to Japan?"}, {"w": "WENT", "r": 3, "c": 1, "d": "A", "clue": "Past of \"go\": I ___ to school."}, {"w": "LOST", "r": 6, "c": 1, "d": "D", "clue": "Past and participle of \"lose\"."}, {"w": "HAD", "r": 8, "c": 13, "d": "D", "clue": "Past form of \"have\": I ___ a car."}]};
+// Individual multiple choice: one attempt per question, correct = index a
+const MCQ = [
+  {q:'She ___ to bed when I called.', o:['has gone','went','had gone','was going'], a:2},
+  {q:'They had ___ the movie before we arrived.', o:['seen','saw','see','sawn'], a:0},
+  {q:'Which sentence is correct?', o:['I had lost my keys yesterday.','I lost my keys yesterday.','I have lost my keys yesterday.','I had lose my keys yesterday.'], a:1},
+  {q:'We ___ dinner when the guests arrived.', o:["didn't finish","haven't finished",'hadn\'t finish',"hadn't finished"], a:3},
+  {q:'___ you ___ the report before the meeting?', o:['Have … finished','Had … finished','Did … finish','Were … finishing'], a:1},
+  {q:'She ___ flown before her trip to Japan.', o:['has never','never flew','had never flown','was never flying'], a:2},
+  {q:'When I arrived, the bus had left. Which action happened first?', o:['I arrived','Both at the same time','Neither action','The bus left'], a:3},
+  {q:'The children had ___ their lunch before the bell rang.', o:['eat','ate','eaten','eating'], a:2},
+  {q:'By 1969, humans ___ on the Moon.', o:['had walked','walked','have walked','were walking'], a:0},
+  {q:'Before this class, I ___ already eaten breakfast.', o:['having','has','have','had'], a:3}
+];
+// Sentence Builder: English sentence + Spanish
+const SENT = [
+  {en:'I had eaten breakfast before school.', es:'Había desayunado antes de la escuela.'},
+  {en:'She had never seen snow before.', es:'Ella nunca había visto nieve antes.'},
+  {en:'We had already left when it rained.', es:'Ya nos habíamos ido cuando llovió.'},
+  {en:'They had gone home before the movie.', es:'Ellos se habían ido a casa antes de la película.'},
+  {en:'Had you finished your homework?', es:'¿Habías terminado tu tarea?'}
+];
+// Which First?: two events, the first one happened first
+const PAIRS = [
+  {first:'The bus left.', second:'I arrived at the stop.', s:'The bus had left when I arrived.', es:'El autobús ya se había ido cuando llegué a la parada.'},
+  {first:'She finished the cake.', second:'We came into the kitchen.', s:'She had finished the cake when we came into the kitchen.', es:'Ella había terminado el pastel cuando entramos a la cocina.'},
+  {first:'It stopped raining.', second:'We went out.', s:'It had stopped raining when we went out.', es:'Había dejado de llover cuando salimos.'},
+  {first:'I fell asleep.', second:'He called me.', s:'I had fallen asleep when he called me.', es:'Me había dormido cuando él me llamó.'}
+];
+
+const GAMES = [
+  {id:'cross', t:'Crossword'},
+  {id:'mcq', t:'Quick Quiz'},
+  {id:'builder', t:'Sentence Builder'},
+  {id:'first', t:'Which First?'}
+];
+let game = 'cross';
+const Q = {i:0, order:shuffle(MCQ.map((_,k)=>k)), answered:null, scored:false};
+const B = {i:0, order:shuffle(SENT.map((_,k)=>k)), pool:[], ans:[], msg:'', cls:''};
+const F = {i:0, order:shuffle(PAIRS.map((_,k)=>k)), leftFirst:true, picked:null};
+const CR = {vals:{}, active:null, dir:'A', msg:'', checked:false};
+
+/* ---------- Crossword ---------- */
+// numbering and cell lists, computed once
+(function prepare(){
+  const starts = CW.entries.map(e=>[e.r,e.c]).sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
+  CW.nums = {}; let n = 0;
+  starts.forEach(([r,c]) => { const k = r+','+c; if (!CW.nums[k]) CW.nums[k] = ++n; });
+  CW.entries.forEach(e => {
+    e.n = CW.nums[e.r+','+e.c];
+    e.cells = [...e.w].map((_,i) => e.d === 'A' ? [e.r, e.c+i] : [e.r+i, e.c]);
+  });
+  CW.map = {};
+  CW.entries.forEach(e => e.cells.forEach(([r,c],i) => {
+    const k = r+','+c; (CW.map[k] = CW.map[k] || {ch:e.w[i], e:[]}).e.push(e);
+  }));
+})();
+function renderCross(s){
+  const inputs = {};
+  const grid = h('div',{class:'cwgrid', style:'grid-template-columns:repeat('+CW.w+',1fr)'});
+  const paint = () => {
+    Object.values(inputs).forEach(i => i.classList.remove('in','cur'));
+    if (CR.active) CR.active.cells.forEach(([r,c]) => inputs[r+','+c] && inputs[r+','+c].classList.add('in'));
+    const f = document.activeElement;
+    if (f && f.tagName === 'INPUT' && inputs && Object.values(inputs).includes(f)) f.classList.add('cur');
+    document.querySelectorAll('.clues li').forEach(li => li.classList.toggle('act', !!CR.active && li.dataset.id === CR.active.w));
+  };
+  const select = (k, toggle) => {
+    const es = CW.map[k].e;
+    if (toggle && es.length > 1) CR.dir = CR.dir === 'A' ? 'D' : 'A';
+    const e = es.find(x => x.d === CR.dir) || es[0];
+    CR.dir = e.d; CR.active = e; paint();
+  };
+  const step = delta => {
+    if (!CR.active) return;
+    const idx = CR.active.cells.findIndex(([r,c]) => inputs[r+','+c] === document.activeElement);
+    const nx = CR.active.cells[idx+delta];
+    if (nx) inputs[nx[0]+','+nx[1]].focus();
+  };
+  const go = (r,c,d) => { const k = r+','+c; if (inputs[k]) { CR.dir = d; inputs[k].focus(); } };
+  for (let r = 0; r < CW.h; r++) for (let c = 0; c < CW.w; c++){
+    const k = r+','+c;
+    if (!CW.map[k]) { grid.append(h('div',{class:'cell blk'})); continue; }
+    const inp = h('input',{maxlength:'1', autocomplete:'off', autocapitalize:'characters', spellcheck:'false', 'aria-label':'Row '+(r+1)+', column '+(c+1)});
+    inp.value = CR.vals[k] || '';
+    inputs[k] = inp;
+    grid.append(h('div',{class:'cell'}, CW.nums[k] ? h('small',{}, String(CW.nums[k])) : null, inp));
+    inp.addEventListener('focus', () => select(k, false));
+    inp.addEventListener('click', () => { if (document.activeElement === inp) select(k, true); });
+    inp.addEventListener('keydown', ev => {
+      const [rr,cc] = k.split(',').map(Number);
+      if (ev.key === 'ArrowRight'){ go(rr,cc+1,'A'); ev.preventDefault(); }
+      else if (ev.key === 'ArrowLeft'){ go(rr,cc-1,'A'); ev.preventDefault(); }
+      else if (ev.key === 'ArrowDown'){ go(rr+1,cc,'D'); ev.preventDefault(); }
+      else if (ev.key === 'ArrowUp'){ go(rr-1,cc,'D'); ev.preventDefault(); }
+      else if (ev.key === 'Backspace'){
+        ev.preventDefault();
+        if (inp.value){ inp.value = ''; delete CR.vals[k]; }
+        else { step(-1); const p = document.activeElement; if (p && p.tagName === 'INPUT'){ p.value = ''; const pk = Object.keys(inputs).find(x => inputs[x] === p); if (pk) delete CR.vals[pk]; } }
+      }
+      else if (/^[a-zA-Z]$/.test(ev.key)){
+        ev.preventDefault();
+        inp.value = ev.key.toUpperCase(); CR.vals[k] = inp.value; CR.msg = ''; step(1);
+      }
+    });
+  }
+  const clueList = (d, label) => {
+    const ol = h('ol');
+    CW.entries.filter(e => e.d === d).sort((a,b) => a.n - b.n).forEach(e => {
+      ol.append(h('li',{'data-id':e.w, onclick:()=>{
+        CR.active = e; CR.dir = e.d;
+        const free = e.cells.find(([r,c]) => !(inputs[r+','+c].value));
+        const [r,c] = free || e.cells[0];
+        inputs[r+','+c].focus(); paint();
+      }}, h('b',{}, e.n+'. '), e.clue+' ('+e.w.length+')'));
+    });
+    return h('div',{}, h('h3',{}, label), ol);
+  };
+  const wordOk = e => e.cells.every(([r,c],i) => (CR.vals[r+','+c] || '') === e.w[i]);
+  const countOk = () => CW.entries.filter(wordOk).length;
+  const mark = (reveal) => {
+    Object.keys(inputs).forEach(k => {
+      const i = inputs[k];
+      i.classList.remove('ok','bad');
+      if (reveal) { i.value = CW.map[k].ch; CR.vals[k] = i.value; i.classList.add('ok'); }
+      else if (CR.checked) i.classList.add(CR.vals[k] === CW.map[k].ch ? 'ok' : 'bad');
+    });
+    document.querySelectorAll('.clues li').forEach(li => {
+      const e = CW.entries.find(x => x.w === li.dataset.id);
+      li.classList.toggle('fin', wordOk(e));
+    });
+  };
+  const msg = h('p',{class:'msg '+(CR.msg ? (countOk() === CW.entries.length ? 'ok' : 'bad') : '')}, CR.msg);
+  s.append(
+    h('p',{class:'eyebrow'}, 'Crossword · '+CW.entries.length+' words · type the answer, one letter per square'),
+    h('p',{class:'hint'}, 'Click a clue or a square. Click the same square again to switch between across and down.'),
+    h('div',{class:'cwwrap'},
+      grid,
+      h('div',{class:'clues'}, clueList('A','Across'), clueList('D','Down'))),
+    msg,
+    h('div',{class:'row'},
+      h('button',{class:'btn primary', onclick:()=>{
+        CR.checked = true;
+        CR.msg = countOk()+' of '+CW.entries.length+' words correct.';
+        mark(false); msg.className = 'msg '+(countOk() === CW.entries.length ? 'ok' : 'bad'); msg.textContent = CR.msg;
+      }}, 'Check'),
+      h('button',{class:'btn', onclick:()=>{ Object.keys(inputs).forEach(k => { inputs[k].value = ''; delete CR.vals[k]; }); CR.checked = false; CR.msg=''; mark(false); msg.textContent=''; }}, 'Clear'),
+      h('button',{class:'btn amber', onclick:()=>{ mark(true); CR.checked = true; CR.msg = 'Answers shown. '+countOk()+' of '+CW.entries.length+' correct.'; msg.textContent = CR.msg; msg.className='msg ok'; }}, 'Show answers'))
+  );
+  requestAnimationFrame(() => { mark(false); paint(); });
+}
+
+/* ---------- Quick Quiz: one student at a time ---------- */
+function renderMCQ(s){
+  const item = MCQ[Q.order[Q.i % MCQ.length]];
+  const answer = idx => {
+    if (Q.answered !== null) return;
+    Q.answered = idx;
+    if (idx === item.a && !Q.scored && cur){ scores[cur] = (scores[cur]||0) + 1; Q.scored = true; renderScore(); }
+    render();
+  };
+  const cls = idx => {
+    if (Q.answered === null) return 'opt';
+    if (idx === item.a) return 'opt right';
+    if (idx === Q.answered) return 'opt wrong';
+    return 'opt';
+  };
+  s.append(
+    h('p',{class:'eyebrow'}, 'Quick Quiz · question '+((Q.i % MCQ.length)+1)+' of '+MCQ.length+' · one student at a time'),
+    h('p',{class:'qnum'}, item.q),
+    h('div',{class:'opts'}, ...item.o.map((t,idx) =>
+      h('button',{class:cls(idx), disabled: Q.answered !== null, onclick:()=>answer(idx)}, t))),
+    Q.answered !== null
+      ? h('p',{class:'msg '+(Q.answered === item.a ? 'ok' : 'bad')},
+          Q.answered === item.a ? (cur ? 'Correct! +1 point for '+cur+'.' : 'Correct!') : 'Not quite. The correct answer is green.')
+      : h('p',{class:'hint'}, cur ? 'Answer: '+cur+'. One try per question.' : 'Pick a student first, then the class sees the options.'),
+    Q.answered !== null ? h('div',{class:'row'}, h('button',{class:'btn primary', onclick:()=>{ Q.i++; Q.answered = null; Q.scored = false; render(); }}, 'Next question')) : null
+  );
+}
+
+/* ---------- Sentence Builder ---------- */
+function loadSentence(){
+  const sent = SENT[B.order[B.i % SENT.length]];
+  B.pool = shuffle(sent.en.split(' ').map((w,k)=>({w, id:k})));
+  B.ans = []; B.msg = ''; B.cls = '';
+}
+function renderBuilder(s){
+  const sent = SENT[B.order[B.i % SENT.length]];
+  const word = id => B.pool.find(p => p.id === id).w;
+  s.append(
+    h('p',{class:'eyebrow'}, 'Sentence Builder · '+((B.i % SENT.length)+1)+' of '+SENT.length),
+    h('p',{class:'sub'}, 'Spanish: '+sent.es),
+    h('div',{class:'answer', 'aria-label':'Your sentence'},
+      B.ans.length ? null : h('span',{class:'hint'}, 'Click the words in order.'),
+      ...B.ans.map(id => h('button',{class:'chip', onclick:()=>{ B.ans = B.ans.filter(x => x !== id); B.msg=''; render(); }, title:'Remove'}, word(id)))
+    ),
+    h('div',{class:'row'},
+      ...B.pool.map(p => h('button',{class:'chip', disabled: B.ans.includes(p.id), onclick:()=>{ B.ans.push(p.id); B.msg=''; render(); }}, p.w))
+    ),
+    h('p',{class:'msg '+B.cls}, B.msg),
+    h('div',{class:'row'},
+      h('button',{class:'btn primary', onclick:()=>{
+        const got = B.ans.map(word).join(' ').toLowerCase();
+        const ok = got === sent.en.toLowerCase();
+        B.msg = ok ? 'Correct!' : 'Not yet. Try again, or show the answer.';
+        B.cls = ok ? 'ok' : 'bad';
+        render();
+      }}, 'Check'),
+      h('button',{class:'btn', onclick:()=>{ B.ans = []; B.msg=''; render(); }}, 'Clear'),
+      h('button',{class:'btn', onclick:()=>{ B.msg = sent.en + '  (' + sent.es + ')'; B.cls = 'ok'; render(); }}, 'Show answer'),
+      h('button',{class:'btn amber', onclick:()=>{ B.i++; loadSentence(); render(); }}, 'Next sentence'))
+  );
+}
+
+/* ---------- Which First? ---------- */
+function renderFirst(s){
+  const p = PAIRS[F.order[F.i % PAIRS.length]];
+  const left = F.leftFirst ? p.first : p.second;
+  const right = F.leftFirst ? p.second : p.first;
+  const pick = side => { if (F.picked) return; F.picked = side; render(); };
+  const cls = side => {
+    if (!F.picked) return 'pair';
+    const isFirst = (side === 'left') === F.leftFirst;
+    return 'pair ' + (isFirst ? 'right' : (F.picked === side ? 'wrong' : ''));
+  };
+  const correct = F.picked && ((F.picked === 'left') === F.leftFirst);
+  s.append(
+    h('p',{class:'eyebrow'}, 'Which happened first? · '+((F.i % PAIRS.length)+1)+' of '+PAIRS.length),
+    h('p',{class:'hint'}, 'Which action happened first? Click the card.'),
+    h('div',{class:'cards'},
+      h('button',{class:cls('left'), disabled: !!F.picked, onclick:()=>pick('left')}, left),
+      h('button',{class:cls('right'), disabled: !!F.picked, onclick:()=>pick('right')}, right)),
+    F.picked ? h('p',{class:'msg '+(correct?'ok':'bad')}, correct ? 'Correct!' : 'Not quite. The other one happened first.') : null,
+    F.picked ? h('p',{class:'big2'}, p.s) : null,
+    F.picked ? h('p',{class:'sub'}, 'Spanish: '+p.es) : null,
+    F.picked ? h('div',{class:'row'}, h('button',{class:'btn primary', onclick:()=>{ F.i++; F.picked=null; F.leftFirst = Math.random() < 0.5; render(); }}, 'Next pair')) : null
+  );
+}
+
+/* ---------- stage + tabs ---------- */
+function render(){
+  const s = $('#stage');
+  s.innerHTML = '';
+  if (game === 'cross') renderCross(s);
+  if (game === 'mcq') renderMCQ(s);
+  if (game === 'builder') renderBuilder(s);
+  if (game === 'first') renderFirst(s);
+  document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', String(b.dataset.id === game)));
+}
+function buildTabs(){
+  const nav = $('#tabs');
+  nav.innerHTML = '';
+  GAMES.forEach(g => nav.append(h('button',{class:'tab', role:'tab', 'data-id':g.id, onclick:()=>{
+    game = g.id; if (game === 'builder' && !B.pool.length) loadSentence(); F.picked = null; render();
+  }}, g.t)));
+}
+
+/* ---------- class panel ---------- */
+let names = [], scores = {}, cur = null, spin = null;
+function store(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
+function read(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+function setCurrent(n){ cur = n; $('#nowName').textContent = n || '—'; renderScore(); }
+function renderScore(){
+  const ol = $('#score');
+  ol.innerHTML = '';
+  names.slice().sort((a,b) => (scores[b]||0) - (scores[a]||0)).forEach(n => {
+    ol.append(h('li',{}, h('button',{'aria-current': String(n === cur), onclick:()=>setCurrent(n)},
+      h('span',{}, n), h('span',{class:'pts'}, String(scores[n]||0)))));
+  });
+}
+$('#saveNames').onclick = () => {
+  names = [...new Set($('#names').value.split(/\n|,/).map(x => x.trim()).filter(Boolean))];
+  store('pp-names', names.join('\n'));
+  if (cur && !names.includes(cur)) cur = null;
+  $('#nowName').textContent = cur || '—';
+  renderScore();
+};
+$('#pick').onclick = () => {
+  if (!names.length){ $('#nowName').textContent = 'Save names first'; return; }
+  if (spin) clearInterval(spin);
+  let k = 0;
+  spin = setInterval(() => {
+    setCurrent(names[k % names.length]); k++;
+    if (k > 18){ clearInterval(spin); spin = null; setCurrent(names[Math.floor(Math.random()*names.length)]); }
+  }, 90);
+};
+$('#plus').onclick = () => { if (!cur) return; scores[cur] = (scores[cur]||0) + 1; renderScore(); };
+$('#minus').onclick = () => { if (!cur) return; scores[cur] = Math.max(0, (scores[cur]||0) - 1); renderScore(); };
+
+/* ---------- start ---------- */
+const saved = read('pp-names');
+if (saved){ $('#names').value = saved; names = saved.split('\n').filter(Boolean); }
+loadSentence();
+buildTabs();
+renderScore();
+render();
+})();
+</script>
