@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Physioverse · Animaciones</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #0b1120; font-family: 'Inter', sans-serif; }
+  #video { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #0b1120; }
+  .abs { position: absolute; }
+  .blob { position: absolute; border-radius: 50%; filter: blur(90px); }
+
+  /* ---------- Teléfono ---------- */
+  #phoneWrap { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  #bezel { position: absolute; left: -38px; top: -38px; width: 1264px; height: 2652px; border-radius: 178px;
+           background: linear-gradient(145deg, #2a3142, #05070d 40%, #1a2030); box-shadow: 0 60px 160px rgba(0,0,0,.65), inset 0 0 0 4px rgba(255,255,255,.08); }
+  #screen { position: absolute; left: 0; top: 0; width: 1188px; height: 2576px; border-radius: 142px; overflow: hidden; background: #eff2f7; }
+  #screen img { display: block; }
+
+  /* ---------- Captions ---------- */
+  #captionShade { position: absolute; left: 0; top: 0; width: 1080px; height: 500px;
+                  background: linear-gradient(#0b1120 62%, rgba(11,17,32,0)); }
+  .cap { position: absolute; left: 60px; right: 60px; top: 110px; text-align: center; }
+  .cap h1 { color: #fff; font-size: 70px; font-weight: 900; letter-spacing: -1.5px; line-height: 1.05; }
+  .cap h1 span { display: inline-block; }
+  .cap p { margin-top: 22px; color: #5eead4; font-size: 36px; font-weight: 600; }
+
+  /* ---------- Dedo / toque ---------- */
+  #finger { position: absolute; width: 96px; height: 96px; margin: -48px 0 0 -48px; border-radius: 50%;
+            background: rgba(255,255,255,.55); border: 5px solid rgba(255,255,255,.95);
+            box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+  #ripple { position: absolute; width: 96px; height: 96px; margin: -48px 0 0 -48px; border-radius: 50%; border: 6px solid #fff; }
+
+  /* ---------- Elementos UI superpuestos ---------- */
+  .pill { position: absolute; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+  .chip { display: inline-flex; align-items: center; gap: 10px; height: 68px; padding: 0 26px; border-radius: 999px;
+          font-size: 30px; font-weight: 600; border: 2px solid #cbd5e1; background: #fff; color: #334155; margin-right: 14px; }
+  .chip svg { width: 28px; height: 28px; }
+  .toast { position: absolute; left: 70px; width: 940px; padding: 28px 34px; border-radius: 40px; background: rgba(255,255,255,.97);
+           box-shadow: 0 30px 80px rgba(0,0,0,.45); display: flex; gap: 26px; align-items: center; }
+</style>
+</head>
+<body>
+<div id="video"></div>
+<script>
+/* =====================================================================
+   Motor de animación determinista: render(t) dibuja el fotograma t (s).
+   Escena elegida con ?scene=intro|agenda|sesion|outro
+   ===================================================================== */
+const scene = new URLSearchParams(location.search).get('scene') || 'intro';
+const V = document.getElementById('video');
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, k) => a + (b - a) * k;
+const prog = (t, t0, t1) => clamp((t - t0) / (t1 - t0));
+const eio = k => k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+const eout = k => 1 - Math.pow(1 - k, 3);
+const eback = k => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(k - 1, 3) + c1 * Math.pow(k - 1, 2); };
+const el = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstChild; };
+const add = (parent, html) => parent.appendChild(el(html));
+const typed = (s, t, t0, cps) => s.slice(0, Math.floor(clamp((t - t0) * cps, 0, s.length)));
+const caret = (t) => (Math.floor(t * 2.2) % 2 === 0 ? 1 : 0);
+
+const ICON = {
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>',
+  plus:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>',
+  wa:    '<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#25D366"/><path fill="#fff" d="M16 7.5a8.4 8.4 0 0 0-7.2 12.8L7.6 24.5l4.3-1.1A8.4 8.4 0 1 0 16 7.5zm4.9 11.8c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1a14 14 0 0 1-1.5-.6 11.6 11.6 0 0 1-4.4-3.9 5 5 0 0 1-1-2.7 2.9 2.9 0 0 1 .9-2.2 1 1 0 0 1 .7-.3h.5c.2 0 .4 0 .6.5l.8 1.9a.5.5 0 0 1 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6a8.6 8.6 0 0 0 1.6 2 7.9 7.9 0 0 0 2.3 1.4c.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l1.8.9c.3.1.4.2.5.3a2.3 2.3 0 0 1-.2 1.3z"/></svg>'
+};
+
+/* ---------- Fondo animado común ---------- */
+function buildBg() {
+  add(V, '<div class="blob" id="b1" style="width:760px;height:760px;background:rgba(45,212,191,.28)"></div>');
+  add(V, '<div class="blob" id="b2" style="width:820px;height:820px;background:rgba(139,92,246,.30)"></div>');
+  add(V, '<div class="blob" id="b3" style="width:600px;height:600px;background:rgba(14,165,233,.22)"></div>');
+}
+function drawBg(t) {
+  const set = (id, x, y) => document.getElementById(id).style.transform = `translate(${x}px,${y}px)`;
+  set('b1', -260 + 90 * Math.sin(t * .6), 120 + 70 * Math.cos(t * .5));
+  set('b2', 520 + 80 * Math.cos(t * .45), 1150 + 90 * Math.sin(t * .55));
+  set('b3', 380 + 120 * Math.sin(t * .35 + 1), 560 + 60 * Math.cos(t * .4));
+}
+/* fundido a negro de entrada/salida */
+let fadeEl;
+function buildFade() { fadeEl = add(V, '<div class="abs" style="inset:0;background:#0b1120;z-index:99"></div>'); }
+function drawFade(t, dur, fin = .45, fout = .5) {
+  fadeEl.style.opacity = Math.max(1 - prog(t, 0, fin), prog(t, dur - fout, dur));
+}
+
+/* ---------- Teléfono + cámara ---------- */
+const S = 0.585, CX = 540, CY = 1120;
+let camState = { z: 1, fx: 594, fy: 1288, dy: 0 };
+function buildPhone() {
+  const w = add(V, '<div id="phoneWrap"><div id="bezel"></div><div id="screen"></div></div>');
+  return document.getElementById('screen');
+}
+function camAt(t, keys) { // keys: [t, z, fx, fy]
+  let k = keys[0];
+  if (t <= keys[0][0]) return { z: k[1], fx: k[2], fy: k[3] };
+  for (let i = 0; i < keys.length - 1; i++) {
+    const a = keys[i], b = keys[i + 1];
+    if (t <= b[0]) {
+      if (b[4] === 'hold') return { z: a[1], fx: a[2], fy: a[3] };
+      const e = eio(prog(t, a[0], b[0]));
+      return { z: lerp(a[1], b[1], e), fx: lerp(a[2], b[2], e), fy: lerp(a[3], b[3], e) };
+    }
+  }
+  k = keys[keys.length - 1];
+  return { z: k[1], fx: k[2], fy: k[3] };
+}
+function applyCam(c, dy = 0, op = 1) {
+  camState = { ...c, dy };
+  const sc = S * c.z;
+  const w = document.getElementById('phoneWrap');
+  w.style.transform = `translate(${CX - c.fx * sc}px,${CY - c.fy * sc + dy}px) scale(${sc})`;
+  w.style.opacity = op;
+}
+const toVideo = (x, y) => { const sc = S * camState.z; return [CX - camState.fx * sc + x * sc, CY - camState.fy * sc + y * sc + camState.dy]; };
+
+/* ---------- Captions ---------- */
+function buildCaptions(list) {
+  add(V, '<div id="captionShade"></div>');
+  return list.map(c => {
+    const words = c.h.split(' ').map(w => `<span>${w}</span>`).join(' ');
+    return { ...c, node: add(V, `<div class="cap"><h1>${words}</h1><p>${c.p}</p></div>`) };
+  });
+}
+function drawCaptions(t, caps) {
+  caps.forEach(c => {
+    const out = c.t1 ? prog(t, c.t1, c.t1 + .35) : 0;
+    c.node.style.opacity = 1 - out;
+    c.node.style.transform = `translateY(${-30 * eio(out)}px)`;
+    [...c.node.querySelectorAll('h1 span')].forEach((s, i) => {
+      const k = eout(prog(t, c.t0 + i * .07, c.t0 + i * .07 + .45));
+      s.style.opacity = k; s.style.transform = `translateY(${(1 - k) * 50}px)`;
+    });
+    const kp = eout(prog(t, c.t0 + .35, c.t0 + .8));
+    const p = c.node.querySelector('p'); p.style.opacity = kp; p.style.transform = `translateY(${(1 - kp) * 20}px)`;
+  });
+}
+
+/* ---------- Dedo ---------- */
+let finger, ripple;
+function buildFinger() {
+  ripple = add(V, '<div id="ripple"></div>');
+  finger = add(V, '<div id="finger"></div>');
+}
+// taps: [{t, x, y}] en coordenadas de pantalla; el dedo viaja entre ellos
+function drawFinger(t, taps, tIn, tOut) {
+  const vis = prog(t, tIn, tIn + .3) * (1 - prog(t, tOut, tOut + .3));
+  let x, y;
+  const pts = taps.map(p => p);
+  if (t <= pts[0].t - .5) { [x, y] = toVideo(pts[0].x, pts[0].y); x += 160 * (1 - eout(prog(t, tIn, pts[0].t - .5))); y += 260 * (1 - eout(prog(t, tIn, pts[0].t - .5))); }
+  else {
+    let i = pts.findIndex(p => t < p.t - .5);
+    if (i === -1) { [x, y] = toVideo(pts[pts.length - 1].x, pts[pts.length - 1].y); }
+    else if (i === 0) { [x, y] = toVideo(pts[0].x, pts[0].y); }
+    else {
+      const a = pts[i - 1], b = pts[i];
+      const k = eio(prog(t, a.t + .15, b.t - .5));
+      [x, y] = toVideo(lerp(a.x, b.x, k), lerp(a.y, b.y, k));
+    }
+  }
+  let press = 0, rip = -1;
+  taps.forEach(p => {
+    press = Math.max(press, 1 - Math.abs(t - p.t) / .14);
+    if (t >= p.t && t < p.t + .55) rip = (t - p.t) / .55;
+  });
+  press = clamp(press);
+  finger.style.left = x + 'px'; finger.style.top = y + 'px';
+  finger.style.opacity = vis;
+  finger.style.transform = `scale(${1 - .22 * press})`;
+  ripple.style.left = x + 'px'; ripple.style.top = y + 'px';
+  ripple.style.opacity = rip < 0 ? 0 : (1 - rip) * vis;
+  ripple.style.transform = `scale(${1 + 1.6 * eout(Math.max(rip, 0))})`;
+}
+const pressed = (t, tp) => 1 - .06 * clamp(1 - Math.abs(t - tp) / .15);
+
+/* =====================================================================
+   ESCENA 1 · INTRO (5 s)
+   ===================================================================== */
+const SCENES = {};
+SCENES.intro = {
+  dur: 5.2,
+  build() {
+    buildBg();
+    this.rings = [0, 1, 2].map(() => add(V, '<div class="abs" style="left:540px;top:760px;width:300px;height:300px;margin:-150px;border-radius:50%;border:3px solid rgba(94,234,212,.6)"></div>'));
+    this.box = add(V, `<div class="abs" style="left:390px;top:610px;width:300px;height:300px;border-radius:78px;background:#1a2233;border:3px solid rgba(255,255,255,.07);box-shadow:0 0 120px rgba(139,92,246,.45);display:flex;align-items:center;justify-content:center">
+       <img src="assets/logo.png" style="width:270px;height:270px;border-radius:70px"></div>`);
+    this.logo = this.box.querySelector('img');
+    const letters = 'PHYSIOVERSE'.split('').map(c => `<span style="display:inline-block">${c}</span>`).join('');
+    this.title = add(V, `<div class="abs" style="left:0;width:1080px;top:960px;text-align:center;color:#fff;font-size:118px;font-weight:900;letter-spacing:6px">${letters}</div>`);
+    this.sub = add(V, '<div class="abs" style="left:0;width:1080px;top:1115px;text-align:center;color:#4fd1b5;font-size:38px;font-weight:500;white-space:pre"></div>');
+    this.bar = add(V, '<div class="abs" style="left:280px;top:1200px;width:520px;height:16px;border-radius:9px;background:rgba(255,255,255,.08);overflow:hidden"><div style="height:100%;width:0;border-radius:9px;background:linear-gradient(90deg,#2dd4bf,#8b5cf6)"></div></div>');
+    this.ver = add(V, '<div class="abs" style="left:0;width:1080px;top:1255px;text-align:center;color:#94a3b8;font-size:28px;letter-spacing:6px">CLINICAL WORKSPACE V1.0</div>');
+    this.tag = add(V, '<div class="abs" style="left:80px;right:80px;top:1470px;text-align:center;color:#fff;font-size:56px;font-weight:800;line-height:1.15">Tu clínica completa,<br><span style="color:#5eead4">en la palma de tu mano.</span></div>');
+    buildFade();
+  },
+  render(t) {
+    drawBg(t);
+    const k = eback(prog(t, .2, 1.3));
+    this.box.style.transform = `scale(${lerp(.25, 1, k)}) rotate(${lerp(-70, 0, eout(prog(t, .2, 1.3)))}deg)`;
+    this.box.style.opacity = prog(t, .2, .6);
+    this.logo.style.transform = `rotate(${t * 40}deg)`;
+    this.rings.forEach((r, i) => {
+      const ph = ((t - .9 - i * .7) / 2.1);
+      const f = ph < 0 ? -1 : ph % 1;
+      r.style.opacity = f < 0 ? 0 : (1 - f) * .8;
+      r.style.transform = `scale(${1 + f * 1.6})`;
+    });
+    [...this.title.children].forEach((s, i) => {
+      const q = eback(prog(t, 1.1 + i * .06, 1.6 + i * .06));
+      s.style.opacity = prog(t, 1.1 + i * .06, 1.4 + i * .06);
+      s.style.transform = `translateY(${(1 - q) * 70}px)`;
+    });
+    const full = 'Plataforma Integral de Fisioterapia & Rehabilitación';
+    const tx = typed(full, t, 1.9, 34);
+    this.sub.textContent = tx + (tx.length < full.length && t > 1.9 ? '|' : '');
+    this.bar.firstChild.style.width = 100 * eio(prog(t, 2.4, 3.9)) + '%';
+    this.bar.style.opacity = prog(t, 2.2, 2.5);
+    this.ver.style.opacity = prog(t, 3.0, 3.5);
+    const kt = eout(prog(t, 3.8, 4.5));
+    this.tag.style.opacity = kt; this.tag.style.transform = `translateY(${(1 - kt) * 40}px)`;
+    drawFade(t, this.dur, .35, .4);
+  }
+};
+
+/* =====================================================================
+   ESCENA 2 · AGENDA DE HOY + BÚSQUEDA (10 s)
+   ===================================================================== */
+SCENES.agenda = {
+  dur: 10,
+  build() {
+    buildBg();
+    const scr = buildPhone();
+    add(scr, '<img src="assets/inicio.jpg" style="width:1188px;height:2576px">');
+    // Anillo de avance animado sobre la tarjeta del paciente
+    this.ring = add(scr, `<div class="abs" style="left:990px;top:1624px;width:124px;height:124px;border-radius:50%;background:#fff">
+      <svg viewBox="0 0 124 124" width="124" height="124" style="position:absolute;left:0;top:0;transform:rotate(-90deg)">
+        <circle cx="62" cy="62" r="45" fill="none" stroke="#eef2f7" stroke-width="11"/>
+        <circle id="arc" cx="62" cy="62" r="45" fill="none" stroke="#1f77c9" stroke-width="11" stroke-linecap="round" stroke-dasharray="282.7" stroke-dashoffset="282.7"/></svg>
+      <div id="pct" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:29px;font-weight:800;color:#111827">0%</div></div>`);
+    // Resaltado de la tarjeta
+    this.glow = add(scr, '<div class="abs" style="left:46px;top:1590px;width:1096px;height:190px;border-radius:48px;border:6px solid #22c3a6;box-shadow:0 0 40px rgba(34,195,166,.7)"></div>');
+    // Campo de búsqueda enfocado
+    this.field = add(scr, `<div class="abs" style="left:482px;top:202px;width:395px;height:81px;border-radius:41px;background:#fff;box-shadow:0 0 0 6px rgba(255,255,255,.45);display:flex;align-items:center;padding-left:30px;gap:14px">
+      <span style="width:40px;height:40px;display:block">${ICON.search}</span><span id="q" style="font-size:35px;font-weight:600;color:#0f172a;white-space:pre"></span><span id="caret" style="width:3px;height:40px;background:#2563eb;margin-left:-10px"></span></div>`);
+    // Resultados
+    this.drop = add(scr, `<div class="abs" style="left:250px;top:305px;width:900px;border-radius:40px;background:#fff;box-shadow:0 30px 70px rgba(15,23,42,.28);padding:26px 30px;transform-origin:70% 0">
+      <div style="font-size:26px;font-weight:700;color:#94a3b8;letter-spacing:2px;margin-bottom:18px">1 RESULTADO</div>
+      <div id="row" style="display:flex;align-items:center;gap:26px;padding:16px;border-radius:28px">
+        <div style="width:100px;height:100px;border-radius:26px;background:#b9c32e;color:#fff;font-size:44px;display:flex;align-items:center;justify-content:center">PP</div>
+        <div><div style="font-size:38px;font-weight:800;color:#0f172a"><span style="background:#fef08a;border-radius:6px">Prueba Pac</span>iente 10</div>
+        <div style="font-size:28px;color:#64748b;margin-top:6px"><b style="color:#2b8fd8">EF-PP-69316</b> · Neuropatía periférica aguda</div></div></div></div>`);
+    buildFinger();
+    this.caps = buildCaptions([
+      { h: 'Tu día, de un vistazo', p: 'Sesiones de hoy, próximas y concluidas', t0: .4, t1: 3.1 },
+      { h: 'Encuentra pacientes en segundos', p: 'Busca por nombre o expediente', t0: 3.4 }
+    ]);
+    buildFade();
+  },
+  render(t) {
+    drawBg(t);
+    const enter = eout(prog(t, .1, 1.1));
+    const c = camAt(t, [[0, 1, 594, 1288], [1.2, 1, 594, 1288], [2.1, 1.5, 594, 1690], [3.2, 1.5, 594, 1690], [4.0, 1.5, 594, 700],
+                        [7.1, 1.5, 594, 700], [7.9, 1.5, 594, 1690], [8.9, 1.5, 594, 1690], [9.6, 1.05, 594, 1288]]);
+    applyCam(c, (1 - enter) * 700, enter);
+    // Anillo 0 → 50 %
+    const r = 50 * eio(prog(t, 2.0, 3.1));
+    document.getElementById('arc').setAttribute('stroke-dashoffset', 282.7 * (1 - r / 100));
+    document.getElementById('pct').textContent = Math.round(r) + '%';
+    const g1 = prog(t, 1.9, 2.3) * (1 - prog(t, 3.0, 3.4));
+    const g2 = prog(t, 7.9, 8.2) * (1 - prog(t, 9.0, 9.5));
+    const pulse = .75 + .25 * Math.sin(t * 9);
+    this.glow.style.opacity = Math.max(g1, g2) * pulse;
+    // Búsqueda
+    const f = prog(t, 4.6, 4.85);
+    this.field.style.opacity = f * (1 - prog(t, 8.4, 8.8));
+    const q = typed('Prueba Pac', t, 4.9, 8);
+    document.getElementById('q').textContent = q;
+    document.getElementById('caret').style.opacity = caret(t) * (t < 6.9 ? 1 : 0);
+    const d = eback(prog(t, 6.15, 6.55)) * (1 - eio(prog(t, 7.15, 7.45)));
+    this.drop.style.opacity = clamp(d * 1.2);
+    this.drop.style.transform = `scale(${lerp(.85, 1, clamp(d))}) translateY(${(1 - clamp(d)) * -20}px)`;
+    document.getElementById('row').style.background = t > 6.85 && t < 7.4 ? '#e0f2fe' : 'transparent';
+    drawFinger(t, [{ t: 4.45, x: 690, y: 243 }, { t: 6.95, x: 640, y: 450 }], 3.9, 7.2);
+    drawCaptions(t, this.caps);
+    drawFade(t, this.dur);
+  }
+};
+
+/* =====================================================================
+   ESCENA 3 · SESIÓN EN CLÍNICA (11 s)
+   ===================================================================== */
+const MX = 45, MY = 345;              // origen del modal dentro de la pantalla
+SCENES.sesion = {
+  dur: 11.4,
+  build() {
+    buildBg();
+    const scr = buildPhone();
+    add(scr, '<div class="abs" style="left:0;top:0;width:1188px;height:2576px;background:#eff2f7"></div>');
+    add(scr, '<img class="abs" src="assets/inicio.jpg" style="left:0;top:-690px;width:1188px;height:2576px">');
+    this.dim = add(scr, '<div class="abs" style="inset:0;background:rgba(15,23,42,.62)"></div>');
+    this.status = add(scr, '<img class="abs" src="assets/status_sesion.png" style="left:0;top:0;width:1188px">');
+    this.cardTap = add(scr, '<div class="abs" style="left:46px;top:900px;width:1096px;height:190px;border-radius:48px;background:rgba(37,99,235,.12)"></div>');
+    this.modal = add(scr, `<div class="abs" style="left:${MX}px;top:${MY}px;width:1097px;height:1952px;border-radius:62px;overflow:hidden;background:#fff;box-shadow:0 -20px 80px rgba(0,0,0,.35)"><img src="assets/modal.png" style="display:block"></div>`);
+    const m = this.modal;
+    // Teléfono enmascarado
+    add(m, '<div class="abs" style="left:203px;top:541px;font-size:37px;font-weight:800;color:#111827;letter-spacing:.5px">663 ••• ••59</div>');
+    // Plan de intervención
+    this.plan = add(m, `<div class="abs" style="left:69px;top:1120px;width:959px;height:115px;border-radius:40px;background:#f9fafe;border:2px solid #e2e8f0;display:flex;align-items:center;padding-left:22px">
+      ${['Electroterapia', 'Ultrasonido', 'Ejercicios'].map((s, i) => `<span class="chip" id="chip${i}"><span class="ic">${ICON.plus}</span>${s}</span>`).join('')}</div>`);
+    this.badge = add(m, '<div class="pill" style="left:666px;top:1036px;width:362px;height:60px;background:#e6f4ff;border:2px solid #9fd2fb;color:#2b8fd8;font-size:31px"></div>');
+    // Estado
+    this.estado = add(m, '<div class="pill" style="left:735px;top:891px;width:264px;height:68px;background:#f9fafc"><div class="pill" style="position:static;width:252px;height:56px;background:#dcfce7;border:3px solid #86efac;color:#166534;font-size:30px;font-weight:800">✓ Confirmada</div></div>');
+    // Botones (copias para animar la pulsación)
+    this.btnRec = add(m, '<div class="abs" style="left:362px;top:612px;width:349px;height:77px;border-radius:39px;background:url(assets/modal.png) -362px -612px"></div>');
+    this.btnFin = add(m, '<div class="abs" style="left:566px;top:1763px;width:462px;height:120px;border-radius:40px;background:url(assets/modal.png) -566px -1763px"></div>');
+    // Éxito
+    this.ok = add(m, `<div class="abs" style="inset:0;background:rgba(255,255,255,.97);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px">
+      <svg width="300" height="300" viewBox="0 0 300 300"><circle cx="150" cy="150" r="130" fill="#dcfce7"/><circle id="okc" cx="150" cy="150" r="118" fill="none" stroke="#16a34a" stroke-width="14" stroke-dasharray="741" stroke-dashoffset="741" transform="rotate(-90 150 150)"/>
+      <path id="okp" d="M95 155l38 38 75-80" fill="none" stroke="#16a34a" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="190" stroke-dashoffset="190"/></svg>
+      <div style="font-size:66px;font-weight:900;color:#0f172a">Sesión finalizada</div>
+      <div style="font-size:38px;color:#64748b">Prueba Paciente 10 · 08:00 pm</div>
+      <div id="money" style="margin-top:10px;font-size:48px;font-weight:800;color:#047857;background:#d1fae5;padding:22px 48px;border-radius:999px">+ $650 registrado</div></div>`);
+    buildFinger();
+    // Notificación de WhatsApp (espacio de video)
+    this.toast = add(V, `<div class="toast" style="top:440px;z-index:20"><div style="width:96px;height:96px;flex:none">${ICON.wa}</div>
+      <div><div style="font-size:26px;color:#64748b;font-weight:600">WHATSAPP · ahora</div>
+      <div style="font-size:33px;font-weight:800;color:#0f172a;margin-top:4px">Recordatorio enviado ✅</div>
+      <div style="font-size:29px;color:#334155;margin-top:4px">“Hola, te esperamos hoy a las 8:00 pm en clínica.”</div></div></div>`);
+    this.caps = buildCaptions([
+      { h: 'Toda la sesión en una pantalla', p: 'Plan de intervención listo para tratar', t0: .3, t1: 4.3 },
+      { h: 'Recordatorios por WhatsApp', p: 'El paciente confirma en un toque', t0: 4.6, t1: 7.4 },
+      { h: 'Finaliza y cobra al instante', p: 'Cada sesión queda registrada', t0: 7.7 }
+    ]);
+    buildFade();
+  },
+  render(t) {
+    drawBg(t);
+    const enter = eout(prog(t, .1, .9));
+    const c = camAt(t, [[0, 1, 594, 1288], [2.0, 1, 594, 1288], [2.7, 1.55, 594, 1450], [4.4, 1.55, 594, 1450], [5.0, 1.5, 594, 1250],
+                        [7.3, 1.5, 594, 1250], [7.9, 1.55, 594, 1950], [8.6, 1.55, 594, 1950], [9.4, 1.08, 594, 1288]]);
+    applyCam(c, (1 - enter) * 700, enter);
+    // Apertura del modal
+    this.cardTap.style.opacity = prog(t, .95, 1.05) * (1 - prog(t, 1.3, 1.6));
+    const mo = eout(prog(t, 1.25, 1.9));
+    this.dim.style.opacity = mo; this.status.style.opacity = mo;
+    this.modal.style.transform = `translateY(${(1 - mo) * 2300}px)`;
+    // Plan de intervención: chips aparecen y se seleccionan
+    [0, 1, 2].forEach(i => {
+      const ch = document.getElementById('chip' + i);
+      const k = eback(prog(t, 2.5 + i * .12, 2.9 + i * .12));
+      ch.style.opacity = clamp(k); ch.style.transform = `scale(${lerp(.6, 1, k)})`;
+    });
+    const sel = [t >= 3.25, false, t >= 3.85];
+    sel.forEach((on, i) => {
+      const ch = document.getElementById('chip' + i);
+      ch.style.background = on ? '#e0f2fe' : '#fff'; ch.style.borderColor = on ? '#38bdf8' : '#cbd5e1'; ch.style.color = on ? '#0369a1' : '#334155';
+      ch.querySelector('.ic').innerHTML = on ? ICON.check : ICON.plus;
+    });
+    const n = sel.filter(Boolean).length;
+    this.badge.textContent = t < 2.6 ? '0 de 0 seleccionadas' : `${n} de 3 seleccionadas`;
+    this.badge.style.transform = `scale(${1 + .08 * Math.max(clamp(1 - Math.abs(t - 3.3) / .2), clamp(1 - Math.abs(t - 3.9) / .2))})`;
+    // Recordatorio
+    this.btnRec.style.transform = `scale(${pressed(t, 5.45)})`;
+    const ts = eback(prog(t, 5.7, 6.15)) * (1 - eio(prog(t, 7.2, 7.5)));
+    this.toast.style.opacity = clamp(ts * 1.3); this.toast.style.transform = `translateY(${(1 - clamp(ts)) * -80}px) scale(${lerp(.9, 1, clamp(ts))})`;
+    const es = eback(prog(t, 6.3, 6.7));
+    this.estado.style.opacity = prog(t, 6.3, 6.45); this.estado.style.transform = `scale(${lerp(.5, 1, es)})`;
+    // Finalizar
+    this.btnFin.style.transform = `scale(${pressed(t, 8.75)})`;
+    this.ok.style.opacity = prog(t, 9.0, 9.3);
+    document.getElementById('okc').setAttribute('stroke-dashoffset', 741 * (1 - eio(prog(t, 9.2, 9.8))));
+    document.getElementById('okp').setAttribute('stroke-dashoffset', 190 * (1 - eout(prog(t, 9.6, 10.0))));
+    const mk = eback(prog(t, 9.9, 10.3));
+    document.getElementById('money').style.transform = `scale(${lerp(.4, 1, mk)})`;
+    document.getElementById('money').style.opacity = prog(t, 9.9, 10.05);
+    drawFinger(t, [{ t: 1.0, x: 594, y: 995 }, { t: 3.25, x: MX + 69 + 160, y: MY + 1177 }, { t: 3.85, x: MX + 69 + 690, y: MY + 1177 },
+                   { t: 5.45, x: MX + 536, y: MY + 650 }, { t: 8.75, x: MX + 797, y: MY + 1823 }], .5, 9.0);
+    drawCaptions(t, this.caps);
+    drawFade(t, this.dur);
+  }
+};
+
+/* =====================================================================
+   ESCENA 4 · CIERRE / CTA (4 s)
+   ===================================================================== */
+SCENES.outro = {
+  dur: 4.2,
+  build() {
+    buildBg();
+    this.box = add(V, '<div class="abs" style="left:420px;top:560px;width:240px;height:240px;border-radius:64px;background:#1a2233;box-shadow:0 0 120px rgba(139,92,246,.5);display:flex;align-items:center;justify-content:center"><img src="assets/logo.png" style="width:216px;height:216px;border-radius:56px"></div>');
+    this.title = add(V, '<div class="abs" style="left:0;width:1080px;top:850px;text-align:center;color:#fff;font-size:104px;font-weight:900;letter-spacing:6px">PHYSIOVERSE</div>');
+    this.sub = add(V, '<div class="abs" style="left:60px;right:60px;top:990px;text-align:center;color:#4fd1b5;font-size:36px;font-weight:500">Plataforma Integral de Fisioterapia & Rehabilitación</div>');
+    this.feats = ['Agenda', 'Expedientes', 'Recordatorios', 'Cobros'].map((f, i) =>
+      add(V, `<div class="pill" style="top:1110px;left:${[95, 300, 545, 810][i]}px;height:66px;padding:0 28px;color:#e2e8f0;font-size:28px;font-weight:600;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.14)">${f}</div>`));
+    this.cta = add(V, '<div class="pill" style="left:240px;top:1300px;width:600px;height:120px;font-size:46px;font-weight:800;color:#0b1120;background:linear-gradient(90deg,#5eead4,#a78bfa);box-shadow:0 20px 60px rgba(94,234,212,.35)">Solicita tu demo →</div>');
+    buildFade();
+  },
+  render(t) {
+    drawBg(t + 3);
+    const k = eback(prog(t, .1, .8));
+    this.box.style.transform = `scale(${lerp(.4, 1, k)})`; this.box.style.opacity = prog(t, .1, .4);
+    this.box.querySelector('img').style.transform = `rotate(${t * 40}deg)`;
+    const kt = eout(prog(t, .4, 1.0));
+    this.title.style.opacity = kt; this.title.style.transform = `translateY(${(1 - kt) * 50}px)`;
+    this.sub.style.opacity = prog(t, .8, 1.3);
+    this.feats.forEach((f, i) => { const q = eback(prog(t, 1.1 + i * .12, 1.5 + i * .12)); f.style.opacity = clamp(q); f.style.transform = `scale(${lerp(.5, 1, q)})`; });
+    const kc = eback(prog(t, 1.8, 2.3));
+    this.cta.style.opacity = clamp(kc); this.cta.style.transform = `scale(${lerp(.6, 1, kc) * (1 + .035 * Math.sin(Math.max(0, t - 2.3) * 6))})`;
+    drawFade(t, this.dur, .35, .35);
+  }
+};
+
+const SC = SCENES[scene];
+SC.build();
+window.DUR = SC.dur;
+window.render = (t) => SC.render(t);
+window.render(0);
+// Vista previa en navegador: ?play
+if (new URLSearchParams(location.search).has('play')) {
+  const t0 = performance.now();
+  (function loop() { const t = ((performance.now() - t0) / 1000) % SC.dur; window.render(t); requestAnimationFrame(loop); })();
+}
+</script>
+</body>
+</html>
