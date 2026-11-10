@@ -4,7 +4,7 @@ const { chromium } = require('playwright');
 const { spawn } = require('child_process');
 const path = require('path');
 const FPS = 30;
-const HTML = { galaxia: 'logo_galaxia.html', fernando: 'fernando.html' };
+const HTML = { galaxia: 'logo_galaxia.html', fernando: 'fernando.html', valoracion: 'valoracion.html' };
 const page_url = (s) => HTML[s] ? 'file://' + path.resolve(__dirname, HTML[s]) : 'file://' + path.resolve(__dirname, 'animacion.html') + '?scene=' + s;
 
 (async () => {

@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Physioverse · Valoración</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #0b1120; font-family: 'Inter', sans-serif; }
+  #video { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #0b1120; }
+  .abs { position: absolute; }
+  .blob { position: absolute; border-radius: 50%; filter: blur(90px); }
+  #phoneWrap { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  #bezel { position: absolute; left: -38px; top: -38px; width: 1264px; height: 2652px; border-radius: 178px;
+           background: linear-gradient(145deg, #2a3142, #05070d 40%, #1a2030); box-shadow: 0 60px 160px rgba(0,0,0,.65), inset 0 0 0 4px rgba(255,255,255,.08); }
+  #screen { position: absolute; left: 0; top: 0; width: 1188px; height: 2576px; border-radius: 142px; overflow: hidden; background: #eff2f7; }
+  .layer { position: absolute; left: 0; top: 0; width: 1188px; height: 2576px; }
+  .layer > img { position: absolute; left: 0; top: 0; width: 1188px; height: 2576px; }
+  .txt { position: absolute; white-space: pre; color: #0f172a; }
+  #finger { position: absolute; width: 96px; height: 96px; margin: -48px 0 0 -48px; border-radius: 50%; z-index: 30;
+            background: rgba(255,255,255,.55); border: 5px solid rgba(255,255,255,.95); box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+  #ripple { position: absolute; width: 96px; height: 96px; margin: -48px 0 0 -48px; border-radius: 50%; border: 6px solid #fff; z-index: 30; }
+  #captionShade { position: absolute; left: 0; top: 0; width: 1080px; height: 640px; background: linear-gradient(#0b1120 62%, rgba(11,17,32,0)); }
+  .cap { position: absolute; left: 44px; right: 44px; top: 100px; text-align: center; }
+  .cap h1 { color: #fff; font-size: 94px; font-weight: 900; letter-spacing: -2px; line-height: 1.02; text-shadow: 0 6px 30px rgba(0,0,0,.55); }
+  .cap h1 span { display: inline-block; }
+  .cap p { margin-top: 22px; color: #5eead4; font-size: 46px; font-weight: 700; text-shadow: 0 4px 20px rgba(0,0,0,.5); }
+  .bergCard { position: absolute; left: 263px; width: 662px; height: 147px; border-radius: 34px; background: #fff; border: 3px solid #e2e8f0;
+              display: flex; align-items: center; padding: 0 30px; gap: 16px; }
+  .bergCard div { flex: 1; font-size: 31px; font-weight: 600; color: #1e293b; line-height: 1.25; }
+  .bergCard b { flex: none; font: 600 26px ui-monospace, monospace; color: #334155; background: #f1f5f9; border-radius: 10px; padding: 8px 12px; }
+</style>
+</head>
+<body>
+<div id="video"></div>
+<script>
+const V = document.getElementById('video');
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, k) => a + (b - a) * k;
+const prog = (t, t0, t1) => clamp((t - t0) / (t1 - t0));
+const eio = k => k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+const eout = k => 1 - Math.pow(1 - k, 3);
+const eback = k => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(k - 1, 3) + c1 * Math.pow(k - 1, 2); };
+const el = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstChild; };
+const add = (parent, html) => parent.appendChild(el(html));
+const typed = (s, t, t0, cps) => s.slice(0, Math.floor(clamp((t - t0) * cps, 0, s.length)));
+const pop = (t, t0, d = .35) => { const k = eback(prog(t, t0, t0 + d)); return { o: clamp(k * 1.5), s: lerp(.5, 1, k) }; };
+
+/* ---------- Fondo ---------- */
+add(V, '<div class="blob" id="b1" style="width:760px;height:760px;background:rgba(45,212,191,.22)"></div>');
+add(V, '<div class="blob" id="b2" style="width:820px;height:820px;background:rgba(139,92,246,.26)"></div>');
+function drawBg(t) {
+  document.getElementById('b1').style.transform = `translate(${-260 + 90 * Math.sin(t * .6)}px,${120 + 70 * Math.cos(t * .5)}px)`;
+  document.getElementById('b2').style.transform = `translate(${520 + 80 * Math.cos(t * .45)}px,${1150 + 90 * Math.sin(t * .55)}px)`;
+}
+
+/* ---------- Teléfono ---------- */
+const S = 0.56, CX = 540, CY = 1225;
+const pw = add(V, '<div id="phoneWrap"><div id="bezel"></div><div id="screen"></div></div>');
+const scr = pw.querySelector('#screen');
+const layer = (src) => { const l = add(scr, `<div class="layer"><img src="assets/valoracion/${src}.jpg"></div>`); l.style.visibility = 'hidden'; return l; };
+const box = (parent, x, y, w, h, css = '', inner = '') => add(parent, `<div class="abs" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;${css}">${inner}</div>`);
+const crop = (parent, src, x, y, w, h, r = 0) => box(parent, x, y, w, h, `border-radius:${r}px;background:url(assets/valoracion/${src}.jpg) ${-x}px ${-y}px / 1188px 2576px`);
+// Desplazamiento entre pantallas, como un scroll: entra desde abajo y sale por arriba
+function showLayer(l, t, tin, tout) {
+  if (t < tin || t > tout + .5) { l.style.visibility = 'hidden'; return; }
+  l.style.visibility = 'visible';
+  const kin = eio(prog(t, tin, tin + .5)), kout = eio(prog(t, tout, tout + .5));
+  l.style.transform = `translateY(${(1 - kin) * 2576 - kout * 1400}px)`;
+  l.style.opacity = tin === 0 ? 1 : 1 - kout * .6;
+}
+
+/* === 1. EVA === */
+const L1 = layer('eva');
+const evaBadge = box(L1, 553, 1022, 212, 103, 'border-radius:30px;background:#e6f4ff;border:5px solid #5aa9f0;display:flex;align-items:center;justify-content:center;font-size:52px;font-weight:800;color:#2b8fd8');
+box(L1, 150, 1176, 885, 60, 'background:#fff');
+box(L1, 166, 1190, 854, 32, 'border-radius:16px;background:#dfe5f1');
+const evaFill = box(L1, 166, 1190, 0, 32, 'border-radius:16px;background:linear-gradient(90deg,#34d399,#fbbf24,#f87171)');
+const evaThumb = box(L1, 0, 1182, 72, 48, 'margin-left:-36px;border-radius:24px;background:#fff;border:2px solid #e2e8f0;box-shadow:0 6px 16px rgba(15,23,42,.18)');
+const evaDesc = add(L1, '<div class="txt" style="left:198px;top:1366px;font-size:34px"></div>');
+const evaX = v => 166 + v * 85.4;
+
+/* === 2. Dermatomas === */
+const L2 = layer('derm_mapa');
+const dGlow = box(L2, 721, 734, 180, 180, 'border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,.55),rgba(59,130,246,0) 70%)');
+const dDim = box(L2, 0, 0, 1188, 2576, 'background:rgba(15,23,42,.5)');
+const sheet = box(L2, 18, 1180, 1152, 1110, 'overflow:hidden;border-radius:60px 60px 0 0;background:url(assets/valoracion/derm_hoja.jpg) -18px -1180px / 1188px 2576px;box-shadow:0 -20px 60px rgba(0,0,0,.3)');
+const dHead = box(sheet, 47, 122, 480, 46, 'background:#fff', '<span style="font-size:31px;color:#64748b;line-height:46px">0 de 2 sensaciones elegidas</span>');
+const dSelA = box(sheet, 61, 501, 488, 119, 'border-radius:34px;border:5px solid #e5e7eb');
+const dSelB = box(sheet, 512, 476, 66, 66, 'border-radius:50%;background:#fff');
+
+/* === 3. Goniometría === */
+const L3 = layer('gonio_clean');
+const gSvg = add(L3, `<svg class="abs" style="left:0;top:0" width="1188" height="2576"><path id="gW" fill="rgba(192,38,211,.28)"/><path id="gA" fill="none" stroke="#7c3aed" stroke-width="5"/>
+  <line id="gL" stroke="#7c3aed" stroke-width="7" stroke-linecap="round"/><circle id="gD" r="12" fill="#7c3aed"/><circle cx="593" cy="1221" r="15" fill="#111827"/><circle cx="593" cy="1221" r="7" fill="#7c3aed"/></svg>`);
+const gPillTop = box(L3, 853, 462, 122, 59, 'border-radius:30px;background:#faf5ff;border:2px solid #e9d5ff;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:800;color:#6b21a8');
+const gPill = box(L3, 701, 1754, 177, 71, 'border-radius:36px;background:#faf5ff;border:2px solid #e9d5ff;display:flex;align-items:center;justify-content:center;font-size:38px;font-weight:800;color:#6b21a8');
+box(L3, 200, 1830, 785, 64, 'background:#fff');
+box(L3, 215, 1853, 755, 14, 'border-radius:7px;background:#e5e7eb');
+const gFill = box(L3, 0, 1853, 0, 14, 'border-radius:7px;background:#7c3aed');
+const gThumb = box(L3, 0, 1838, 66, 44, 'margin-left:-33px;border-radius:22px;background:#fff;border:2px solid #e2e8f0;box-shadow:0 6px 16px rgba(15,23,42,.18)');
+const gX = a => 592 - 7.72 * a;
+
+/* === 4. Fuerza muscular === */
+const L4 = layer('fuerza');
+const fPre = box(L4, 594, 1396, 127, 127, 'border-radius:26px;background:#fefce8;border:3px solid #fde68a;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#a16207',
+  '<span style="font-size:36px;font-weight:800">3</span><span style="font-size:23px;font-weight:600">C/grav.</span>');
+const fBtn = crop(L4, 'fuerza', 594, 1392, 127, 135, 26);
+const fBadgeCover = box(L4, 800, 1260, 192, 110, 'background:#f1f4f9');
+const fBadge = crop(L4, 'fuerza', 806, 1266, 182, 98, 49);
+const fDescCover = box(L4, 196, 1547, 796, 190, 'background:#f1f4f9');
+
+/* === 5. Escalas: Berg === */
+const BERG = [
+  ['berg1', 440, '1 - Necesita mínima ayuda para\nlevantarse', '+1'],
+  ['berg1', 1874, '2 - Permanece de pie 30\nsegundos sin soporte', '+2'],
+  ['berg2', 737, '2 - Completa 4 pasos sin ayuda\nbajo supervisión', '+2'],
+  ['berg2', 2000, '2 - Puede dar un paso pequeño y\nsostener 30s', '+2']
+];
+const L5a = layer('berg1'), L5b = layer('berg2');
+const bCards = BERG.map(([l, y, txt, pts]) => add(l === 'berg1' ? L5a : L5b,
+  `<div class="bergCard" style="top:${y}px"><div>${txt.replace('\n', '<br>')}</div><b>${pts}</b></div>`));
+const L5c = layer('berg_res');
+const bNum = box(L5c, 196, 1562, 72, 64, 'background:#fff;text-align:right;font-size:43px;font-weight:800;color:#0f172a;line-height:64px');
+const bPillCover = box(L5c, 326, 1536, 464, 176, 'background:#fff');
+const bPill = crop(L5c, 'berg_res', 330, 1540, 456, 168, 84);
+
+/* === 6. Diagnóstico === */
+const L6 = layer('dx');
+box(L6, 196, 830, 794, 198, 'background:#f8fafc');
+const dxTxt = add(L6, '<div class="txt" style="left:219px;top:846px;width:760px;white-space:normal;font-size:37px;font-weight:700;line-height:56px"></div>');
+const dxSum = box(L6, 196, 1388, 794, 158, 'background:#f8fafc');
+const dxCnt = box(L6, 880, 1598, 130, 44, 'background:#fff;text-align:right;font-size:31px;font-weight:700;color:#475569;line-height:44px');
+box(L6, 200, 1995, 320, 100, 'background:#f9fafc');
+const dxSes = add(L6, '<div class="txt" style="left:219px;top:2024px;font-size:37px;font-weight:600"></div>');
+
+/* === 7. Tratamiento === */
+const L7 = layer('tratamiento');
+const TT = [[250, 1075, 630, 83, 'TENS (Electroanalgesia)', 600, '#fff'], [245, 1270, 700, 85, '100 Hz 80 ms', 400, '#fff'],
+            [245, 1467, 700, 83, 'Cara anterior muñeca', 400, '#fff'], [245, 1663, 567, 82, '15 min', 400, '#fff']];
+const ttTxt = TT.map(([x, y, w, h, s, fw, bg]) => { box(L7, x, y, w, h, `background:${bg}`); return add(L7, `<div class="txt" style="left:265px;top:${y + h / 2 - 22}px;font-size:35px;font-weight:${fw};line-height:44px"></div>`); });
+box(L7, 196, 2148, 800, 116, 'background:#f9fafc');
+const ttMan = add(L7, '<div class="txt" style="left:218px;top:2160px;font-size:35px;line-height:46px"></div>');
+
+/* ---------- Dedo ---------- */
+const ripple = add(V, '<div id="ripple"></div>');
+const finger = add(V, '<div id="finger"></div>');
+const FK = [];   // [t, x, y, down]
+const tap = (t, x, y) => FK.push([t - .5, x, y, 0], [t, x, y, 1], [t + .14, x, y, 0]);
+const drag = (t0, t1, x0, y0, x1, y1) => FK.push([t0 - .45, x0, y0, 0], [t0, x0, y0, 1], [t1, x1, y1, 1], [t1 + .14, x1, y1, 0]);
+
+/* ---------- Guion ---------- */
+const T = { eva: 0, derm: 5.6, gonio: 11.2, fuerza: 16.2, berg: 20.6, bergB: 23.0, bergR: 25.2, dx: 27.4, tto: 31.4, end: 35.6 };
+FK.length = 0;
+drag(2.2, 3.4, evaX(0), 1206, evaX(7), 1206); drag(3.5, 4.0, evaX(7), 1206, evaX(4), 1206);
+tap(7.0, 811, 824); tap(8.5, 322, 1740); tap(9.5, 862, 2186);
+drag(12.3, 13.7, gX(0), 1860, gX(32), 1860);
+tap(17.4, 657, 1460);
+tap(21.6, 594, 514); tap(22.5, 594, 1947); tap(23.9, 594, 811); tap(24.7, 594, 2073);
+FK.sort((a, b) => a[0] - b[0]);
+const CAM = [[0, 1, 594, 1288], [1.1, 1, 594, 1288], [1.8, 1.4, 594, 1180], [5.4, 1.4, 594, 1180], [6.2, 1.1, 594, 1150],
+  [6.8, 1.35, 700, 900], [7.4, 1.35, 700, 900], [7.9, 1.25, 594, 1720], [9.8, 1.25, 594, 1720], [10.4, 1.05, 594, 1250],
+  [11.3, 1.05, 594, 1250], [11.9, 1.4, 594, 1450], [15.9, 1.4, 594, 1450],
+  [16.6, 1.4, 594, 1400], [20.3, 1.4, 594, 1400],
+  [20.9, 1.35, 594, 900], [21.8, 1.35, 594, 900], [22.4, 1.35, 594, 1750], [23.0, 1.35, 594, 1750], [23.5, 1.35, 594, 900], [24.1, 1.35, 594, 900],
+  [24.6, 1.35, 594, 1850], [25.2, 1.35, 594, 1850], [25.7, 1.4, 594, 1350], [27.1, 1.4, 594, 1350],
+  [27.8, 1.3, 594, 1250], [31.1, 1.3, 594, 1250], [31.8, 1.3, 594, 1500], [35.3, 1.3, 594, 1500]];
+const CAPS = [
+  { h: '¿Sigues valorando en papel?', p: '', t0: .3, t1: 2.6 },
+  { h: 'Dolor (EVA) en un deslizamiento', p: '', t0: 2.8, t1: 5.6 },
+  { h: 'Dermatomas interactivos', p: 'Marca zona, lado y sensación', t0: 5.9, t1: 11.0 },
+  { h: 'Goniometría visual', p: 'El rango articular, en grados', t0: 11.5, t1: 16.0 },
+  { h: 'Fuerza muscular (Daniels)', p: 'Línea base para comparar avances', t0: 16.5, t1: 20.4 },
+  { h: '24 escalas estandarizadas', p: 'Berg, Tinetti, ARAT y más', t0: 20.9, t1: 27.2 },
+  { h: 'Diagnóstico fisioterapéutico', p: 'Y el plan de sesiones', t0: 27.7, t1: 31.2 },
+  { h: 'Tratamiento documentado', p: 'Medios físicos, dosis y técnicas', t0: 31.7, t1: 35.4 }
+];
+
+/* ---------- Cierre ---------- */
+const END = add(V, `<div class="abs" style="inset:0">
+  <div class="abs" id="ol" style="left:390px;top:520px;width:300px;height:300px;border-radius:50%;overflow:hidden;box-shadow:0 0 110px 20px rgba(139,92,246,.55);-webkit-mask-image:radial-gradient(circle,#000 97%,transparent 100%)">
+    <img src="assets/logo_master.jpg" style="position:absolute;left:-41.4px;top:-39.9px;width:384px;height:384px"></div>
+  <div class="abs" id="ot" style="left:0;width:1080px;top:880px;text-align:center;color:#fff;font-size:108px;font-weight:900;letter-spacing:6px">PHYSIOVERSE</div>
+  <div class="abs" id="os" style="left:60px;right:60px;top:1030px;text-align:center;color:#fff;font-size:54px;font-weight:800;line-height:1.15">Toda tu valoración,<br><span style="color:#5eead4">en un solo lugar.</span></div>
+  <div class="abs" id="oc" style="left:240px;top:1290px;width:600px;height:120px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:46px;font-weight:800;color:#0b1120;background:linear-gradient(90deg,#5eead4,#a78bfa);box-shadow:0 20px 60px rgba(94,234,212,.35)">Solicita tu demo →</div></div>`);
+
+add(V, '<div id="captionShade"></div>');
+CAPS.forEach(c => c.node = add(V, `<div class="cap"><h1>${c.h.split(' ').map(w => `<span>${w}</span>`).join(' ')}</h1>${c.p ? `<p>${c.p}</p>` : ''}</div>`));
+const fade = add(V, '<div class="abs" style="inset:0;background:#0b1120;z-index:99"></div>');
+
+let cam = { z: 1, fx: 594, fy: 1288 };
+function camAt(t) {
+  if (t <= CAM[0][0]) return { z: CAM[0][1], fx: CAM[0][2], fy: CAM[0][3] };
+  for (let i = 0; i < CAM.length - 1; i++) {
+    const a = CAM[i], b = CAM[i + 1];
+    if (t <= b[0]) { const e = eio(prog(t, a[0], b[0])); return { z: lerp(a[1], b[1], e), fx: lerp(a[2], b[2], e), fy: lerp(a[3], b[3], e) }; }
+  }
+  const k = CAM.at(-1); return { z: k[1], fx: k[2], fy: k[3] };
+}
+const toVideo = (x, y, dy) => { const sc = S * cam.z; return [CX - cam.fx * sc + x * sc, CY - cam.fy * sc + y * sc + dy]; };
+function drawFinger(t, dy, tIn, tOut) {
+  const v = prog(t, tIn, tIn + .3) * (1 - prog(t, tOut, tOut + .3));
+  let x, y, down = 0;
+  if (t <= FK[0][0]) { [x, y] = toVideo(FK[0][1], FK[0][2], dy); const k = 1 - eout(prog(t, tIn, FK[0][0])); x += 160 * k; y += 260 * k; }
+  else if (t >= FK.at(-1)[0]) [x, y] = toVideo(FK.at(-1)[1], FK.at(-1)[2], dy);
+  else {
+    const i = FK.findIndex(k => k[0] > t), a = FK[i - 1], b = FK[i];
+    const lin = a[3] && b[3];   // arrastre: movimiento uniforme
+    const k = lin ? eio(prog(t, a[0], b[0])) : eio(prog(t, a[0] + .1, b[0]));
+    [x, y] = toVideo(lerp(a[1], b[1], k), lerp(a[2], b[2], k), dy);
+    down = a[3] ? 1 : 0;
+  }
+  let rip = -1;
+  FK.forEach((k, i) => { if (k[3] && i > 0 && !FK[i - 1][3] && t >= k[0] && t < k[0] + .55) rip = (t - k[0]) / .55; });
+  finger.style.left = ripple.style.left = x + 'px'; finger.style.top = ripple.style.top = y + 'px';
+  finger.style.opacity = v; finger.style.transform = `scale(${down ? .8 : 1})`;
+  ripple.style.opacity = rip < 0 ? 0 : (1 - rip) * v; ripple.style.transform = `scale(${1 + 1.6 * eout(Math.max(rip, 0))})`;
+}
+// valor de un arrastre según el dedo (para sincronizar deslizadores)
+const dragVal = (t, segs, v0) => { let v = v0; segs.forEach(([t0, t1, a, b]) => { if (t >= t0) v = lerp(a, b, eio(prog(t, t0, t1))); }); return v; };
+
+const DUR = 39.4;
+window.DUR = DUR;
+window.render = function (t) {
+  drawBg(t);
+  const enter = eout(prog(t, .1, 1.0)), dy = (1 - enter) * 800;
+  const out = eio(prog(t, T.end, T.end + .6));
+  cam = camAt(t);
+  const sc = S * cam.z;
+  pw.style.transform = `translate(${CX - cam.fx * sc}px,${CY - cam.fy * sc + dy + out * 300}px) scale(${sc})`;
+  pw.style.opacity = enter * (1 - out);
+
+  showLayer(L1, t, 0, T.derm); showLayer(L2, t, T.derm, T.gonio); showLayer(L3, t, T.gonio, T.fuerza); showLayer(L4, t, T.fuerza, T.berg);
+  showLayer(L5a, t, T.berg, T.bergB); showLayer(L5b, t, T.bergB, T.bergR); showLayer(L5c, t, T.bergR, T.dx); showLayer(L6, t, T.dx, T.tto); showLayer(L7, t, T.tto, T.end + 2);
+
+  // EVA
+  const ev = dragVal(t, [[2.2, 3.4, 0, 7], [3.5, 4.0, 7, 4]], 0);
+  evaThumb.style.left = evaX(ev) + 'px'; evaFill.style.width = ev * 85.4 + 'px';
+  evaBadge.textContent = `${Math.round(ev)} / 10`;
+  evaDesc.textContent = typed('Ardor en cara anterior de muñeca', t, 4.2, 26);
+
+  // Dermatomas
+  dGlow.style.opacity = (.5 + .5 * Math.sin(t * 8)) * prog(t, 6.4, 6.7) * (1 - prog(t, 7.2, 7.5));
+  const so = eout(prog(t, 7.2, 7.75)) * (1 - eio(prog(t, 9.7, 10.2)));
+  dDim.style.opacity = so; sheet.style.transform = `translateY(${(1 - so) * 1150}px)`;
+  const selOn = t >= 8.5;
+  dSelA.style.opacity = selOn ? 0 : 1; dHead.style.opacity = selOn ? 0 : 1;
+  const bp = pop(t, 8.5); dSelB.style.opacity = selOn ? 1 - bp.o : 1;
+
+  // Goniometría
+  const a = dragVal(t, [[12.3, 13.7, 0, 32]], 0);
+  const R = 304, cx = 593, cy = 1221, rad = a * Math.PI / 180;
+  const ex = cx - R * Math.sin(rad), ey = cy - R * Math.cos(rad);
+  document.getElementById('gW').setAttribute('d', a < .3 ? '' : `M${cx} ${cy}L${cx} ${cy - R}A${R} ${R} 0 0 0 ${ex} ${ey}Z`);
+  document.getElementById('gA').setAttribute('d', a < .3 ? '' : `M${cx} ${cy - R}A${R} ${R} 0 0 0 ${ex} ${ey}`);
+  const gl = document.getElementById('gL'); gl.setAttribute('x1', cx); gl.setAttribute('y1', cy); gl.setAttribute('x2', ex); gl.setAttribute('y2', ey);
+  const gd = document.getElementById('gD'); gd.setAttribute('cx', ex); gd.setAttribute('cy', ey);
+  gPill.textContent = Math.round(a); gPillTop.textContent = Math.round(a) + '°';
+  gThumb.style.left = gX(a) + 'px'; gFill.style.left = gX(a) + 'px'; gFill.style.width = (592 - gX(a)) + 'px';
+
+  // Fuerza
+  const fp = pop(t, 17.4);
+  fPre.style.opacity = t < 17.4 ? 1 : 0;
+  fBtn.style.opacity = t < 17.4 ? 0 : 1; fBtn.style.transform = `scale(${t < 17.4 ? 1 : fp.s * .9 + .1})`;
+  const fb = pop(t, 17.65);
+  fBadgeCover.style.opacity = t < 17.65 ? 1 : 0; fBadge.style.opacity = t < 17.65 ? 0 : fb.o; fBadge.style.transform = `scale(${fb.s})`;
+  fDescCover.style.opacity = 1 - prog(t, 17.9, 18.3);
+
+  // Berg
+  [21.6, 22.5, 23.9, 24.7].forEach((tt, i) => bCards[i].style.opacity = 1 - prog(t, tt, tt + .12));
+  bNum.textContent = Math.round(28 * eout(prog(t, 25.8, 26.7)));
+  const pp = pop(t, 26.5);
+  bPillCover.style.opacity = t < 26.5 ? 1 : 0; bPill.style.opacity = t < 26.5 ? 0 : pp.o; bPill.style.transform = `scale(${pp.s})`;
+
+  // Diagnóstico
+  dxTxt.textContent = typed('Hemiparesia izquierda secundaria a EVC agudo', t, 28.0, 32);
+  dxSum.style.opacity = 1 - prog(t, 29.5, 29.8);
+  dxCnt.textContent = (t < 29.5 ? 0 : 44) + ' / 80';
+  dxSes.textContent = t < 30.0 ? '' : String(Math.max(1, Math.round(15 * eout(prog(t, 30.0, 30.8)))));
+
+  // Tratamiento
+  ttTxt[0].textContent = t < 32.2 ? '' : 'TENS (Electroanalgesia)';
+  ttTxt[0].style.opacity = prog(t, 32.2, 32.4);
+  ttTxt[1].textContent = typed('100 Hz 80 ms', t, 32.6, 22);
+  ttTxt[2].textContent = typed('Cara anterior muñeca', t, 33.3, 26);
+  ttTxt[3].textContent = typed('15 min', t, 34.2, 18);
+  ttMan.textContent = typed('Movilizaciones artrocinemáticas\nKalterborn de flexores y extensores de muñeca', t, 34.0, 50);
+
+  drawFinger(t, dy, 1.6, 24.9);
+
+  // Textos
+  CAPS.forEach(c => {
+    const o = prog(t, c.t1 - .3, c.t1);
+    c.node.style.opacity = t < c.t0 ? 0 : 1 - o;
+    c.node.style.transform = `translateY(${-24 * eio(o)}px)`;
+    [...c.node.querySelectorAll('h1 span')].forEach((s, i) => {
+      const k = eout(prog(t, c.t0 + i * .06, c.t0 + i * .06 + .4));
+      s.style.opacity = k; s.style.transform = `translateY(${(1 - k) * 44}px)`;
+    });
+    const p = c.node.querySelector('p'); if (p) p.style.opacity = eout(prog(t, c.t0 + .4, c.t0 + .8));
+  });
+
+  // Cierre
+  END.style.opacity = prog(t, T.end + .3, T.end + .8);
+  if (t > T.end) {
+    const k = eback(prog(t, T.end + .3, T.end + 1));
+    document.getElementById('ol').style.transform = `scale(${lerp(.4, 1, k)}) rotate(${t * 30}deg)`;
+    const kt = eout(prog(t, T.end + .6, T.end + 1.2));
+    document.getElementById('ot').style.opacity = kt; document.getElementById('ot').style.transform = `translateY(${(1 - kt) * 50}px)`;
+    document.getElementById('os').style.opacity = prog(t, T.end + 1.0, T.end + 1.5);
+    const kc = eback(prog(t, T.end + 1.6, T.end + 2.1));
+    const oc = document.getElementById('oc');
+    oc.style.opacity = clamp(kc); oc.style.transform = `scale(${lerp(.6, 1, kc) * (1 + .035 * Math.sin(Math.max(0, t - T.end - 2.1) * 6))})`;
+  }
+  fade.style.opacity = Math.max(1 - prog(t, 0, .3), prog(t, DUR - .5, DUR));
+};
+window.render(0);
+if (new URLSearchParams(location.search).has('play')) {
+  const t0 = performance.now();
+  (function loop() { window.render(((performance.now() - t0) / 1000) % DUR); requestAnimationFrame(loop); })();
+}
+</script>
+</body>
+</html>
