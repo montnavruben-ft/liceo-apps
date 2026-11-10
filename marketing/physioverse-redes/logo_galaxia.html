@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Physioverse · Logo galaxia</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #05070f; font-family: 'Inter', sans-serif; }
+  #video { position: relative; width: 1080px; height: 1920px; overflow: hidden;
+           background: radial-gradient(circle at 50% 45%, #121a3a 0%, #070a18 55%, #04050c 100%); }
+  .abs { position: absolute; }
+  canvas { position: absolute; left: 0; top: 0; }
+  #cam { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+  #disc { position: absolute; left: -410px; top: -410px; width: 820px; height: 820px; border-radius: 50%; overflow: hidden;
+          -webkit-mask-image: radial-gradient(circle, #000 95%, transparent 100%); }
+  #disc img { position: absolute; left: -176.4px; top: -163.1px; width: 1159.5px; height: 1150.7px; }
+  #swirl { position: absolute; inset: 0; border-radius: 50%; mix-blend-mode: screen;
+           background: conic-gradient(from 0deg, transparent 0 20%, rgba(94,234,212,.22) 30%, transparent 42% 70%, rgba(217,70,239,.22) 80%, transparent 92%); }
+  #halo { position: absolute; left: -405px; top: -405px; width: 810px; height: 810px; border-radius: 50%;
+          box-shadow: 0 0 140px 30px rgba(139,92,246,.55), 0 0 70px 10px rgba(34,211,238,.45); }
+  #vignette { position: absolute; inset: 0; background: radial-gradient(circle at 540px 860px, transparent 0 190px, rgba(3,5,14,.82) 330px); }
+  #ring { position: absolute; left: 540px; top: 860px; width: 380px; height: 380px; margin: -190px; border-radius: 50%; }
+  #ring svg { width: 100%; height: 100%; overflow: visible; }
+  .card { position: absolute; left: 70px; width: 940px; top: 1390px; height: 270px; border-radius: 48px; padding: 0 44px;
+          display: flex; align-items: center; gap: 40px; background: rgba(15,23,42,.62); border: 2px solid rgba(255,255,255,.12);
+          box-shadow: 0 30px 80px rgba(0,0,0,.5); backdrop-filter: blur(12px); }
+  .icon { flex: none; width: 170px; height: 170px; border-radius: 40px; background: rgba(255,255,255,.05); display: flex; align-items: center; justify-content: center; }
+  .icon svg { width: 140px; height: 140px; overflow: visible; }
+  .icon svg * { fill: none; stroke-width: 4.5; stroke-linecap: round; stroke-linejoin: round; }
+  .kick { font-size: 28px; font-weight: 800; letter-spacing: 7px; }
+  .ttl { color: #fff; font-size: 58px; font-weight: 900; letter-spacing: -1px; margin-top: 6px; line-height: 1.05; }
+  .sub { color: #a5b4fc; font-size: 31px; font-weight: 500; margin-top: 12px; }
+  #cap { position: absolute; left: 60px; right: 60px; top: 150px; text-align: center; }
+  #cap h1 { color: #fff; font-size: 72px; font-weight: 900; letter-spacing: -1.5px; line-height: 1.05; }
+  #cap h1 span { display: inline-block; }
+  #cap p { margin-top: 20px; color: #5eead4; font-size: 36px; font-weight: 600; }
+  #brand { position: absolute; left: 0; width: 1080px; top: 1180px; text-align: center; }
+</style>
+</head>
+<body>
+<div id="video">
+  <canvas id="stars" width="1080" height="1920"></canvas>
+  <div id="cam"><div id="halo"></div><div id="disc"><img src="assets/logo_hd.png"><div id="swirl"></div></div></div>
+  <div id="vignette"></div>
+  <div id="ring"><svg viewBox="-100 -100 200 200">
+    <circle r="92" stroke="rgba(255,255,255,.9)" stroke-width="2.2" fill="none" stroke-dasharray="6 9"/>
+    <circle id="ringArc" r="99" fill="none" stroke-width="4" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg></div>
+  <div id="cap"><h1></h1><p></p></div>
+  <div id="brand">
+    <div id="bt" style="color:#fff;font-size:116px;font-weight:900;letter-spacing:7px"></div>
+    <div id="bs" style="color:#4fd1b5;font-size:37px;font-weight:500;margin-top:22px">Plataforma Integral de Fisioterapia & Rehabilitación</div>
+    <div id="bl" style="color:#fff;font-size:48px;font-weight:800;margin-top:90px">Todo tu universo clínico,<br><span style="color:#5eead4">en un solo lugar.</span></div>
+  </div>
+  <div id="fade" class="abs" style="inset:0;background:#04050c"></div>
+</div>
+<script>
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, k) => a + (b - a) * k;
+const prog = (t, t0, t1) => clamp((t - t0) / (t1 - t0));
+const eio = k => k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+const eout = k => 1 - Math.pow(1 - k, 3);
+const eback = k => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(k - 1, 3) + c1 * Math.pow(k - 1, 2); };
+const $ = id => document.getElementById(id);
+const B = 820 / 186;            // px de video por px del logo original (zoom 1)
+const C = [540, 860];
+
+/* Elementos del logo: posición relativa al centro del disco (px del logo original) */
+const ICONS = {
+  neurona: `<circle cx="50" cy="50" r="11"/><path d="M50 39V20M50 20l-9-11M50 20l9-11M39 50H19l-9-8M19 50l-9 8M59 43l17-15 12 1M76 28l2-12M58 59l16 18 16 14M41 59L27 77l-11 2M27 77l-2 12"/>`,
+  columna: `<rect x="34" y="6" width="32" height="13" rx="5"/><rect x="32" y="24" width="36" height="14" rx="5"/><rect x="31" y="43" width="38" height="14" rx="5"/><rect x="32" y="62" width="36" height="14" rx="5"/><rect x="34" y="81" width="32" height="13" rx="5"/><path d="M24 13h10M66 13h10M22 31h10M68 31h10M20 50h11M69 50h11M22 69h10M68 69h10M24 87h10M66 87h10"/>`,
+  pesas:   `<path d="M30 50h40"/><rect x="18" y="28" width="10" height="44" rx="3"/><rect x="8" y="36" width="9" height="28" rx="3"/><rect x="72" y="28" width="10" height="44" rx="3"/><rect x="83" y="36" width="9" height="28" rx="3"/>`,
+  huesos:  `<path d="M31 39l30 30M39 31l30 30"/><circle cx="25" cy="31" r="9"/><circle cx="31" cy="25" r="9"/><circle cx="69" cy="75" r="9"/><circle cx="75" cy="69" r="9"/>`
+};
+const ELEMS = [
+  { k: 'neurona', f: [-43, -40], col: '#67e8f9', kick: 'NEURONA', ttl: 'Neurorrehabilitación', sub: 'Sistema nervioso y control motor' },
+  { k: 'columna', f: [47, -13],  col: '#5eead4', kick: 'COLUMNA', ttl: 'Columna y postura',    sub: 'Raquis, dolor lumbar y cervical' },
+  { k: 'pesas',   f: [4, 44],    col: '#f0abfc', kick: 'PESAS',   ttl: 'Ejercicio terapéutico', sub: 'Fuerza, readaptación y deporte' },
+  { k: 'huesos',  f: [-73, 2],   col: '#a5f3fc', kick: 'HUESOS',  ttl: 'Traumatología',        sub: 'Fracturas, articulaciones y ortopedia' }
+];
+const T0 = 3.4, STEP = 2.6;
+ELEMS.forEach((e, i) => {
+  e.t = T0 + i * STEP;
+  const d = document.createElement('div'); d.className = 'card';
+  d.innerHTML = `<div class="icon" style="box-shadow:inset 0 0 0 2px ${e.col}55, 0 0 40px ${e.col}33"><svg viewBox="0 0 100 100" style="filter:drop-shadow(0 0 6px ${e.col})">${ICONS[e.k]}</svg></div>
+    <div><div class="kick" style="color:${e.col}">${e.kick}</div><div class="ttl">${e.ttl}</div><div class="sub">${e.sub}</div></div>`;
+  d.querySelectorAll('svg *').forEach(p => { p.setAttribute('pathLength', 1); p.style.stroke = e.col; p.style.strokeDasharray = 1; });
+  $('video').insertBefore(d, $('fade'));
+  e.card = d;
+});
+// Caption
+const capH = 'Un universo de fisioterapia';
+$('cap').querySelector('h1').innerHTML = capH.split(' ').map(w => `<span>${w}</span>`).join(' ');
+$('cap').querySelector('p').textContent = 'Descubre lo que hay en cada órbita';
+$('bt').innerHTML = 'PHYSIOVERSE'.split('').map(c => `<span style="display:inline-block">${c}</span>`).join('');
+
+/* Estrellas deterministas */
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const COLS = ['#a5f3fc', '#c4b5fd', '#f0abfc', '#ffffff', '#5eead4'];
+const STARS = Array.from({ length: 900 }, (_, i) => {
+  const arm = i % 3 !== 0, r = 60 + Math.pow(rnd(), .7) * 1050;
+  const a0 = arm ? (i % 2) * Math.PI + 1.9 * Math.log(r / 60) + (rnd() - .5) * .5 : rnd() * Math.PI * 2;
+  return { r, a0, s: .6 + rnd() * 2.6, c: COLS[Math.floor(rnd() * COLS.length)], tw: rnd() * 6.28, sp: .5 + rnd() };
+});
+const ctx = $('stars').getContext('2d');
+function drawStars(t, spin) {
+  ctx.clearRect(0, 0, 1080, 1920);
+  const inK = eout(prog(t, 0, 2.6));
+  for (const s of STARS) {
+    const r = s.r * lerp(2.6, 1, inK);
+    const a = s.a0 + spin * (260 / (s.r + 160)) * s.sp;
+    const x = C[0] + Math.cos(a) * r, y = C[1] + Math.sin(a) * r * .92;
+    if (x < -10 || x > 1090 || y < -10 || y > 1930) continue;
+    ctx.globalAlpha = (.35 + .65 * (.5 + .5 * Math.sin(t * 3 * s.sp + s.tw))) * clamp(inK * 1.5);
+    ctx.fillStyle = s.c; ctx.beginPath(); ctx.arc(x, y, s.s, 0, 6.283); ctx.fill();
+    if (t < 2.6) { // estela durante el remolino inicial
+      ctx.globalAlpha *= .35; ctx.strokeStyle = s.c; ctx.lineWidth = s.s;
+      ctx.beginPath(); ctx.arc(C[0], C[1], r, a - .35 * (1 - inK), a); ctx.stroke();
+    }
+  }
+  ctx.globalAlpha = 1;
+}
+
+/* Cámara */
+const KEYS = [[0, 1, 0, 0], [T0, 1, 0, 0]];
+ELEMS.forEach(e => { KEYS.push([e.t + .9, 2.05, ...e.f]); KEYS.push([e.t + STEP - .05, 2.18, ...e.f]); });
+const TOUT = T0 + 4 * STEP + .1;
+KEYS.push([TOUT + 1.1, .62, 0, 0]);
+function camAt(t) {
+  if (t <= KEYS[0][0]) return KEYS[0].slice(1);
+  for (let i = 0; i < KEYS.length - 1; i++) {
+    const a = KEYS[i], b = KEYS[i + 1];
+    if (t <= b[0]) {
+      const slow = b[1] > a[1] && Math.abs(b[2] - a[2]) < .01 && Math.abs(b[3] - a[3]) < .01; // empuje lento
+      const e = slow ? prog(t, a[0], b[0]) : eio(prog(t, a[0], b[0]));
+      return [lerp(a[1], b[1], e), lerp(a[2], b[2], e), lerp(a[3], b[3], e)];
+    }
+  }
+  return KEYS[KEYS.length - 1].slice(1);
+}
+
+const DUR = 18.2;
+window.DUR = DUR;
+window.render = function (t) {
+  // Giro de galaxia: remolino inicial + deriva + giro extra en cada cambio de foco
+  let thDeg = -620 * (1 - eout(prog(t, 0, 2.8))) + 9 * t;
+  ELEMS.forEach(e => thDeg += 55 * eio(prog(t, e.t, e.t + .95)));
+  thDeg += 120 * eio(prog(t, TOUT, TOUT + 1.4));
+  drawStars(t, thDeg * Math.PI / 180 * .9);
+
+  const [z0, fx, fy] = camAt(t);
+  const z = z0 * lerp(.12, 1, eback(prog(t, .2, 2.6)));
+  const cy = C[1] - 170 * eio(prog(t, TOUT, TOUT + 1.1));
+  const cam = $('cam');
+  cam.style.transform = `translate(${C[0]}px,${cy}px) scale(${z}) rotate(${thDeg}deg) translate(${-fx * B}px,${-fy * B}px)`;
+  cam.style.opacity = prog(t, .2, .9);
+  $('swirl').style.transform = `rotate(${t * 70}deg)`;
+  $('swirl').style.opacity = .6 + .4 * Math.sin(t * 2);
+  const flash = clamp(1 - Math.abs(t - 2.5) / .5);
+  $('halo').style.opacity = .7 + .3 * flash;
+  $('disc').style.filter = `brightness(${1 + .5 * flash}) saturate(1.15)`;
+
+  // Foco: viñeta + anillo + tarjeta
+  let foc = 0;
+  ELEMS.forEach((e, i) => {
+    const tin = e.t + .55, tout = i < 3 ? ELEMS[i + 1].t + .15 : TOUT + .1;
+    const k = eout(prog(t, tin, tin + .5)) * (1 - eio(prog(t, tout, tout + .4)));
+    foc = Math.max(foc, k);
+    e.card.style.opacity = k;
+    e.card.style.transform = `translateY(${(1 - k) * 60}px) scale(${lerp(.94, 1, k)})`;
+    e.card.querySelectorAll('svg *').forEach((p, j) => p.style.strokeDashoffset = 1 - eio(prog(t, tin + .15 + j * .05, tin + .9 + j * .05)));
+    if (t >= e.t && t < tout + .4) {
+      $('ringArc').style.stroke = e.col;
+      $('ringArc').style.strokeDashoffset = 1 - eio(prog(t, tin, tin + .8));
+    }
+  });
+  $('vignette').style.opacity = foc;
+  $('ring').style.opacity = foc;
+  $('ring').style.transform = `rotate(${t * 25}deg) scale(${lerp(1.3, 1, foc)})`;
+
+  // Caption
+  const capOut = prog(t, TOUT - .2, TOUT + .3);
+  [...$('cap').querySelectorAll('h1 span')].forEach((s, i) => {
+    const k = eout(prog(t, 2.6 + i * .08, 3.1 + i * .08));
+    s.style.opacity = k; s.style.transform = `translateY(${(1 - k) * 50}px)`;
+  });
+  const kp = eout(prog(t, 3.0, 3.5)); $('cap').querySelector('p').style.opacity = kp;
+  $('cap').style.opacity = 1 - capOut;
+
+  // Marca final
+  [...$('bt').children].forEach((s, i) => {
+    const q = eback(prog(t, TOUT + .7 + i * .05, TOUT + 1.2 + i * .05));
+    s.style.opacity = prog(t, TOUT + .7 + i * .05, TOUT + 1 + i * .05); s.style.transform = `translateY(${(1 - q) * 70}px)`;
+  });
+  $('bs').style.opacity = prog(t, TOUT + 1.4, TOUT + 1.9);
+  const kl = eout(prog(t, TOUT + 1.9, TOUT + 2.5));
+  $('bl').style.opacity = kl; $('bl').style.transform = `translateY(${(1 - kl) * 40}px)`;
+
+  $('fade').style.opacity = Math.max(1 - prog(t, 0, .3), prog(t, DUR - .45, DUR));
+};
+window.render(0);
+if (new URLSearchParams(location.search).has('play')) {
+  const t0 = performance.now();
+  (function loop() { window.render(((performance.now() - t0) / 1000) % DUR); requestAnimationFrame(loop); })();
+}
+</script>
+</body>
+</html>
