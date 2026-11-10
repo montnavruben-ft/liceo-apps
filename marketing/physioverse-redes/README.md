@@ -9,6 +9,7 @@ Videos verticales 1080×1920 (9:16, 30 fps, sin audio) para Reels, TikTok y Stor
 | `videos/02_agenda_busqueda.mp4` | 14 s | Sesiones de hoy, anillo de avance, escritura en el buscador |
 | `videos/03_sesion_clinica.mp4` | 16 s | Plan de intervención, recordatorio por WhatsApp, finalizar y cobrar |
 | `videos/04_logo_galaxia.mp4` | 19 s | Intro cinemática: el logo gira como galaxia, recorre sus elementos en primer plano y cierra con la marca |
+| `videos/05_fernando_migracion.mp4` | 37 s | Historia de Fernando (plastilina): de expedientes en papel a importarlos en Physioverse |
 
 El teléfono del paciente está enmascarado (`663 ••• ••59`) y se quitó el indicador de grabación de pantalla.
 
@@ -19,5 +20,6 @@ node render.js            # renderiza cada escena a build/*.mp4 (requiere Playwr
 ./armar_videos.sh         # une escenas -> videos/
 ```
 Intro del logo: `logo_galaxia.html` (`node render.js galaxia`), usa `assets/logo_master.jpg` (logo en alta resolución).
+Fernando: `python3 preparar_fernando.py <gif1> <gif2> <gif3> <expediente> <nuevo> <importar>` y luego `node render.js fernando` (`fernando.html`).
 Vista previa en navegador: `animacion.html?scene=sesion&play` (escenas: `intro`, `agenda`, `sesion`, `outro`).
 Textos, tiempos y movimientos de cámara se editan en `animacion.html`.
