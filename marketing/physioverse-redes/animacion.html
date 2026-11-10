@@ -18,12 +18,12 @@
   #screen img { display: block; }
 
   /* ---------- Captions ---------- */
-  #captionShade { position: absolute; left: 0; top: 0; width: 1080px; height: 500px;
+  #captionShade { position: absolute; left: 0; top: 0; width: 1080px; height: 640px;
                   background: linear-gradient(#0b1120 62%, rgba(11,17,32,0)); }
-  .cap { position: absolute; left: 60px; right: 60px; top: 110px; text-align: center; }
-  .cap h1 { color: #fff; font-size: 70px; font-weight: 900; letter-spacing: -1.5px; line-height: 1.05; }
+  .cap { position: absolute; left: 44px; right: 44px; top: 100px; text-align: center; }
+  .cap h1 { color: #fff; font-size: 94px; font-weight: 900; letter-spacing: -2px; line-height: 1.02; text-shadow: 0 6px 30px rgba(0,0,0,.55); }
   .cap h1 span { display: inline-block; }
-  .cap p { margin-top: 22px; color: #5eead4; font-size: 36px; font-weight: 600; }
+  .cap p { margin-top: 22px; color: #5eead4; font-size: 46px; font-weight: 700; text-shadow: 0 4px 20px rgba(0,0,0,.5); }
 
   /* ---------- Dedo / toque ---------- */
   #finger { position: absolute; width: 96px; height: 96px; margin: -48px 0 0 -48px; border-radius: 50%;
@@ -87,7 +87,7 @@ function drawFade(t, dur, fin = .45, fout = .5) {
 }
 
 /* ---------- Teléfono + cámara ---------- */
-const S = 0.585, CX = 540, CY = 1120;
+const S = 0.56, CX = 540, CY = 1225;
 let camState = { z: 1, fx: 594, fy: 1288, dy: 0 };
 function buildPhone() {
   const w = add(V, '<div id="phoneWrap"><div id="bezel"></div><div id="screen"></div></div>');
@@ -324,7 +324,7 @@ SCENES.sesion = {
       <div id="money" style="margin-top:10px;font-size:48px;font-weight:800;color:#047857;background:#d1fae5;padding:22px 48px;border-radius:999px">+ $650 registrado</div></div>`);
     buildFinger();
     // Notificación de WhatsApp (espacio de video)
-    this.toast = add(V, `<div class="toast" style="top:440px;z-index:20"><div style="width:96px;height:96px;flex:none">${ICON.wa}</div>
+    this.toast = add(V, `<div class="toast" style="top:600px;z-index:20"><div style="width:96px;height:96px;flex:none">${ICON.wa}</div>
       <div><div style="font-size:26px;color:#64748b;font-weight:600">WHATSAPP · ahora</div>
       <div style="font-size:33px;font-weight:800;color:#0f172a;margin-top:4px">Recordatorio enviado ✅</div>
       <div style="font-size:29px;color:#334155;margin-top:4px">“Hola, te esperamos hoy a las 8:00 pm en clínica.”</div></div></div>`);
