@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Physioverse · Informe y progreso</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #0b1120; font-family: 'Inter', sans-serif; }
+  #video { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #0b1120; }
+  .abs { position: absolute; }
+  .blob { position: absolute; border-radius: 50%; filter: blur(90px); }
+  #phoneWrap { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  #bezel { position: absolute; left: -38px; top: -38px; width: 1264px; height: 2652px; border-radius: 178px;
+           background: linear-gradient(145deg, #2a3142, #05070d 40%, #1a2030); box-shadow: 0 60px 160px rgba(0,0,0,.65), inset 0 0 0 4px rgba(255,255,255,.08); }
+  #screen { position: absolute; left: 0; top: 0; width: 1188px; height: 2576px; border-radius: 142px; overflow: hidden; background: #eff2f7; }
+  .layer { position: absolute; left: 0; top: 0; width: 1188px; height: 2576px; }
+  .layer > img { position: absolute; left: 0; top: 0; width: 1188px; height: 2576px; }
+  #finger { position: absolute; width: 96px; height: 96px; margin: -48px 0 0 -48px; border-radius: 50%; z-index: 30;
+            background: rgba(255,255,255,.55); border: 5px solid rgba(255,255,255,.95); box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+  #ripple { position: absolute; width: 96px; height: 96px; margin: -48px 0 0 -48px; border-radius: 50%; border: 6px solid #fff; z-index: 30; }
+  #captionShade { position: absolute; left: 0; top: 0; width: 1080px; height: 640px; background: linear-gradient(#0b1120 62%, rgba(11,17,32,0)); }
+  .cap { position: absolute; left: 44px; right: 44px; top: 100px; text-align: center; }
+  .cap h1 { color: #fff; font-size: 94px; font-weight: 900; letter-spacing: -2px; line-height: 1.02; text-shadow: 0 6px 30px rgba(0,0,0,.55); }
+  .cap h1 span { display: inline-block; }
+  .cap p { margin-top: 22px; color: #5eead4; font-size: 46px; font-weight: 700; text-shadow: 0 4px 20px rgba(0,0,0,.5); }
+  .clip { position: absolute; left: 0; width: 1080px; overflow: hidden; }
+  .clip img { position: absolute; left: 0; top: 0; width: 1080px; }
+  .clip::after { content: ''; position: absolute; inset: 0; background: linear-gradient(#0b1120, rgba(11,17,32,0) 12%, rgba(11,17,32,0) 86%, #0b1120); }
+</style>
+</head>
+<body>
+<div id="video"></div>
+<script>
+const V = document.getElementById('video');
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, k) => a + (b - a) * k;
+const prog = (t, t0, t1) => clamp((t - t0) / (t1 - t0));
+const eio = k => k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+const eout = k => 1 - Math.pow(1 - k, 3);
+const eback = k => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(k - 1, 3) + c1 * Math.pow(k - 1, 2); };
+const el = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstChild; };
+const add = (parent, html) => parent.appendChild(el(html));
+const pop = (t, t0, d = .35) => { const k = eback(prog(t, t0, t0 + d)); return { o: clamp(k * 1.5), s: lerp(.5, 1, k) }; };
+
+add(V, '<div class="blob" id="b1" style="width:760px;height:760px;background:rgba(45,212,191,.22)"></div>');
+add(V, '<div class="blob" id="b2" style="width:820px;height:820px;background:rgba(139,92,246,.26)"></div>');
+function drawBg(t) {
+  document.getElementById('b1').style.transform = `translate(${-260 + 90 * Math.sin(t * .6)}px,${120 + 70 * Math.cos(t * .5)}px)`;
+  document.getElementById('b2').style.transform = `translate(${520 + 80 * Math.cos(t * .45)}px,${1150 + 90 * Math.sin(t * .55)}px)`;
+}
+
+/* ---------- Teléfono ---------- */
+const S = 0.56, CX = 540, CY = 1225;
+const pw = add(V, '<div id="phoneWrap"><div id="bezel"></div><div id="screen"></div></div>');
+const scr = pw.querySelector('#screen');
+const layer = (src) => { const l = add(scr, `<div class="layer"><img src="assets/informe/${src}.jpg"></div>`); l.style.visibility = 'hidden'; return l; };
+const box = (parent, x, y, w, h, css = '', inner = '') => add(parent, `<div class="abs" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;${css}">${inner}</div>`);
+function showLayer(l, t, tin, tout) {
+  if (t < tin || t > tout + .5) { l.style.visibility = 'hidden'; return; }
+  l.style.visibility = 'visible';
+  const kin = eio(prog(t, tin, tin + .5)), kout = eio(prog(t, tout, tout + .5));
+  l.style.transform = `translateY(${(1 - kin) * 2576 - kout * 1400}px)`;
+  l.style.opacity = tin === 0 ? 1 : 1 - kout * .6;
+}
+
+/* === 1. Informe / auditoría === */
+const L1 = layer('auditoria');
+const toast = box(L1, 84, 360, 1020, 170, 'border-radius:40px;background:#fff;box-shadow:0 24px 60px rgba(15,23,42,.35);display:flex;align-items:center;gap:30px;padding:0 36px;z-index:5',
+  `<div style="flex:none;width:96px;height:118px;border-radius:14px;background:#fee2e2;display:flex;align-items:flex-end;justify-content:center;padding-bottom:12px">
+     <span style="font-size:26px;font-weight:900;color:#fff;background:#dc2626;border-radius:7px;padding:3px 10px">PDF</span></div>
+   <div><div style="font-size:38px;font-weight:800;color:#0f172a">Informe_clinico.pdf</div><div style="font-size:30px;color:#64748b;margin-top:6px">Listo para imprimir o compartir</div></div>
+   <div style="margin-left:auto;width:64px;height:64px;border-radius:50%;background:#dcfce7;color:#16a34a;font-size:40px;font-weight:900;display:flex;align-items:center;justify-content:center">✓</div>`);
+const okPill = box(L1, 146, 1018, 420, 66, 'z-index:3;border-radius:33px;background:#dcfce7;border:3px solid #86efac;color:#166534;font-size:31px;font-weight:800;display:flex;align-items:center;justify-content:center', '✓ Expediente aprobado');
+const okCover = box(L1, 140, 1012, 410, 78, 'background:#fff');
+
+/* === 2. Progreso === */
+const L2 = layer('progreso');
+box(L2, 129, 468, 250, 250, 'border-radius:50%;background:#fff');
+const ring = add(L2, `<svg class="abs" style="left:136px;top:475px" width="236" height="236" viewBox="0 0 236 236">
+  <circle cx="118" cy="118" r="104" fill="none" stroke="#e2e8f0" stroke-width="28"/>
+  <circle id="arc" cx="118" cy="118" r="104" fill="none" stroke="#429fef" stroke-width="28" stroke-linecap="round" stroke-dasharray="653.5" stroke-dashoffset="653.5" transform="rotate(-90 118 118)"/>
+  <text id="pct" x="118" y="138" text-anchor="middle" font-family="Inter" font-size="58" font-weight="700" fill="#111827">0%</text></svg>`);
+// Radar (se redibuja encima de la captura)
+const RC = [594, 1466], RR = 251;
+const ANG = [-90, -38.57, 12.86, 64.29, 115.71, 167.14, 218.57].map(a => a * Math.PI / 180);
+const INI = [.57, .46, .58, .13, .2, .57, .59], HOY = [.80, .805, .48, .27, .49, .56, .67];
+const P = (r, i) => [RC[0] + Math.cos(ANG[i]) * r * RR, RC[1] + Math.sin(ANG[i]) * r * RR];
+const poly = (vals) => vals.map((v, i) => P(v, i).map(n => n.toFixed(1)).join(',')).join(' ');
+const grid = [1, .8, .6, .4, .2].map(k => `<polygon points="${poly(Array(7).fill(k))}" fill="none" stroke="#e5e7eb" stroke-width="2"/>`).join('')
+  + ANG.map((_, i) => { const [x, y] = P(1, i); return `<line x1="${RC[0]}" y1="${RC[1]}" x2="${x}" y2="${y}" stroke="#e5e7eb" stroke-width="2"/>`; }).join('');
+add(L2, `<svg class="abs" style="left:0;top:0" width="1188" height="2576">
+  <polygon points="${poly(Array(7).fill(1.045))}" fill="#fff"/>${grid}
+  <polygon points="${poly(INI)}" fill="none" stroke="#8592a6" stroke-width="4" stroke-dasharray="10 8"/>
+  <polygon id="hoy" fill="rgba(46,155,79,.28)" stroke="#2e9b4f" stroke-width="6" stroke-linejoin="round"/>
+  <g id="dots">${ANG.map(() => '<circle r="11" fill="#2e9b4f"/>').join('')}</g></svg>`);
+// Barra de dolor
+box(L2, 150, 2228, 890, 40, 'background:#fff');
+box(L2, 164, 2237, 858, 20, 'border-radius:10px;background:#e3e9f5');
+const pBar = box(L2, 164, 2237, 0, 20, 'border-radius:10px;background:#289551');
+box(L2, 676, 2231, 6, 32, 'background:#1f2937;border-radius:3px');
+const pNum = box(L2, 880, 2082, 150, 66, 'background:#fff;text-align:right;font-size:50px;font-weight:800;color:#237a3f;line-height:66px');
+
+/* === 3. Portal del paciente === */
+const L3 = layer('portal');
+box(L3, 166, 917, 858, 30, 'border-radius:15px;background:linear-gradient(90deg,#3f4577,#56629b)');
+const qBar = box(L3, 166, 917, 0, 30, 'border-radius:15px;background:linear-gradient(90deg,#5ccf9c,#2c6ad8)');
+
+/* ---------- Clip de Lucía ---------- */
+const CL = add(V, '<div class="abs" style="inset:0"></div>');
+const clipBox = add(CL, '<div class="clip" style="top:600px;height:1080px"></div>');
+const LF = Array.from({ length: 33 }, (_, i) => add(clipBox, `<img src="assets/lucia/telefono_${String(i).padStart(3, '0')}.jpg" style="opacity:0">`));
+
+/* ---------- Dedo ---------- */
+const ripple = add(V, '<div id="ripple"></div>');
+const finger = add(V, '<div id="finger"></div>');
+const FK = [];
+const tap = (t, x, y) => FK.push([t - .5, x, y, 0], [t, x, y, 1], [t + .14, x, y, 0]);
+tap(2.7, 911, 295); tap(9.0, 418, 2375); tap(23.8, 853, 1032);
+FK.sort((a, b) => a[0] - b[0]);
+
+/* ---------- Guion ---------- */
+const T = { prog: 12.6, portal: 20.6, lucia: 25.3, end: 29.2 };
+const CAM = [[0, 1, 594, 1288], [1.2, 1, 594, 1288], [2.0, 1.35, 594, 760], [4.4, 1.35, 594, 760], [5.4, 1.35, 594, 1500], [7.6, 1.35, 594, 1500],
+  [8.4, 1.35, 594, 2080], [9.3, 1.35, 594, 2080], [10.0, 1.35, 594, 1100], [12.4, 1.35, 594, 1100],
+  [13.0, 1.4, 594, 760], [14.9, 1.4, 594, 760], [15.6, 1.35, 594, 1450], [17.4, 1.35, 594, 1450], [18.0, 1.35, 594, 2050], [20.4, 1.35, 594, 2050],
+  [21.0, 1.35, 594, 1050], [25.0, 1.35, 594, 1050]];
+const CAPS = [
+  { h: 'Tu informe clínico en PDF', p: 'Formato NOM-004, listo para imprimir', t0: .3, t1: 7.5 },
+  { h: 'Revisa y aprueba expedientes', p: 'Supervisión clínica de tu equipo', t0: 7.8, t1: 12.5 },
+  { h: 'Mide el avance de cada paciente', p: 'Dolor, fuerza, rango y escalas', t0: 12.9, t1: 20.5 },
+  { h: 'Y tu paciente lo ve en su app', p: 'Su progreso, siempre a la mano', t0: 20.9, t1: 25.2 },
+  { h: 'Pacientes motivados', p: 'que sí terminan su tratamiento', t0: 25.5, t1: 29.1 }
+];
+
+const END = add(V, `<div class="abs" style="inset:0">
+  <div class="abs" id="ol" style="left:390px;top:520px;width:300px;height:300px;border-radius:50%;overflow:hidden;box-shadow:0 0 110px 20px rgba(139,92,246,.55);-webkit-mask-image:radial-gradient(circle,#000 97%,transparent 100%)">
+    <img src="assets/logo_master.jpg" style="position:absolute;left:-41.4px;top:-39.9px;width:384px;height:384px"></div>
+  <div class="abs" id="ot" style="left:0;width:1080px;top:880px;text-align:center;color:#fff;font-size:108px;font-weight:900;letter-spacing:6px">PHYSIOVERSE</div>
+  <div class="abs" id="os" style="left:60px;right:60px;top:1030px;text-align:center;color:#fff;font-size:54px;font-weight:800;line-height:1.15">Tu clínica y tus pacientes,<br><span style="color:#5eead4">conectados.</span></div>
+  <div class="abs" id="oc" style="left:240px;top:1290px;width:600px;height:120px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:46px;font-weight:800;color:#0b1120;background:linear-gradient(90deg,#5eead4,#a78bfa);box-shadow:0 20px 60px rgba(94,234,212,.35)">Solicita tu demo →</div></div>`);
+add(V, '<div id="captionShade"></div>');
+CAPS.forEach(c => c.node = add(V, `<div class="cap"><h1>${c.h.split(' ').map(w => `<span>${w}</span>`).join(' ')}</h1>${c.p ? `<p>${c.p}</p>` : ''}</div>`));
+const fade = add(V, '<div class="abs" style="inset:0;background:#0b1120;z-index:99"></div>');
+
+let cam = { z: 1, fx: 594, fy: 1288 };
+function camAt(t) {
+  if (t <= CAM[0][0]) return { z: CAM[0][1], fx: CAM[0][2], fy: CAM[0][3] };
+  for (let i = 0; i < CAM.length - 1; i++) {
+    const a = CAM[i], b = CAM[i + 1];
+    if (t <= b[0]) { const e = eio(prog(t, a[0], b[0])); return { z: lerp(a[1], b[1], e), fx: lerp(a[2], b[2], e), fy: lerp(a[3], b[3], e) }; }
+  }
+  const k = CAM.at(-1); return { z: k[1], fx: k[2], fy: k[3] };
+}
+const toVideo = (x, y, dy) => { const sc = S * cam.z; return [CX - cam.fx * sc + x * sc, CY - cam.fy * sc + y * sc + dy]; };
+function drawFinger(t, dy, tIn, tOut) {
+  const v = prog(t, tIn, tIn + .3) * (1 - prog(t, tOut, tOut + .3));
+  let x, y, down = 0;
+  if (t <= FK[0][0]) { [x, y] = toVideo(FK[0][1], FK[0][2], dy); const k = 1 - eout(prog(t, tIn, FK[0][0])); x += 160 * k; y += 260 * k; }
+  else if (t >= FK.at(-1)[0]) [x, y] = toVideo(FK.at(-1)[1], FK.at(-1)[2], dy);
+  else {
+    const i = FK.findIndex(k => k[0] > t), a = FK[i - 1], b = FK[i];
+    const k = eio(prog(t, a[0] + .1, b[0]));
+    [x, y] = toVideo(lerp(a[1], b[1], k), lerp(a[2], b[2], k), dy);
+    down = a[3] ? 1 : 0;
+  }
+  let rip = -1;
+  FK.forEach((k, i) => { if (k[3] && i > 0 && !FK[i - 1][3] && t >= k[0] && t < k[0] + .55) rip = (t - k[0]) / .55; });
+  finger.style.left = ripple.style.left = x + 'px'; finger.style.top = ripple.style.top = y + 'px';
+  finger.style.opacity = v; finger.style.transform = `scale(${down ? .8 : 1})`;
+  ripple.style.opacity = rip < 0 ? 0 : (1 - rip) * v; ripple.style.transform = `scale(${1 + 1.6 * eout(Math.max(rip, 0))})`;
+}
+
+const DUR = 32.8;
+window.DUR = DUR;
+window.render = function (t) {
+  drawBg(t);
+  const enter = eout(prog(t, .1, 1.0)), dy = (1 - enter) * 800;
+  const out = eio(prog(t, T.lucia, T.lucia + .5));
+  cam = camAt(t);
+  const sc = S * cam.z;
+  pw.style.transform = `translate(${CX - cam.fx * sc}px,${CY - cam.fy * sc + dy + out * 300}px) scale(${sc})`;
+  pw.style.opacity = enter * (1 - out);
+  showLayer(L1, t, 0, T.prog); showLayer(L2, t, T.prog, T.portal); showLayer(L3, t, T.portal, T.end + 2);
+
+  // Informe
+  const tp = pop(t, 2.95, .4);
+  toast.style.opacity = tp.o * (1 - prog(t, 4.6, 4.9)); toast.style.transform = `translateY(${(1 - tp.s) * -120}px) scale(${lerp(.8, 1, clamp(tp.s))})`;
+  const ap = pop(t, 10.2, .4);
+  okCover.style.opacity = t < 10.2 ? 0 : 1; okPill.style.opacity = t < 10.2 ? 0 : ap.o; okPill.style.transform = `scale(${ap.s})`;
+
+  // Progreso
+  const r = 36 * eio(prog(t, 13.4, 14.6));
+  document.getElementById('arc').setAttribute('stroke-dashoffset', 653.5 * (1 - r / 100));
+  document.getElementById('pct').textContent = Math.round(r) + '%';
+  const k = eio(prog(t, 15.9, 17.2));
+  const cur = INI.map((v, i) => lerp(v, HOY[i], k));
+  document.getElementById('hoy').setAttribute('points', poly(cur));
+  [...document.getElementById('dots').children].forEach((c, i) => { const [x, y] = P(cur[i], i); c.setAttribute('cx', x); c.setAttribute('cy', y); });
+  const b = eio(prog(t, 18.3, 19.5));
+  pBar.style.width = 858 * lerp(.6, .8, b) * (t < 18.0 ? 0 : 1) + 'px';
+  pNum.textContent = Math.round(lerp(60, 80, b)) + '%';
+
+  // Portal
+  qBar.style.width = 858 * .36 * eio(prog(t, 21.6, 22.9)) + 'px';
+
+  // Clip de Lucía (a 0.8x)
+  CL.style.opacity = prog(t, T.lucia + .1, T.lucia + .5) * (1 - prog(t, T.end - .2, T.end + .2));
+  const fi = clamp(Math.floor((t - T.lucia) * 12 * .8), 0, 32);
+  LF.forEach((im, i) => im.style.opacity = i === fi ? 1 : 0);
+  LF[fi].style.transform = `scale(${1 + .05 * prog(t, T.lucia, T.end)})`;
+
+  drawFinger(t, dy, 1.9, 24.2);
+
+  CAPS.forEach(c => {
+    const o = prog(t, c.t1 - .3, c.t1);
+    c.node.style.opacity = t < c.t0 ? 0 : 1 - o;
+    c.node.style.transform = `translateY(${-24 * eio(o)}px)`;
+    [...c.node.querySelectorAll('h1 span')].forEach((s, i) => {
+      const k = eout(prog(t, c.t0 + i * .06, c.t0 + i * .06 + .4));
+      s.style.opacity = k; s.style.transform = `translateY(${(1 - k) * 44}px)`;
+    });
+    const p = c.node.querySelector('p'); if (p) p.style.opacity = eout(prog(t, c.t0 + .4, c.t0 + .8));
+  });
+
+  END.style.opacity = prog(t, T.end + .1, T.end + .6);
+  if (t > T.end) {
+    const k = eback(prog(t, T.end + .1, T.end + .8));
+    document.getElementById('ol').style.transform = `scale(${lerp(.4, 1, k)}) rotate(${t * 30}deg)`;
+    const kt = eout(prog(t, T.end + .4, T.end + 1.0));
+    document.getElementById('ot').style.opacity = kt; document.getElementById('ot').style.transform = `translateY(${(1 - kt) * 50}px)`;
+    document.getElementById('os').style.opacity = prog(t, T.end + .8, T.end + 1.3);
+    const kc = eback(prog(t, T.end + 1.4, T.end + 1.9));
+    const oc = document.getElementById('oc');
+    oc.style.opacity = clamp(kc); oc.style.transform = `scale(${lerp(.6, 1, kc) * (1 + .035 * Math.sin(Math.max(0, t - T.end - 1.9) * 6))})`;
+  } else END.style.opacity = 0;
+  fade.style.opacity = Math.max(1 - prog(t, 0, .3), prog(t, DUR - .5, DUR));
+};
+window.render(0);
+if (new URLSearchParams(location.search).has('play')) {
+  const t0 = performance.now();
+  (function loop() { window.render(((performance.now() - t0) / 1000) % DUR); requestAnimationFrame(loop); })();
+}
+</script>
+</body>
+</html>

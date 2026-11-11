@@ -13,3 +13,4 @@ une 03_sesion_clinica.mp4  sesion outro
 une 04_logo_galaxia.mp4     galaxia
 une 05_fernando_migracion.mp4 fernando
 une 06_valoracion_completa.mp4 valoracion
+une 07_informe_progreso.mp4 informe
