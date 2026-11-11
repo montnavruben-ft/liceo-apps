@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Physioverse · App del paciente</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #0b1120; font-family: 'Inter', sans-serif; }
+  #video { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #0b1120; }
+  .abs { position: absolute; }
+  .blob { position: absolute; border-radius: 50%; filter: blur(90px); }
+  #phoneWrap { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  #bezel { position: absolute; left: -38px; top: -38px; width: 1264px; height: 2652px; border-radius: 178px;
+           background: linear-gradient(145deg, #2a3142, #05070d 40%, #1a2030); box-shadow: 0 60px 160px rgba(0,0,0,.65), inset 0 0 0 4px rgba(255,255,255,.08); }
+  #screen { position: absolute; left: 0; top: 0; width: 1188px; height: 2576px; border-radius: 142px; overflow: hidden; background: #eff2f7; }
+  .layer { position: absolute; left: 0; top: 0; width: 1188px; height: 2576px; }
+  .layer > img { position: absolute; left: 0; top: 0; width: 1188px; height: 2576px; }
+  #finger { position: absolute; width: 96px; height: 96px; margin: -48px 0 0 -48px; border-radius: 50%; z-index: 30;
+            background: rgba(255,255,255,.55); border: 5px solid rgba(255,255,255,.95); box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+  #ripple { position: absolute; width: 96px; height: 96px; margin: -48px 0 0 -48px; border-radius: 50%; border: 6px solid #fff; z-index: 30; }
+  #captionShade { position: absolute; left: 0; top: 0; width: 1080px; height: 640px; background: linear-gradient(#0b1120 62%, rgba(11,17,32,0)); }
+  .cap { position: absolute; left: 44px; right: 44px; top: 100px; text-align: center; }
+  .cap h1 { color: #fff; font-size: 94px; font-weight: 900; letter-spacing: -2px; line-height: 1.02; text-shadow: 0 6px 30px rgba(0,0,0,.55); }
+  .cap h1 span { display: inline-block; }
+  .cap p { margin-top: 22px; color: #5eead4; font-size: 46px; font-weight: 700; text-shadow: 0 4px 20px rgba(0,0,0,.5); }
+  .clip { position: absolute; left: 0; width: 1080px; overflow: hidden; }
+  .clip img { position: absolute; left: 0; top: 0; width: 1080px; }
+  .clip::after { content: ''; position: absolute; inset: 0; background: linear-gradient(#0b1120, rgba(11,17,32,0) 12%, rgba(11,17,32,0) 86%, #0b1120); }
+</style>
+</head>
+<body>
+<div id="video"></div>
+<script>
+const V = document.getElementById('video');
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, k) => a + (b - a) * k;
+const prog = (t, t0, t1) => clamp((t - t0) / (t1 - t0));
+const eio = k => k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+const eout = k => 1 - Math.pow(1 - k, 3);
+const eback = k => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(k - 1, 3) + c1 * Math.pow(k - 1, 2); };
+const el = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstChild; };
+const add = (parent, html) => parent.appendChild(el(html));
+const pop = (t, t0, d = .35) => { const k = eback(prog(t, t0, t0 + d)); return { o: clamp(k * 1.5), s: lerp(.5, 1, k) }; };
+
+add(V, '<div class="blob" id="b1" style="width:760px;height:760px;background:rgba(45,212,191,.22)"></div>');
+add(V, '<div class="blob" id="b2" style="width:820px;height:820px;background:rgba(139,92,246,.26)"></div>');
+function drawBg(t) {
+  document.getElementById('b1').style.transform = `translate(${-260 + 90 * Math.sin(t * .6)}px,${120 + 70 * Math.cos(t * .5)}px)`;
+  document.getElementById('b2').style.transform = `translate(${520 + 80 * Math.cos(t * .45)}px,${1150 + 90 * Math.sin(t * .55)}px)`;
+}
+
+/* ---------- Guion ---------- */
+const T = { phone: 3.7, c2: 10.8, c3: 14.4, c4: 17.8, end: 21.5 };
+
+/* ---------- Clips de plastilina ---------- */
+function clip(name, n, h, top, t0, t1, speed, fps) {
+  const sc = add(V, '<div class="abs" style="inset:0"></div>');
+  const bx = add(sc, `<div class="clip" style="top:${top}px;height:${h}px"></div>`);
+  const fr = Array.from({ length: n }, (_, i) => add(bx, `<img src="assets/lucia/${name}_${String(i).padStart(3, '0')}.jpg" style="opacity:0">`));
+  return { sc, fr, t0, t1, speed, fps, n };
+}
+function drawClip(c, t) {
+  c.sc.style.opacity = prog(t, c.t0 - .05, c.t0 + .3) * (1 - prog(t, c.t1 - .3, c.t1));
+  if (t < c.t0 - .1 || t > c.t1 + .1) return;
+  const fi = clamp(Math.floor((t - c.t0) * c.fps * c.speed), 0, c.n - 1);
+  c.fr.forEach((im, i) => im.style.opacity = i === fi ? 1 : 0);
+  c.fr[fi].style.transform = `scale(${1 + .05 * prog(t, c.t0, c.t1)})`;
+}
+const C1 = clip('desanimo', 63, 1071, 600, 0, T.phone, .85, 20);
+const C2 = clip('telefono', 33, 1080, 600, T.c2, T.c3, .8, 12);
+const C3 = clip('banda', 66, 1071, 600, T.c3, T.c4, .8, 25);
+const C4 = clip('despedida', 16, 804, 720, T.c4, T.end, 1, 4.35);
+
+/* ---------- Teléfono con el portal ---------- */
+const S = 0.56, CX = 540, CY = 1225;
+const PH = add(V, '<div class="abs" style="inset:0"></div>');
+const pw = add(PH, '<div id="phoneWrap"><div id="bezel"></div><div id="screen"></div></div>');
+const scr = pw.querySelector('#screen');
+const box = (parent, x, y, w, h, css = '', inner = '') => add(parent, `<div class="abs" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;${css}">${inner}</div>`);
+add(scr, '<div class="layer"><img src="assets/informe/portal.jpg"></div>');
+box(scr, 166, 917, 858, 30, 'border-radius:15px;background:linear-gradient(90deg,#3f4577,#56629b)');
+const qBar = box(scr, 166, 917, 0, 30, 'border-radius:15px;background:linear-gradient(90deg,#5ccf9c,#2c6ad8)');
+const conf = box(scr, 104, 1498, 384, 78, 'border-radius:39px;background:#dcfce7;border:3px solid #86efac;color:#166534;font-size:34px;font-weight:800;letter-spacing:2px;display:flex;align-items:center;justify-content:center', '✓ CONFIRMADA');
+const NAV = [361, 594, 827, 1060].map(x => box(scr, x - 95, 2321, 190, 190, 'border-radius:50%;background:radial-gradient(circle,rgba(45,212,191,.45),rgba(45,212,191,0) 70%)'));
+const wa = box(V, 90, 1430, 900, 170, 'border-radius:44px;background:#fff;box-shadow:0 30px 80px rgba(0,0,0,.45);display:flex;align-items:center;gap:26px;padding:0 34px;z-index:20',
+  `<svg width="96" height="96" viewBox="0 0 32 32" style="flex:none"><circle cx="16" cy="16" r="16" fill="#25D366"/><path fill="#fff" d="M16 7.5a8.4 8.4 0 0 0-7.2 12.8L7.6 24.5l4.3-1.1A8.4 8.4 0 1 0 16 7.5zm4.9 11.8c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1a14 14 0 0 1-1.5-.6 11.6 11.6 0 0 1-4.4-3.9 5 5 0 0 1-1-2.7 2.9 2.9 0 0 1 .9-2.2 1 1 0 0 1 .7-.3h.5c.2 0 .4 0 .6.5l.8 1.9a.5.5 0 0 1 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6a8.6 8.6 0 0 0 1.6 2 7.9 7.9 0 0 0 2.3 1.4c.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l1.8.9c.3.1.4.2.5.3a2.3 2.3 0 0 1-.2 1.3z"/></svg>
+   <div><div style="font-size:27px;color:#64748b;font-weight:600">WHATSAPP · Lucía → Fernando</div><div style="font-size:36px;font-weight:800;color:#0f172a;margin-top:6px">“¡Confirmado! Ahí estaré 🙌”</div></div>`);
+
+/* ---------- Dedo ---------- */
+const ripple = add(V, '<div id="ripple"></div>');
+const finger = add(V, '<div id="finger"></div>');
+const FK = [];
+const tap = (t, x, y) => FK.push([t - .5, x, y, 0], [t, x, y, 1], [t + .14, x, y, 0]);
+tap(7.3, 295, 1537); tap(8.6, 793, 2079);
+FK.sort((a, b) => a[0] - b[0]);
+
+const CAM = [[T.phone, 1, 594, 1288], [4.3, 1.3, 594, 880], [6.2, 1.3, 594, 880], [6.9, 1.3, 594, 1750], [9.0, 1.3, 594, 1750], [9.6, 1.05, 594, 1500], [10.8, 1.05, 594, 1500]];
+const CAPS = [
+  { h: '¿Tus pacientes abandonan el tratamiento?', p: '', t0: .3, t1: 3.6 },
+  { h: 'Dales su propia app', p: 'Su plan y su progreso, a la mano', t0: 3.9, t1: 6.6 },
+  { h: 'Confirman su cita en un toque', p: 'Y te escriben directo por WhatsApp', t0: 6.8, t1: 9.3 },
+  { h: 'Citas, ejercicios y recibos', p: 'Todo en un solo lugar', t0: 9.4, t1: 10.8 },
+  { h: 'Lucía ve su avance…', p: '…y se motiva a seguir', t0: 11.0, t1: 14.3 },
+  { h: 'Hace sus ejercicios en casa', p: 'Con su plan siempre en el celular', t0: 14.6, t1: 17.7 },
+  { h: '¡Y completa su tratamiento!', p: 'Pacientes que regresan y te recomiendan', t0: 18.0, t1: 21.4 }
+];
+const END = add(V, `<div class="abs" style="inset:0">
+  <div class="abs" id="ol" style="left:390px;top:520px;width:300px;height:300px;border-radius:50%;overflow:hidden;box-shadow:0 0 110px 20px rgba(139,92,246,.55);-webkit-mask-image:radial-gradient(circle,#000 97%,transparent 100%)">
+    <img src="assets/logo_master.jpg" style="position:absolute;left:-41.4px;top:-39.9px;width:384px;height:384px"></div>
+  <div class="abs" id="ot" style="left:0;width:1080px;top:880px;text-align:center;color:#fff;font-size:108px;font-weight:900;letter-spacing:6px">PHYSIOVERSE</div>
+  <div class="abs" id="os" style="left:60px;right:60px;top:1030px;text-align:center;color:#fff;font-size:54px;font-weight:800;line-height:1.15">Tus pacientes,<br><span style="color:#5eead4">más comprometidos.</span></div>
+  <div class="abs" id="oc" style="left:240px;top:1290px;width:600px;height:120px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:46px;font-weight:800;color:#0b1120;background:linear-gradient(90deg,#5eead4,#a78bfa);box-shadow:0 20px 60px rgba(94,234,212,.35)">Solicita tu demo →</div></div>`);
+add(V, '<div id="captionShade"></div>');
+CAPS.forEach(c => c.node = add(V, `<div class="cap"><h1>${c.h.split(' ').map(w => `<span>${w}</span>`).join(' ')}</h1>${c.p ? `<p>${c.p}</p>` : ''}</div>`));
+const fade = add(V, '<div class="abs" style="inset:0;background:#0b1120;z-index:99"></div>');
+
+let cam = { z: 1, fx: 594, fy: 1288 };
+function camAt(t) {
+  if (t <= CAM[0][0]) return { z: CAM[0][1], fx: CAM[0][2], fy: CAM[0][3] };
+  for (let i = 0; i < CAM.length - 1; i++) {
+    const a = CAM[i], b = CAM[i + 1];
+    if (t <= b[0]) { const e = eio(prog(t, a[0], b[0])); return { z: lerp(a[1], b[1], e), fx: lerp(a[2], b[2], e), fy: lerp(a[3], b[3], e) }; }
+  }
+  const k = CAM.at(-1); return { z: k[1], fx: k[2], fy: k[3] };
+}
+const toVideo = (x, y, dy) => { const sc = S * cam.z; return [CX - cam.fx * sc + x * sc, CY - cam.fy * sc + y * sc + dy]; };
+function drawFinger(t, dy, tIn, tOut) {
+  const v = prog(t, tIn, tIn + .3) * (1 - prog(t, tOut, tOut + .3));
+  let x, y, down = 0;
+  if (t <= FK[0][0]) { [x, y] = toVideo(FK[0][1], FK[0][2], dy); const k = 1 - eout(prog(t, tIn, FK[0][0])); x += 160 * k; y += 260 * k; }
+  else if (t >= FK.at(-1)[0]) [x, y] = toVideo(FK.at(-1)[1], FK.at(-1)[2], dy);
+  else {
+    const i = FK.findIndex(k => k[0] > t), a = FK[i - 1], b = FK[i];
+    const k = eio(prog(t, a[0] + .1, b[0]));
+    [x, y] = toVideo(lerp(a[1], b[1], k), lerp(a[2], b[2], k), dy);
+    down = a[3] ? 1 : 0;
+  }
+  let rip = -1;
+  FK.forEach((k, i) => { if (k[3] && i > 0 && !FK[i - 1][3] && t >= k[0] && t < k[0] + .55) rip = (t - k[0]) / .55; });
+  finger.style.left = ripple.style.left = x + 'px'; finger.style.top = ripple.style.top = y + 'px';
+  finger.style.opacity = v; finger.style.transform = `scale(${down ? .8 : 1})`;
+  ripple.style.opacity = rip < 0 ? 0 : (1 - rip) * v; ripple.style.transform = `scale(${1 + 1.6 * eout(Math.max(rip, 0))})`;
+}
+
+const DUR = 25;
+window.DUR = DUR;
+window.render = function (t) {
+  drawBg(t);
+  [C1, C2, C3, C4].forEach(c => drawClip(c, t));
+  // Teléfono
+  const enter = eout(prog(t, T.phone, T.phone + .8)), dy = (1 - enter) * 900;
+  const out = eio(prog(t, T.c2 - .3, T.c2 + .2));
+  PH.style.opacity = prog(t, T.phone - .1, T.phone + .3) * (1 - out);
+  cam = camAt(t);
+  const sc = S * cam.z;
+  pw.style.transform = `translate(${CX - cam.fx * sc}px,${CY - cam.fy * sc + dy}px) scale(${sc})`;
+  qBar.style.width = 858 * .36 * eio(prog(t, 4.6, 5.8)) + 'px';
+  const cp = pop(t, 7.3); conf.style.opacity = t < 7.3 ? 0 : cp.o; conf.style.transform = `scale(${cp.s})`;
+  NAV.forEach((n, i) => { const k = prog(t, 9.6 + i * .25, 9.8 + i * .25) * (1 - prog(t, 10.4 + i * .1, 10.7 + i * .1)); n.style.opacity = k; n.style.transform = `scale(${.6 + .4 * k})`; });
+  const wp = pop(t, 8.8, .4);
+  wa.style.opacity = wp.o * (1 - prog(t, 9.9, 10.2)); wa.style.transform = `translateY(${(1 - clamp(wp.s)) * 80}px) scale(${lerp(.85, 1, clamp(wp.s))})`;
+  if (t > T.phone - .2 && t < T.c2 + .2) drawFinger(t, dy, 6.4, 9.2); else finger.style.opacity = ripple.style.opacity = 0;
+
+  CAPS.forEach(c => {
+    const o = prog(t, c.t1 - .3, c.t1);
+    c.node.style.opacity = t < c.t0 ? 0 : 1 - o;
+    c.node.style.transform = `translateY(${-24 * eio(o)}px)`;
+    [...c.node.querySelectorAll('h1 span')].forEach((s, i) => {
+      const k = eout(prog(t, c.t0 + i * .06, c.t0 + i * .06 + .4));
+      s.style.opacity = k; s.style.transform = `translateY(${(1 - k) * 44}px)`;
+    });
+    const p = c.node.querySelector('p'); if (p) p.style.opacity = eout(prog(t, c.t0 + .4, c.t0 + .8));
+  });
+  END.style.opacity = t > T.end ? prog(t, T.end + .1, T.end + .6) : 0;
+  if (t > T.end) {
+    const k = eback(prog(t, T.end + .1, T.end + .8));
+    document.getElementById('ol').style.transform = `scale(${lerp(.4, 1, k)}) rotate(${t * 30}deg)`;
+    const kt = eout(prog(t, T.end + .4, T.end + 1.0));
+    document.getElementById('ot').style.opacity = kt; document.getElementById('ot').style.transform = `translateY(${(1 - kt) * 50}px)`;
+    document.getElementById('os').style.opacity = prog(t, T.end + .8, T.end + 1.3);
+    const kc = eback(prog(t, T.end + 1.4, T.end + 1.9));
+    const oc = document.getElementById('oc');
+    oc.style.opacity = clamp(kc); oc.style.transform = `scale(${lerp(.6, 1, kc) * (1 + .035 * Math.sin(Math.max(0, t - T.end - 1.9) * 6))})`;
+  }
+  fade.style.opacity = Math.max(1 - prog(t, 0, .3), prog(t, DUR - .5, DUR));
+};
+window.render(0);
+if (new URLSearchParams(location.search).has('play')) {
+  const t0 = performance.now();
+  (function loop() { window.render(((performance.now() - t0) / 1000) % DUR); requestAnimationFrame(loop); })();
+}
+</script>
+</body>
+</html>
