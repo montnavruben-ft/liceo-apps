@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Physioverse · Carrusel</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1350px; overflow: hidden; background: #0b1120; font-family: 'Inter', sans-serif; }
+  #s { position: relative; width: 1080px; height: 1350px; overflow: hidden;
+       background: radial-gradient(circle at 12% 8%, rgba(45,212,191,.22), transparent 42%), radial-gradient(circle at 95% 92%, rgba(139,92,246,.30), transparent 45%), #0b1120; }
+  .abs { position: absolute; }
+  /* Encabezado */
+  .count { position: absolute; left: 70px; top: 64px; padding: 10px 22px; border-radius: 999px; background: rgba(94,234,212,.14); border: 2px solid rgba(94,234,212,.45);
+           color: #5eead4; font-size: 26px; font-weight: 800; letter-spacing: 2px; }
+  .topic { position: absolute; right: 70px; top: 72px; color: #94a3b8; font-size: 26px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; }
+  .title { position: absolute; left: 70px; right: 70px; top: 134px; color: #fff; font-size: 66px; font-weight: 900; letter-spacing: -1.5px; line-height: 1.04; }
+  .title em { font-style: normal; color: #5eead4; }
+  .sub { position: absolute; left: 70px; right: 70px; color: #cbd5e1; font-size: 31px; font-weight: 500; line-height: 1.3; }
+  /* Teléfono */
+  .phone { position: absolute; border-radius: 54px; padding: 16px; background: linear-gradient(145deg, #2a3142, #05070d 40%, #1a2030);
+           box-shadow: 0 40px 90px rgba(0,0,0,.6), inset 0 0 0 3px rgba(255,255,255,.08); }
+  .screen { position: relative; overflow: hidden; border-radius: 40px; background: #eff2f7; }
+  .screen > .inner { position: absolute; left: 0; top: 0; width: 1188px; height: 2576px; transform-origin: 0 0; }
+  .screen > .inner > img { position: absolute; left: 0; top: 0; width: 1188px; height: 2576px; }
+  .pin { position: absolute; width: 54px; height: 54px; margin: -27px 0 0 -27px; border-radius: 50%; background: #14b8a6; color: #fff; z-index: 5;
+         font-size: 28px; font-weight: 900; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 7px rgba(20,184,166,.35), 0 8px 20px rgba(0,0,0,.4); }
+  .note { position: absolute; left: 640px; width: 380px; padding: 16px 22px 18px; border-radius: 26px; background: rgba(15,23,42,.78); border: 2px solid rgba(255,255,255,.1); z-index: 4; }
+  .note .n { display: inline-flex; width: 38px; height: 38px; border-radius: 50%; background: #14b8a6; color: #fff; font-size: 23px; font-weight: 900; align-items: center; justify-content: center; margin-bottom: 8px; }
+  .note b { display: block; color: #fff; font-size: 29px; font-weight: 800; line-height: 1.15; }
+  .note span.d { display: block; color: #a5b4c8; font-size: 23px; line-height: 1.3; margin-top: 6px; }
+  /* Mini teléfonos (collage) */
+  .lab { position: absolute; text-align: center; color: #fff; font-size: 29px; font-weight: 800; line-height: 1.15; }
+  .lab span { display: block; color: #94a3b8; font-size: 22px; font-weight: 500; margin-top: 6px; }
+  /* Pie */
+  .brand { position: absolute; left: 70px; bottom: 50px; display: flex; align-items: center; gap: 14px; color: #fff; font-size: 26px; font-weight: 900; letter-spacing: 4px; z-index: 6; }
+  .brand i { width: 50px; height: 50px; border-radius: 50%; overflow: hidden; display: block; box-shadow: 0 0 24px rgba(139,92,246,.6); }
+  .brand i img { width: 64px; height: 64px; margin: -7px 0 0 -7px; }
+  .swipe { position: absolute; right: 70px; bottom: 54px; color: #5eead4; font-size: 27px; font-weight: 800; z-index: 6; }
+  .cta { position: absolute; left: 70px; right: 70px; bottom: 120px; height: 104px; border-radius: 52px; display: flex; align-items: center; justify-content: center; z-index: 6;
+         font-size: 40px; font-weight: 900; color: #0b1120; background: linear-gradient(90deg, #5eead4, #a78bfa); box-shadow: 0 20px 50px rgba(94,234,212,.3); }
+  /* Portada */
+  .cover-img { position: absolute; inset: 0; background-size: cover; background-position: center 30%; }
+  .cover-fade { position: absolute; inset: 0; background: linear-gradient(rgba(11,17,32,.85) 0%, rgba(11,17,32,.15) 34%, rgba(11,17,32,0) 52%, rgba(11,17,32,.8) 78%, #0b1120 100%); }
+  .ctitle { position: absolute; left: 64px; right: 64px; top: 120px; color: #fff; font-size: 96px; font-weight: 900; letter-spacing: -2.5px; line-height: .98; text-shadow: 0 8px 30px rgba(0,0,0,.45); }
+  .ctitle em { font-style: normal; color: #5eead4; }
+  .kicker { position: absolute; left: 64px; top: 64px; color: #5eead4; font-size: 28px; font-weight: 800; letter-spacing: 5px; }
+  .csub { position: absolute; left: 64px; right: 64px; bottom: 150px; color: #fff; font-size: 38px; font-weight: 700; line-height: 1.2; text-shadow: 0 4px 20px rgba(0,0,0,.5); }
+  .pill { position: absolute; right: 64px; bottom: 50px; padding: 18px 34px; border-radius: 999px; background: #5eead4; color: #0b1120; font-size: 30px; font-weight: 900; z-index: 6; }
+</style>
+</head>
+<body>
+<div id="s"></div>
+<script>
+const Q = new URLSearchParams(location.search);
+const IMG = {
+  inicio: 'assets/inicio.jpg', sesion: 'assets/sesion.jpg', portal: 'assets/informe/portal.jpg', auditoria: 'assets/informe/auditoria.jpg', progreso: 'assets/informe/progreso.jpg',
+  nuevo: 'assets/fernando/nuevo.jpg', importar: 'assets/fernando/importar.jpg', expediente: 'assets/fernando/expediente.jpg',
+  eva: 'assets/valoracion/eva.jpg', derm: 'assets/valoracion/derm_mapa.jpg', gonio: 'assets/valoracion/gonio.jpg', fuerza: 'assets/valoracion/fuerza.jpg',
+  berg: 'assets/valoracion/berg_res.jpg', escalas: 'assets/valoracion/escalas.jpg', dx: 'assets/valoracion/dx.jpg', tto: 'assets/valoracion/tratamiento.jpg'
+};
+// Superposiciones reutilizables (coordenadas de la captura)
+const OV = {
+  tel: '<div class="abs" style="left:250px;top:886px;font-size:37px;font-weight:800;color:#111827">663 ••• ••59</div>',
+  search: `<div class="abs" style="left:482px;top:202px;width:395px;height:81px;border-radius:41px;background:#fff;box-shadow:0 0 0 6px rgba(255,255,255,.45);display:flex;align-items:center;padding-left:30px;font-size:35px;font-weight:600;color:#0f172a">🔍&nbsp; Prueba Pac<span style="width:3px;height:40px;background:#2563eb;margin-left:4px"></span></div>
+    <div class="abs" style="left:250px;top:305px;width:900px;border-radius:40px;background:#fff;box-shadow:0 30px 70px rgba(15,23,42,.28);padding:26px 30px">
+      <div style="font-size:26px;font-weight:700;color:#94a3b8;letter-spacing:2px;margin-bottom:18px">1 RESULTADO</div>
+      <div style="display:flex;align-items:center;gap:26px;padding:16px;border-radius:28px;background:#e0f2fe">
+        <div style="width:100px;height:100px;border-radius:26px;background:#b9c32e;color:#fff;font-size:44px;display:flex;align-items:center;justify-content:center">PP</div>
+        <div><div style="font-size:38px;font-weight:800;color:#0f172a"><span style="background:#fef08a;border-radius:6px">Prueba Pac</span>iente 10</div>
+        <div style="font-size:28px;color:#64748b;margin-top:6px"><b style="color:#2b8fd8">EF-PP-69316</b> · Neuropatía periférica aguda</div></div></div></div>`,
+  conf: '<div class="abs" style="left:104px;top:1498px;width:384px;height:78px;border-radius:39px;background:#dcfce7;border:3px solid #86efac;color:#166534;font-size:34px;font-weight:800;letter-spacing:2px;display:flex;align-items:center;justify-content:center">✓ CONFIRMADA</div>',
+  aprob: '<div class="abs" style="left:140px;top:1012px;width:430px;height:78px;background:#fff"></div><div class="abs" style="left:146px;top:1018px;width:420px;height:66px;border-radius:33px;background:#dcfce7;border:3px solid #86efac;color:#166534;font-size:31px;font-weight:800;display:flex;align-items:center;justify-content:center">✓ Expediente aprobado</div>'
+};
+
+/* ===================== CONTENIDO ===================== */
+const C = {
+  agenda: { topic: 'Agenda de citas', slides: [
+    { type: 'cover', img: 'assets/carrusel/lucia_tel.jpg', pos: 'center 62%', kicker: 'PHYSIOVERSE · AGENDA',
+      title: 'Tu agenda,<br><em>sin caos.</em>', sub: 'Así organizas tus citas, sesiones y recordatorios en un solo lugar.' },
+    { title: 'Tu día, <em>de un vistazo</em>', sub: 'Al abrir la app ves a quién atiendes hoy.', img: 'inicio', crop: [120, 2120],
+      pins: [[594, 963, 'Hoy y mañana', 'Cambia entre las sesiones de hoy y la agenda provisional de mañana.'],
+             [594, 1197, 'Filtros rápidos', 'Todas, próximas o concluidas.'],
+             [180, 1685, 'Cada paciente', 'Hora, expediente, diagnóstico y % de avance.'],
+             [594, 1905, 'Historial del día', 'Las sesiones concluidas quedan registradas.']] },
+    { title: 'Encuentra a <em>cualquier paciente</em>', sub: 'Escribe su nombre o número de expediente.', img: 'inicio', crop: [0, 1500], ov: ['search'],
+      pins: [[680, 243, 'Búsqueda instantánea', 'Resultados mientras escribes.'],
+             [1120, 470, 'Un toque y listo', 'Abres su sesión o su expediente.']] },
+    { title: 'La sesión completa <em>en un panel</em>', sub: 'Todo lo que necesitas mientras atiendes.', img: 'sesion', crop: [340, 2300], ov: ['tel'],
+      pins: [[610, 488, 'Monto a cobrar', 'Antes de empezar.'],
+             [395, 925, 'Contacto rápido', 'Llamar o recordar.'],
+             [760, 1269, 'Estado de la cita', 'Confirmada o pendiente.'],
+             [95, 1410, 'Plan de intervención', 'Listo desde el expediente.'],
+             [565, 2167, 'Finaliza la sesión', 'Y queda en el historial.']] },
+    { title: 'Recordatorios <em>por WhatsApp</em>', sub: 'Menos faltas, sin perseguir pacientes.', img: 'sesion', crop: [1150, 2300], ov: ['tel'],
+      pins: [[1080, 1760, 'Programa recordatorios', 'Elige cuándo se envían.'],
+             [1080, 1873, 'Envía al momento', 'Un toque y el paciente lo recibe.'],
+             [850, 1958, 'O desde tu WhatsApp', 'Si prefieres usar tu número.']] },
+    { title: 'Tu paciente <em>confirma desde su app</em>', sub: 'Cada paciente tiene su propio portal.', img: 'portal', crop: [950, 2560], ov: ['conf'], cta: true,
+      pins: [[1010, 1380, 'Su próxima sesión', 'Día, hora y fisioterapeuta.'],
+             [520, 1537, 'Confirma asistencia', 'Y tú lo ves en tu agenda.'],
+             [1030, 2079, 'Te escribe directo', 'Por WhatsApp, en un toque.']] }
+  ] },
+  expediente: { topic: 'Expediente clínico', slides: [
+    { type: 'cover', img: 'assets/carrusel/fernando.jpg', pos: 'center 20%', kicker: 'PHYSIOVERSE · EXPEDIENTE',
+      title: 'El expediente,<br><em>sin papel.</em>', sub: 'Todo lo que registras de cada paciente, en una app hecha para fisios.' },
+    { title: 'Crea o <em>importa</em> en un clic', sub: 'Empieza desde cero o trae tus expedientes de siempre.', img: 'nuevo', crop: [250, 1560],
+      pins: [[140, 1088, 'Crear manualmente', 'Un expediente limpio, listo para llenar.'],
+             [140, 1227, 'Importar desde archivo', 'PDF, Word o notas clínicas.'],
+             [140, 1373, 'Importador OCR', 'Digitaliza hojas o reportes escaneados.']] },
+    { title: 'La ficha de <em>cada paciente</em>', sub: 'Datos, terapeuta asignado y accesos rápidos.', img: 'expediente', crop: [130, 1960],
+      pins: [[150, 480, 'Expediente con ID', 'Y botón para dar de alta.'],
+             [1090, 960, 'Asigna terapeuta', 'Ideal para clínicas con equipo.'],
+             [1090, 1250, 'Informe y progreso', 'PDF o avance, en un toque.'],
+             [1090, 1574, 'Activa su cuenta', 'Acceso a su portal.'],
+             [815, 1838, 'Secciones clínicas', 'Antecedentes, exploración, diagnóstico…']] },
+    { type: 'multi', title: 'Exploración física <em>interactiva</em>', sub: 'Se registra tocando, no escribiendo.',
+      items: [['eva', [700, 1560], 'Dolor (EVA)', 'Deslizas y listo'], ['derm', [240, 1700], 'Dermatomas', 'Zona, lado y sensación'], ['gonio', [430, 1960], 'Goniometría', 'Rango en grados']] },
+    { type: 'multi', title: 'Fuerza y <em>escalas estandarizadas</em>', sub: 'Mediciones objetivas para comparar avances.',
+      items: [['fuerza', [360, 1760], 'Fuerza muscular', 'Escala de Daniels 0–5'], ['escalas', [440, 2140], '24 escalas', 'Berg, Tinetti, ARAT y más'], ['berg', [960, 1760], 'Resultado al instante', 'Puntaje e interpretación']] },
+    { type: 'multi', title: 'Diagnóstico y <em>tratamiento</em>', sub: 'El plan completo, documentado.', cta: true,
+      items: [['dx', [430, 2140], 'Diagnóstico', 'Funcional y sesiones planeadas'], ['tto', [700, 2300], 'Tratamiento', 'Medios físicos, dosis y técnicas']] }
+  ] },
+  informe: { topic: 'Informe y progreso', slides: [
+    { type: 'cover', img: 'assets/carrusel/duo.jpg', pos: 'center 55%', kicker: 'PHYSIOVERSE · INFORME Y PROGRESO',
+      title: 'Que el avance<br><em>se vea.</em>', sub: 'Informes clínicos en PDF y progreso que tú y tu paciente pueden ver.' },
+    { title: 'Informe clínico <em>en PDF</em>', sub: 'Generado desde el expediente, sin capturar nada de nuevo.', img: 'auditoria', crop: [130, 1760],
+      pins: [[911, 295, 'Imprime o comparte', 'Descarga el informe al momento.'],
+             [1060, 640, 'Formato NOM-004-SSA3', 'Encabezado y datos de tu clínica.'],
+             [590, 1051, 'Estado de revisión', 'Pendiente o aprobado.'],
+             [1040, 1450, 'Datos clínicos', 'Paciente, ingreso y fisioterapeuta responsable.']] },
+    { title: 'Revisa y <em>aprueba</em>', sub: 'Supervisión clínica para clínicas con varios fisios.', img: 'auditoria', crop: [880, 2540], ov: ['aprob'],
+      pins: [[610, 1051, 'Aprobado en un toque', 'El expediente queda validado.'],
+             [910, 2160, 'Ver expediente completo', 'Revisa cada detalle.'],
+             [580, 2262, 'Revisar / cancelar', 'Devuelve con observaciones.'],
+             [770, 2375, 'Guardar y aprobar', 'Firma de dirección clínica.']] },
+    { title: 'Mide <em>el avance</em>', sub: 'Cada sesión suma al progreso del tratamiento.', img: 'progreso', crop: [130, 2300],
+      pins: [[395, 470, 'Avance del tratamiento', 'Sesiones hechas vs. planeadas.'],
+             [594, 1466, 'Cómo va en cada área', 'Al inicio vs. hoy: dolor, fuerza, rango, escalas.'],
+             [679, 2247, 'Meta por indicador', 'Dónde empezó y cuánto falta.']] },
+    { title: 'Tu paciente <em>lo ve en su app</em>', sub: 'Pacientes que ven su avance, siguen viniendo.', img: 'portal', crop: [100, 1650], cta: true,
+      pins: [[1010, 572, 'Su plan de rehabilitación', 'Con su nombre y su avance.'],
+             [594, 930, 'Progreso en tiempo real', 'Se actualiza con cada sesión.'],
+             [1050, 1032, 'Abre su progreso', 'El mismo detalle que tú ves.']] }
+  ] }
+};
+
+/* ===================== RENDER ===================== */
+const S = document.getElementById('s');
+const add = (p, h) => { const d = document.createElement('div'); d.innerHTML = h.trim(); const first = d.firstElementChild; while (d.firstChild) p.appendChild(d.firstChild); return first; };
+const deck = C[Q.get('c') || 'agenda'];
+const idx = +(Q.get('i') || 1), sl = deck.slides[idx - 1], N = deck.slides.length;
+window.N = N;
+const brand = '<div class="brand"><i><img src="assets/logo_master.jpg"></i>PHYSIOVERSE</div>';
+
+function phone(x, y, w, img, crop, ov = []) {
+  const sw = w - 32, k = sw / 1188, sh = (crop[1] - crop[0]) * k;
+  const p = add(S, `<div class="phone" style="left:${x}px;top:${y}px;width:${w}px"><div class="screen" style="width:${sw}px;height:${sh}px">
+    <div class="inner" style="transform:translateY(${-crop[0] * k}px) scale(${k})"><img src="${IMG[img]}">${ov.map(o => OV[o]).join('')}</div></div></div>`);
+  return { k, map: (px, py) => [x + 16 + px * k, y + 16 + (py - crop[0]) * k], h: sh + 32 };
+}
+
+if (sl.type === 'cover') {
+  add(S, `<div class="cover-img" style="background-image:url(${sl.img});background-position:${sl.pos}"></div><div class="cover-fade"></div>`);
+  add(S, `<div class="kicker">${sl.kicker}</div><div class="ctitle">${sl.title}</div><div class="csub">${sl.sub}</div>`);
+  add(S, brand); add(S, '<div class="pill">Desliza →</div>');
+} else {
+  add(S, `<div class="count">${String(idx).padStart(2, '0')} / ${String(N).padStart(2, '0')}</div><div class="topic">${deck.topic}</div>`);
+  const t = add(S, `<div class="title">${sl.title}</div>`);
+  const sub = add(S, `<div class="sub">${sl.sub}</div>`);
+  sub.style.top = (t.offsetTop + t.offsetHeight + 16) + 'px';
+  const top = sub.offsetTop + sub.offsetHeight + 40;
+  const bottom = sl.cta ? 1350 - 250 : 1350 - 120;
+  if (sl.type === 'multi') {
+    const n = sl.items.length, gap = 34, W = (940 - gap * (n - 1)) / n, labH = 110;
+    const k0 = (W - 32) / 1188, H = Math.min((bottom - top - labH - 32) / k0, 2576);
+    sl.items.forEach(([img, crop, lab, d], i) => {
+      const mid = (crop[0] + crop[1]) / 2;
+      let c = [Math.max(0, mid - H / 2), 0]; c[1] = c[0] + H;
+      if (c[1] > 2576) c = [2576 - H, 2576];
+      const y0 = top + Math.max(0, (bottom - top - (H * k0 + 32) - labH) / 2);
+      const ph = phone(70 + i * (W + gap), y0, W, img, c);
+      add(S, `<div class="lab" style="left:${70 + i * (W + gap) - 10}px;width:${W + 20}px;top:${y0 + ph.h + 22}px">${lab}<span>${d}</span></div>`);
+    });
+  } else {
+    const W = 520, sw = W - 32, k0 = sw / 1188;
+    let c = sl.crop.slice(); const maxH = (bottom - top - 32) / k0;
+    if (c[1] - c[0] > maxH) c[1] = c[0] + maxH;
+    const ph = phone(70, top, W, sl.img, c, sl.ov || []);
+    const svg = add(S, '<svg class="abs" style="left:0;top:0;z-index:3" width="1080" height="1350"></svg>');
+    const items = sl.pins.map(([px, py, b, d], i) => {
+      const [x, y] = ph.map(px, py);
+      add(S, `<div class="pin" style="left:${x}px;top:${y}px">${i + 1}</div>`);
+      const n = add(S, `<div class="note"><span class="n">${i + 1}</span><b>${b}</b><span class="d">${d}</span></div>`);
+      return { x, y, n };
+    });
+    // Coloca las notas a la altura de su punto sin que se encimen
+    const order = items.slice().sort((a, b) => a.y - b.y);
+    let cur = top;
+    order.forEach(it => { const h = it.n.offsetHeight; const want = it.y - h / 2; it.top = Math.max(cur, want); cur = it.top + h + 14; });
+    const over = cur - 14 - bottom; if (over > 0) { let lim = top; order.forEach(it => { it.top = Math.max(lim, it.top - over); lim = it.top + it.n.offsetHeight + 14; }); }
+    order.forEach(it => {
+      it.n.style.top = it.top + 'px';
+      const ny = it.top + 40;
+      svg.insertAdjacentHTML('beforeend', `<path d="M${it.x} ${it.y} C ${it.x + 120} ${it.y}, 560 ${ny}, 640 ${ny}" fill="none" stroke="#5eead4" stroke-width="3" stroke-dasharray="2 8" stroke-linecap="round"/>`);
+    });
+  }
+  if (sl.cta) add(S, '<div class="cta">Solicita tu demo →</div>');
+  add(S, brand);
+  if (idx < N) add(S, '<div class="swipe">Desliza →</div>');
+}
+</script>
+</body>
+</html>

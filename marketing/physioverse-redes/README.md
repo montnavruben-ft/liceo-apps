@@ -29,3 +29,7 @@ Valoración: `valoracion.html` (`node render.js valoracion`), capturas en `asset
 Lucía: `python3 preparar_lucia.py <carpeta_uploads>` prepara clips y capturas (`assets/lucia/`, `assets/informe/`); video 3: `node render.js informe`; video 5: `node render.js paciente`; dermatomas: `node render.js dermatomas`.
 Vista previa en navegador: `animacion.html?scene=sesion&play` (escenas: `intro`, `agenda`, `sesion`, `outro`).
 Textos, tiempos y movimientos de cámara se editan en `animacion.html`.
+
+## Carruseles para Instagram / Facebook
+PNG 1080×1350 (4:5) en `carruseles/agenda`, `carruseles/expediente` y `carruseles/informe`; textos sugeridos en `carruseles/textos_publicacion.md`.
+Se generan con `node render_carrusel.js` a partir de `carrusel.html` (contenido de cada slide en el objeto `C`).
