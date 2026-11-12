@@ -1,0 +1,119 @@
+{
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "durationInFrames": 2400,
+  "transitionFrames": 12,
+  "scenes": [
+    {
+      "id": 1,
+      "key": "hook",
+      "name": "Hook",
+      "startFrame": 0,
+      "endFrame": 120,
+      "narration": "¿Y si tu cerebro pudiera reaprender a moverse?",
+      "onScreen": { "title": "¿TU CEREBRO PUEDE REAPRENDER?", "subtitle": null },
+      "visual": "Cerebro estilizado low-poly flotando en centro, sinapsis con puntos de luz cian que se encienden en oleada. Fondo azul noche con partículas que suben.",
+      "camera": "Frontal, push-in 1.0 a 1.15, rotación Y 0° a 45°."
+    },
+    {
+      "id": 2,
+      "key": "que-es",
+      "name": "¿Qué es?",
+      "startFrame": 120,
+      "endFrame": 360,
+      "narration": "Eso es el Método Bobath: una forma de rehabilitar el movimiento después de una lesión del sistema nervioso.",
+      "onScreen": { "title": "MÉTODO BOBATH", "subtitle": "Rehabilitación neurológica" },
+      "visual": "Avatar humano estilizado sin rostro con sistema nervioso en cian. Halo señala cerebro, médula y músculos. Paso lento hacia adelante, la línea nerviosa se ilumina de arriba a abajo.",
+      "camera": "Plano medio, dolly-in lateral de izquierda a derecha."
+    },
+    {
+      "id": 3,
+      "key": "origen",
+      "name": "Origen",
+      "startFrame": 360,
+      "endFrame": 600,
+      "narration": "Nació en Londres, en los años cuarenta, con Berta y Karel Bobath.",
+      "onScreen": { "title": "LONDRES, AÑOS 40", "subtitle": "Berta + Karel Bobath" },
+      "visual": "Mapa 3D de Londres en miniatura, dos siluetas estilizadas emergen con ease-out, año 1940s en 3D flotante.",
+      "camera": "Cenital inclinada 45°, órbita lenta de 30°."
+    },
+    {
+      "id": 4,
+      "key": "neuroplasticidad",
+      "name": "La idea revolucionaria",
+      "startFrame": 600,
+      "endFrame": 840,
+      "narration": "Su idea era revolucionaria: el cerebro no está roto para siempre, puede reorganizarse.",
+      "onScreen": { "title": "NEUROPLASTICIDAD", "subtitle": "El cerebro se reorganiza" },
+      "visual": "Red neuronal que se rompe en un punto (línea roja tenue) y se reconecta con nuevas rutas cian que crecen con animación de trazado, pulso en los nodos.",
+      "camera": "Zoom-out lento, luego push-in al nodo reconectado."
+    },
+    {
+      "id": 5,
+      "key": "problema",
+      "name": "El problema",
+      "startFrame": 840,
+      "endFrame": 1110,
+      "narration": "Tras un ictus o una parálisis cerebral, el tono se altera y el movimiento sale torcido.",
+      "onScreen": { "title": "TONO ALTERADO", "subtitle": "El movimiento se desvía" },
+      "visual": "Dos avatares lado a lado: izquierda marcha fluida con trayectoria recta verde; derecha brazo flexionado, pierna rígida, trayectoria torcida roja y resorte apretado que vibra.",
+      "camera": "Plano general, paneo horizontal de izquierda a derecha."
+    },
+    {
+      "id": 6,
+      "key": "inhibir",
+      "name": "Paso 1: Inhibición",
+      "startFrame": 1110,
+      "endFrame": 1380,
+      "narration": "Primero, el terapeuta inhibe ese tono anormal, con sus manos y con la postura.",
+      "onScreen": { "title": "1. INHIBIR", "subtitle": "Calmar el tono anormal" },
+      "visual": "Manos estilizadas del terapeuta sobre hombro y pelvis; el resorte rojo tenso se afloja y pasa a azul; onda de calma circular.",
+      "camera": "Primer plano de hombro/pelvis, zoom-in lento."
+    },
+    {
+      "id": 7,
+      "key": "facilitar",
+      "name": "Paso 2: Facilitación",
+      "startFrame": 1380,
+      "endFrame": 1650,
+      "narration": "Después facilita el movimiento correcto, guiando desde puntos clave como la pelvis o el hombro.",
+      "onScreen": { "title": "2. FACILITAR", "subtitle": "Guiar el movimiento correcto" },
+      "visual": "Orbes dorados en pelvis, tronco, hombro y mano que pulsan en secuencia; el terapeuta guía el brazo en un alcance hacia un objeto con trayectoria cian.",
+      "camera": "Plano medio 3/4, tilt-up siguiendo el brazo."
+    },
+    {
+      "id": 8,
+      "key": "ciclo",
+      "name": "El ciclo Bobath",
+      "startFrame": 1650,
+      "endFrame": 1920,
+      "narration": "Observar, analizar, tratar y volver a evaluar. Así, repetición tras repetición.",
+      "onScreen": { "title": "OBSERVAR → ANALIZAR → TRATAR → REEVALUAR", "subtitle": null },
+      "visual": "Rueda de 4 nodos 3D que gira 90° por nodo; cada nodo hace pop al encenderse; flechas luminosas en loop.",
+      "camera": "Frontal centrada, leve zoom-out."
+    },
+    {
+      "id": 9,
+      "key": "para-quien",
+      "name": "¿Para quién?",
+      "startFrame": 1920,
+      "endFrame": 2190,
+      "narration": "Se usa en hemiparesias, parálisis cerebral, traumatismos, lesiones medulares y esclerosis múltiple, entre otras.",
+      "onScreen": { "title": "¿PARA QUIÉN?", "subtitle": "Ictus · Parálisis cerebral · Lesión medular · EM" },
+      "visual": "Mosaico de 4 avatares estilizados (niño, adulto mayor, joven en silla, adulto) en tarjetas flotantes con icono, entrada en cascada con stagger de 0.15 s.",
+      "camera": "Plano general, zoom-out suave."
+    },
+    {
+      "id": 10,
+      "key": "cierre",
+      "name": "Cierre / CTA",
+      "startFrame": 2190,
+      "endFrame": 2400,
+      "narration": "El objetivo no es solo moverse. Es volver a vivir con la mayor independencia posible.",
+      "onScreen": { "title": "MOVERSE ES VOLVER A VIVIR", "subtitle": "Guarda este reel · Síguenos" },
+      "visual": "Avatar caminando 3 pasos hacia la cámara, el fondo se ilumina, cerebro y cuerpo se conectan con luz completa, texto final con scale-in.",
+      "camera": "Dolly-in frontal, fade suave a blanco al final."
+    }
+  ]
+}

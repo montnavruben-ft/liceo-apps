@@ -1,0 +1,29 @@
+{
+  "language": "es-MX (español latino neutro, sin regionalismos)",
+  "targetLoudness": "-16 LUFS integrado (música de fondo a -24 LUFS)",
+  "wordsPerMinute": 105,
+  "audioFile": "src/audio/narration-es-lat.mp3",
+  "note": "Cada clip de narración empieza en el startFrame de su escena (30 fps). 'subtitleChunks' es el texto exacto dividido en bloques de máximo 2 líneas para <Subtitles />.",
+  "scenes": [
+    { "sceneId": 1, "startFrame": 0, "endFrame": 120, "text": "¿Y si tu cerebro pudiera reaprender a moverse?",
+      "subtitleChunks": ["¿Y si tu cerebro pudiera reaprender a moverse?"] },
+    { "sceneId": 2, "startFrame": 120, "endFrame": 360, "text": "Eso es el Método Bobath: una forma de rehabilitar el movimiento después de una lesión del sistema nervioso.",
+      "subtitleChunks": ["Eso es el Método Bobath:", "una forma de rehabilitar el movimiento", "después de una lesión del sistema nervioso."] },
+    { "sceneId": 3, "startFrame": 360, "endFrame": 600, "text": "Nació en Londres, en los años cuarenta, con Berta y Karel Bobath.",
+      "subtitleChunks": ["Nació en Londres, en los años cuarenta,", "con Berta y Karel Bobath."] },
+    { "sceneId": 4, "startFrame": 600, "endFrame": 840, "text": "Su idea era revolucionaria: el cerebro no está roto para siempre, puede reorganizarse.",
+      "subtitleChunks": ["Su idea era revolucionaria:", "el cerebro no está roto para siempre,", "puede reorganizarse."] },
+    { "sceneId": 5, "startFrame": 840, "endFrame": 1110, "text": "Tras un ictus o una parálisis cerebral, el tono se altera y el movimiento sale torcido.",
+      "subtitleChunks": ["Tras un ictus o una parálisis cerebral,", "el tono se altera y el movimiento sale torcido."] },
+    { "sceneId": 6, "startFrame": 1110, "endFrame": 1380, "text": "Primero, el terapeuta inhibe ese tono anormal, con sus manos y con la postura.",
+      "subtitleChunks": ["Primero, el terapeuta inhibe ese tono anormal,", "con sus manos y con la postura."] },
+    { "sceneId": 7, "startFrame": 1380, "endFrame": 1650, "text": "Después facilita el movimiento correcto, guiando desde puntos clave como la pelvis o el hombro.",
+      "subtitleChunks": ["Después facilita el movimiento correcto,", "guiando desde puntos clave", "como la pelvis o el hombro."] },
+    { "sceneId": 8, "startFrame": 1650, "endFrame": 1920, "text": "Observar, analizar, tratar y volver a evaluar. Así, repetición tras repetición.",
+      "subtitleChunks": ["Observar, analizar, tratar y volver a evaluar.", "Así, repetición tras repetición."] },
+    { "sceneId": 9, "startFrame": 1920, "endFrame": 2190, "text": "Se usa en hemiparesias, parálisis cerebral, traumatismos, lesiones medulares y esclerosis múltiple, entre otras.",
+      "subtitleChunks": ["Se usa en hemiparesias, parálisis cerebral,", "traumatismos, lesiones medulares", "y esclerosis múltiple, entre otras."] },
+    { "sceneId": 10, "startFrame": 2190, "endFrame": 2400, "text": "El objetivo no es solo moverse. Es volver a vivir con la mayor independencia posible.",
+      "subtitleChunks": ["El objetivo no es solo moverse.", "Es volver a vivir con la mayor", "independencia posible."] }
+  ]
+}

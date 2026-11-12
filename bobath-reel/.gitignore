@@ -1,0 +1,4 @@
+node_modules
+out/
+.DS_Store
+src/audio/narracion/*.mp3

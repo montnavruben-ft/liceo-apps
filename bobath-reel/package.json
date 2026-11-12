@@ -1,0 +1,32 @@
+{
+  "name": "bobath-reel",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Reel informativo vertical 9:16 (1080x1920, 30 fps, 80 s) sobre el Método Bobath, hecho con Remotion 4 + React Three Fiber.",
+  "scripts": {
+    "dev": "remotion studio",
+    "render": "remotion render BobathReel out/bobath-reel.mp4",
+    "cover": "remotion still Cover public/cover.png",
+    "subtitles": "node scripts/build-subtitles.mjs && node scripts/export-srt.mjs",
+    "srt": "node scripts/export-srt.mjs",
+    "narration": "node scripts/build-narration.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@react-three/fiber": "8.18.0",
+    "@remotion/cli": "4.0.543",
+    "@remotion/fonts": "^4.0.543",
+    "@remotion/layout-utils": "4.0.543",
+    "@remotion/media-utils": "4.0.543",
+    "@remotion/three": "4.0.543",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.543",
+    "three": "0.170.0"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.12",
+    "@types/three": "0.170.0",
+    "typescript": "5.6.3"
+  }
+}

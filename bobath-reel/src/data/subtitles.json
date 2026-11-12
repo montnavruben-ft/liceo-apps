@@ -1,0 +1,173 @@
+{
+  "fps": 30,
+  "cues": [
+    {
+      "id": 1,
+      "sceneId": 1,
+      "startFrame": 0,
+      "endFrame": 105,
+      "text": "¿Y si tu cerebro pudiera reaprender a moverse?"
+    },
+    {
+      "id": 2,
+      "sceneId": 2,
+      "startFrame": 120,
+      "endFrame": 171,
+      "text": "Eso es el Método Bobath:"
+    },
+    {
+      "id": 3,
+      "sceneId": 2,
+      "startFrame": 171,
+      "endFrame": 252,
+      "text": "una forma de rehabilitar el movimiento"
+    },
+    {
+      "id": 4,
+      "sceneId": 2,
+      "startFrame": 252,
+      "endFrame": 345,
+      "text": "después de una lesión del sistema nervioso."
+    },
+    {
+      "id": 5,
+      "sceneId": 3,
+      "startFrame": 360,
+      "endFrame": 497,
+      "text": "Nació en Londres, en los años cuarenta,"
+    },
+    {
+      "id": 6,
+      "sceneId": 3,
+      "startFrame": 497,
+      "endFrame": 585,
+      "text": "con Berta y Karel Bobath."
+    },
+    {
+      "id": 7,
+      "sceneId": 4,
+      "startFrame": 600,
+      "endFrame": 672,
+      "text": "Su idea era revolucionaria:"
+    },
+    {
+      "id": 8,
+      "sceneId": 4,
+      "startFrame": 672,
+      "endFrame": 771,
+      "text": "el cerebro no está roto para siempre,"
+    },
+    {
+      "id": 9,
+      "sceneId": 4,
+      "startFrame": 771,
+      "endFrame": 825,
+      "text": "puede reorganizarse."
+    },
+    {
+      "id": 10,
+      "sceneId": 5,
+      "startFrame": 840,
+      "endFrame": 956,
+      "text": "Tras un ictus o una parálisis cerebral,"
+    },
+    {
+      "id": 11,
+      "sceneId": 5,
+      "startFrame": 956,
+      "endFrame": 1095,
+      "text": "el tono se altera y el movimiento sale torcido."
+    },
+    {
+      "id": 12,
+      "sceneId": 6,
+      "startFrame": 1110,
+      "endFrame": 1262,
+      "text": "Primero, el terapeuta inhibe ese tono anormal,"
+    },
+    {
+      "id": 13,
+      "sceneId": 6,
+      "startFrame": 1262,
+      "endFrame": 1365,
+      "text": "con sus manos y con la postura."
+    },
+    {
+      "id": 14,
+      "sceneId": 7,
+      "startFrame": 1380,
+      "endFrame": 1490,
+      "text": "Después facilita el movimiento correcto,"
+    },
+    {
+      "id": 15,
+      "sceneId": 7,
+      "startFrame": 1490,
+      "endFrame": 1561,
+      "text": "guiando desde puntos clave"
+    },
+    {
+      "id": 16,
+      "sceneId": 7,
+      "startFrame": 1561,
+      "endFrame": 1635,
+      "text": "como la pelvis o el hombro."
+    },
+    {
+      "id": 17,
+      "sceneId": 8,
+      "startFrame": 1650,
+      "endFrame": 1800,
+      "text": "Observar, analizar, tratar y volver a evaluar."
+    },
+    {
+      "id": 18,
+      "sceneId": 8,
+      "startFrame": 1800,
+      "endFrame": 1905,
+      "text": "Así, repetición tras repetición."
+    },
+    {
+      "id": 19,
+      "sceneId": 9,
+      "startFrame": 1920,
+      "endFrame": 2020,
+      "text": "Se usa en hemiparesias, parálisis cerebral,"
+    },
+    {
+      "id": 20,
+      "sceneId": 9,
+      "startFrame": 2020,
+      "endFrame": 2094,
+      "text": "traumatismos, lesiones medulares"
+    },
+    {
+      "id": 21,
+      "sceneId": 9,
+      "startFrame": 2094,
+      "endFrame": 2175,
+      "text": "y esclerosis múltiple, entre otras."
+    },
+    {
+      "id": 22,
+      "sceneId": 10,
+      "startFrame": 2190,
+      "endFrame": 2268,
+      "text": "El objetivo no es solo moverse."
+    },
+    {
+      "id": 23,
+      "sceneId": 10,
+      "startFrame": 2268,
+      "endFrame": 2344,
+      "text": "Es volver a vivir con la mayor"
+    },
+    {
+      "id": 24,
+      "sceneId": 10,
+      "startFrame": 2344,
+      "endFrame": 2400,
+      "text": "independencia posible."
+    }
+  ]
+}
