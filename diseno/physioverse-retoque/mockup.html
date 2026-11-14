@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Physioverse · Retoque visual</title>
+<style>
+  /* ============ TOKENS DEL RETOQUE ============ */
+  :root {
+    --bg: #f4f5fb;            /* fondo con un toque lavanda (antes gris azulado plano) */
+    --card: #ffffff;
+    --line: #e7e9f2;
+    --ink: #0e1530;           /* texto principal, azul tinta (antes negro/slate) */
+    --muted: #667091;
+    --soft: #9aa3bf;
+    --primary: #2f55e4;       /* azul propio, más profundo que el azul por defecto */
+    --primary-50: #edf1fe;
+    --teal: #12b5a5;          /* acento del logo */
+    --teal-50: #e6f8f6;
+    --violet: #7c5cfa;        /* acento del logo */
+    --violet-50: #f1edff;
+    --amber: #e8a317; --amber-50: #fff7e6;
+    --rose: #e5487a; --rose-50: #fdecf2;
+    --green: #1fa463; --green-50: #e7f7ef;
+    --side: #0c1130;          /* barra lateral índigo profundo */
+    --r: 18px;
+    --shadow: 0 1px 2px rgba(14,21,48,.04), 0 8px 24px -12px rgba(14,21,48,.12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1440px; height: 810px; overflow: hidden; background: var(--bg); font-family: 'Inter', sans-serif; color: var(--ink); font-size: 14px; }
+  .disp { font-family: 'Inter Display', 'Inter', sans-serif; }
+  .num { font-variant-numeric: tabular-nums; }
+  svg.i { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  .app { display: grid; grid-template-columns: 248px 1fr; height: 810px; }
+
+  /* ---------- Barra lateral ---------- */
+  .side { background: var(--side); color: #c9cfe6; padding: 22px 16px; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+  .side::before { content: ''; position: absolute; left: -90px; top: -120px; width: 320px; height: 320px; border-radius: 50%;
+                  background: radial-gradient(circle, rgba(124,92,250,.35), rgba(18,181,165,.12) 45%, transparent 70%); }
+  .pv { position: relative; display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 800; letter-spacing: 3px; color: #fff; padding: 0 6px; }
+  .pv i { width: 26px; height: 26px; border-radius: 50%; overflow: hidden; box-shadow: 0 0 16px rgba(124,92,250,.7); }
+  .pv i img { width: 34px; height: 34px; margin: -4px 0 0 -4px; }
+  .clinic { position: relative; margin-top: 18px; display: flex; gap: 12px; align-items: center; padding: 12px; border-radius: 14px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.07); }
+  .clinic .lg { width: 38px; height: 38px; border-radius: 11px; background: linear-gradient(135deg, var(--primary), var(--violet)); color: #fff; display: flex; align-items: center; justify-content: center; }
+  .clinic b { display: block; color: #fff; font-size: 14px; }
+  .clinic small { color: var(--teal); font-size: 11px; font-weight: 700; letter-spacing: .5px; }
+  .grp { position: relative; margin: 26px 10px 8px; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: #6f7799; text-transform: uppercase; }
+  .nav a { position: relative; display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 11px; color: #b7bedb; font-weight: 600; text-decoration: none; margin-bottom: 2px; }
+  .nav a.on { background: rgba(255,255,255,.08); color: #fff; }
+  .nav a.on::before { content: ''; position: absolute; left: -16px; top: 9px; bottom: 9px; width: 4px; border-radius: 0 4px 4px 0; background: var(--teal); box-shadow: 0 0 12px var(--teal); }
+  .nav a.on svg { color: var(--teal); }
+  .nav .badge { margin-left: auto; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 99px; background: rgba(18,181,165,.18); color: var(--teal); }
+  .me { position: relative; margin-top: auto; display: flex; gap: 12px; align-items: center; padding: 12px; border-top: 1px solid rgba(255,255,255,.08); }
+  .av { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 14px; flex: none; }
+  .me b { color: #fff; font-size: 13px; display: block; } .me small { font-size: 11px; color: #7e86a8; }
+
+  /* ---------- Barra superior ---------- */
+  .main { display: flex; flex-direction: column; min-width: 0; }
+  .top { height: 64px; display: flex; align-items: center; gap: 14px; padding: 0 28px; background: rgba(255,255,255,.75); border-bottom: 1px solid var(--line); }
+  .crumb { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+  .crumb b { color: var(--ink); }
+  .search { margin-left: auto; width: 340px; height: 40px; border-radius: 12px; background: var(--bg); border: 1px solid var(--line); display: flex; align-items: center; gap: 10px; padding: 0 12px; color: var(--soft); }
+  .search kbd { margin-left: auto; font: 600 11px 'Inter'; color: var(--muted); background: #fff; border: 1px solid var(--line); border-radius: 6px; padding: 2px 6px; }
+  .ib { width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--line); background: #fff; display: flex; align-items: center; justify-content: center; color: var(--muted); position: relative; }
+  .ib .dot { position: absolute; top: 9px; right: 10px; width: 8px; height: 8px; border-radius: 50%; background: var(--rose); border: 2px solid #fff; }
+  .role { font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 99px; color: var(--violet); background: var(--violet-50); }
+  .page { flex: 1; overflow: hidden; padding: 24px 28px; }
+
+  /* ---------- Componentes ---------- */
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow); }
+  .eyebrow { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--teal); letter-spacing: .3px; }
+  .h1 { font-family: 'Inter Display', 'Inter'; font-size: 30px; font-weight: 800; letter-spacing: -.8px; margin-top: 4px; }
+  .lead { color: var(--muted); margin-top: 4px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: 12px; font-weight: 700; font-size: 13.5px; border: 1px solid var(--line); background: #fff; color: var(--ink); white-space: nowrap; }
+  .btn.pri { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 6px 16px -6px rgba(47,85,228,.6); }
+  .btn.ghost { background: transparent; }
+  .btn.dis { color: var(--soft); background: #f7f8fc; }
+  .seg { display: inline-flex; padding: 4px; border-radius: 12px; background: #eceef7; gap: 2px; }
+  .seg span { padding: 7px 14px; border-radius: 9px; font-weight: 600; color: var(--muted); font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
+  .seg span.on { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(14,21,48,.12); }
+  .seg em { font-style: normal; font-size: 11px; font-weight: 800; padding: 1px 7px; border-radius: 99px; background: var(--primary-50); color: var(--primary); }
+  .chip { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 99px; font-size: 12px; font-weight: 700; }
+  .id { font: 600 11.5px ui-monospace, 'SFMono-Regular', monospace; color: var(--muted); background: #f1f3f9; padding: 3px 8px; border-radius: 6px; }
+
+  /* Marcadores numerados del retoque */
+  .mk { position: absolute; width: 28px; height: 28px; margin: -14px 0 0 -14px; border-radius: 50%; background: #ff3d7f; color: #fff; font-weight: 900; font-size: 14px;
+        display: none; align-items: center; justify-content: center; box-shadow: 0 0 0 4px rgba(255,61,127,.25), 0 4px 10px rgba(0,0,0,.25); z-index: 50; }
+  body.show-mk .mk { display: flex; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const Q = new URLSearchParams(location.search);
+const P = Q.get('p') || 'inicio';
+if (Q.has('mk')) document.body.classList.add('show-mk');
+const ic = {
+  grid: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>',
+  cal: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>',
+  dollar: '<path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>',
+  bell: '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/>',
+  clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  users: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  left: '<path d="m15 18-6-6 6-6"/>', right: '<path d="m9 18 6-6-6-6"/>', down: '<path d="m6 9 6 6 6-6"/>',
+  sliders: '<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>',
+  hist: '<path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/>',
+  pdf: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M12 18v-6M9 15l3 3 3-3"/>',
+  trend: '<path d="m23 6-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/>',
+  save: '<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/>',
+  key: '<circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"/>',
+  user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  heart: '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',
+  img: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>',
+  act: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+  steth: '<path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>',
+  bone: '<path d="M17 10c.7-.7 1.69 0 2.5 0a2.5 2.5 0 1 0 0-5 .5.5 0 0 1-.5-.5 2.5 2.5 0 1 0-5 0c0 .81.7 1.8 0 2.5l-7 7c-.7.7-1.69 0-2.5 0a2.5 2.5 0 0 0 0 5c.28 0 .5.22.5.5a2.5 2.5 0 1 0 5 0c0-.81-.7-1.8 0-2.5Z"/>',
+  play: '<path d="m6 3 14 9-14 9V3z"/>', list: '<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+  phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
+  home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
+  spark: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/>'
+};
+const I = (n, s = 18, extra = '') => `<svg class="i" viewBox="0 0 24 24" style="width:${s}px;height:${s}px;${extra}">${ic[n]}</svg>`;
+const mk = (n, x, y) => `<div class="mk" style="left:${x}px;top:${y}px">${n}</div>`;
+
+const navItem = (k, icon, label, badge = '') => `<a class="${P === k ? 'on' : ''}">${I(icon)}${label}${badge}</a>`;
+const shell = (crumb, content, marks = '') => `
+<div class="app">
+  <aside class="side">
+    <div class="pv"><i><img src="assets/logo_master.jpg"></i>PHYSIOVERSE</div>
+    <div class="clinic"><div class="lg">${I('bone', 20)}</div><div><b>Multiverse Fisioterapia</b><small>● FISIO JEFE</small></div></div>
+    <div class="grp">Clínica</div>
+    <nav class="nav">
+      ${navItem('inicio', 'grid', 'Inicio', '<span class="badge">1</span>')}
+      ${navItem('agenda', 'cal', 'Agenda')}
+      ${navItem('expediente', 'file', 'Expediente')}
+    </nav>
+    <div class="grp">Gestión</div>
+    <nav class="nav">${navItem('admin', 'dollar', 'Administración')}${navItem('staff', 'shield', 'Staff')}</nav>
+    <div class="me"><div class="av" style="background:linear-gradient(135deg,#a12bd6,#e5487a)">PM</div><div><b>Plan Multiverse 80</b><small>Jefe de clínica · Fisio jefe</small></div></div>
+  </aside>
+  <main class="main">
+    <header class="top">
+      <div class="crumb">Multiverse Fisioterapia <span style="color:var(--soft)">/</span> <b>${crumb}</b></div>
+      <span class="role">Fisio jefe</span>
+      <div class="search">${I('search', 16)}<span style="white-space:nowrap">Buscar paciente o cita…</span><kbd style="white-space:nowrap">Ctrl K</kbd></div>
+      <div class="ib">${I('bell', 18)}<span class="dot"></span></div>
+      <div class="av" style="background:linear-gradient(135deg,#e5487a,#f59e0b);width:40px;height:40px">PM</div>
+    </header>
+    <section class="page">${content}</section>
+  </main>
+</div>${marks}`;
+
+/* ======================= INICIO ======================= */
+const inicio = () => shell('Inicio', `
+  <div style="display:flex;align-items:flex-end;gap:20px">
+    <div>
+      <div class="eyebrow">${I('spark', 14)} Viernes 13 de noviembre de 2026</div>
+      <div class="h1">Buenas noches, Plan Multiverse</div>
+      <div class="lead">Tienes <b style="color:var(--ink)">1 sesión</b> pendiente de confirmar hoy.</div>
+    </div>
+    <div style="margin-left:auto;display:flex;gap:10px"><span class="btn">${I('cal', 16)} Ver agenda</span><span class="btn pri">${I('plus', 16)} Nueva cita</span></div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:22px">
+    ${[['Sesiones hoy', '1', 'users', 'var(--primary)', 'var(--primary-50)', 'programadas'],
+       ['Por confirmar', '1', 'clock', 'var(--amber)', 'var(--amber-50)', 'envía recordatorio'],
+       ['Concluidas', '0', 'check', 'var(--green)', 'var(--green-50)', 'de 1 hoy'],
+       ['Mañana', '0', 'cal', 'var(--violet)', 'var(--violet-50)', 'provisionales']].map(([l, n, icn, c, bg, s]) => `
+      <div class="card" style="padding:16px 18px;display:flex;align-items:center;gap:14px">
+        <div style="width:44px;height:44px;border-radius:13px;background:${bg};color:${c};display:flex;align-items:center;justify-content:center">${I(icn, 20)}</div>
+        <div><div style="color:var(--muted);font-size:12.5px;font-weight:600">${l}</div>
+        <div style="display:flex;align-items:baseline;gap:8px"><span class="disp num" style="font-size:28px;font-weight:800;letter-spacing:-.5px">${n}</span><span style="font-size:12px;color:var(--soft)">${s}</span></div></div>
+      </div>`).join('')}
+  </div>
+  <div style="display:flex;align-items:center;gap:14px;margin-top:24px">
+    <div class="seg"><span class="on">Hoy</span><span>Mañana · provisional</span></div>
+    <div class="seg"><span class="on">Todas <em>1</em></span><span>${I('clock', 14)} Próximas <em>1</em></span><span>${I('check', 14)} Concluidas <em style="background:#eef0f5;color:var(--muted)">0</em></span></div>
+    <span style="margin-left:auto;color:var(--muted);font-size:13px;display:flex;gap:8px;align-items:center">${I('users', 16)} 1 paciente programado hoy</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;margin-top:22px">
+    <span style="width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 4px var(--teal-50)"></span>
+    <b style="font-size:16px">Próximas sesiones</b><span class="chip" style="height:22px;background:var(--teal-50);color:#0d8a7e">1</span>
+  </div>
+  <div style="display:grid;grid-template-columns:600px 340px;gap:16px;margin-top:12px">
+    <div class="card" style="padding:0;overflow:hidden;display:flex">
+      <div style="width:6px;background:var(--violet)"></div>
+      <div style="width:128px;padding:18px 0;text-align:center;border-right:1px dashed var(--line)">
+        <div class="disp num" style="font-size:26px;font-weight:800">17:00</div><div style="font-size:12px;color:var(--soft)">a 18:00</div>
+        <span class="chip" style="margin-top:12px;height:22px;font-size:11px;white-space:nowrap;background:var(--amber-50);color:#a26a00">${I('clock', 12)} Por confirmar</span>
+      </div>
+      <div style="flex:1;padding:16px 18px">
+        <div style="display:flex;gap:12px;align-items:center">
+          <div class="av" style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#9333ea,#c026d3)">JW</div>
+          <div><b style="font-size:15.5px">Juan (WhatsApp)</b><div style="margin-top:3px;display:flex;gap:6px;align-items:center"><span class="id">EF-JW-0001</span><span class="chip" style="height:20px;font-size:11px;padding:0 8px;background:var(--violet-50);color:var(--violet)">Valoración inicial</span></div></div>
+        </div>
+        <div style="margin-top:14px;display:flex;justify-content:space-between;font-size:12px;color:var(--muted)"><span>Avance de recuperación</span><b class="num" style="color:var(--ink)">0%</b></div>
+        <div style="height:6px;border-radius:6px;background:#eef0f6;margin-top:6px;overflow:hidden"><div style="width:3%;height:100%;background:linear-gradient(90deg,var(--teal),var(--primary))"></div></div>
+        <div style="margin-top:14px;display:flex;gap:8px;align-items:center;font-size:12px;color:var(--muted);white-space:nowrap">Última sesión <b style="color:var(--ink)">25 ago</b>
+          <span style="margin-left:auto;display:flex;gap:6px"><span class="btn" style="height:32px;padding:0 10px;font-size:12.5px">${I('file', 14)} Expediente</span><span class="btn pri" style="height:32px;padding:0 12px;font-size:12.5px">${I('play', 12)} Iniciar</span></span></div>
+      </div>
+    </div>
+    <div style="border:2px dashed #dfe2ee;border-radius:var(--r);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted)">
+      <div style="width:44px;height:44px;border-radius:50%;background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--primary)">${I('plus', 20)}</div>
+      <b style="color:var(--ink)">No hay más citas hoy</b><span style="font-size:12.5px">Agenda una sesión en segundos</span>
+    </div>
+  </div>`,
+  mk(1, 236, 66) + mk(2, 568, 30) + mk(3, 760, 84) + mk(4, 1090, 160) + mk(5, 262, 284) + mk(6, 262, 400) + mk(7, 1238, 400));
+
+/* ======================= AGENDA ======================= */
+const MOD = { ini: ['var(--violet)', 'var(--violet-50)', 'Valoración inicial'], cli: ['var(--primary)', 'var(--primary-50)', 'Sesión en clínica'],
+              dom: ['var(--amber)', 'var(--amber-50)', 'Sesión a domicilio'], rev: ['var(--rose)', 'var(--rose-50)', 'Revaloración'] };
+const agenda = () => {
+  const days = [['lun', 9], ['mar', 10], ['mié', 11], ['jue', 12], ['vie', 13], ['sáb', 14], ['dom', 15]];
+  const H0 = 7, H1 = 20, hh = 38, top0 = 0;
+  const ev = [[3, 8, 9, 'cli', 'Prueba Paciente 10', 'conf'], [3, 10, 11, 'cli', 'María José Rangel', 'conf'], [2, 11, 12, 'cli', 'Prueba Paciente 10', 'pend'],
+              [1, 17, 18, 'ini', 'Prueba Paciente 10', 'pend'], [2, 17, 18, 'ini', 'Con Rogelio (WhatsApp)', 'pend'], [4, 17, 18, 'ini', 'Juan (WhatsApp)', 'pend'],
+              [0, 9, 10, 'dom', 'Laura Méndez', 'done'], [1, 12, 13, 'rev', 'Carlos Ruiz', 'done']];
+  const colW = 'calc((100% - 56px) / 7)';
+  const grid = `
+  <div style="position:relative;display:grid;grid-template-columns:56px repeat(7,1fr);">
+    <div></div>${days.map(([d, n], i) => `<div style="padding:10px 0 12px;text-align:center;border-left:1px solid var(--line)">
+      <div style="font-size:11.5px;font-weight:700;color:${i === 4 ? 'var(--teal)' : 'var(--soft)'};text-transform:uppercase;letter-spacing:1px">${d}</div>
+      <div class="disp num" style="margin:4px auto 0;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;${i === 4 ? 'background:var(--teal);color:#fff;box-shadow:0 4px 12px -2px rgba(18,181,165,.6)' : i > 4 ? 'color:var(--soft)' : ''}">${n}</div></div>`).join('')}
+  </div>
+  <div style="position:relative;display:grid;grid-template-columns:56px repeat(7,1fr);border-top:1px solid var(--line);height:${(H1 - H0) * hh}px">
+    <div>${Array.from({ length: H1 - H0 }, (_, k) => `<div class="num" style="height:${hh}px;font-size:11px;color:var(--soft);text-align:right;padding-right:10px;transform:translateY(-7px)">${k ? (H0 + k) + ':00' : ''}</div>`).join('')}</div>
+    ${days.map((_, i) => `<div style="position:relative;border-left:1px solid var(--line);${i === 4 ? 'background:linear-gradient(rgba(18,181,165,.06),rgba(18,181,165,.06))' : ''};${i > 4 ? 'background:repeating-linear-gradient(135deg,#f6f7fb 0 8px,#eef0f6 8px 10px)' : ''}
+        ;background-image:${i > 4 ? 'repeating-linear-gradient(135deg,#f6f7fb 0 8px,#eef0f6 8px 10px)' : `repeating-linear-gradient(to bottom, transparent 0 ${hh - 1}px, var(--line) ${hh - 1}px ${hh}px)`}">
+        ${i > 4 ? `<div style="position:absolute;top:44%;width:100%;text-align:center;font-size:11.5px;font-weight:600;color:var(--soft)">No laborable</div>` : ''}</div>`).join('')}
+    ${ev.map(([d, a, b, m, name, st]) => { const [c, bg] = MOD[m];
+      const pend = st === 'pend', done = st === 'done';
+      return `<div style="position:absolute;left:calc(56px + ${colW} * ${d} + 4px);width:calc(${colW} - 8px);top:${(a - H0) * hh + 2}px;height:${(b - a) * hh - 4}px;border-radius:9px;
+        background:${bg};border-left:4px solid ${c};${pend ? `outline:1.5px dashed ${c};outline-offset:-1.5px;` : ''}padding:4px 8px;overflow:hidden;${done ? 'opacity:.6' : ''}">
+        <div style="display:flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:${c}" class="num">${a}:00 – ${b}:00
+          <span style="margin-left:auto">${pend ? I('clock', 12) : done ? I('check', 12) : `<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green)"></span>`}</span></div>
+        <div style="font-size:11.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${name}</div></div>`; }).join('')}
+    <div style="position:absolute;left:calc(56px + ${colW} * 4);width:${colW};top:${(16.33 - H0) * hh}px;height:2px;background:var(--rose)"><span style="position:absolute;left:-5px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--rose)"></span></div>
+  </div>`;
+  return shell('Agenda', `
+  <div style="display:flex;align-items:flex-end;gap:16px">
+    <div><div class="eyebrow">${I('cal', 14)} Agenda</div><div class="h1">Calendario de sesiones</div></div>
+    <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
+      <div class="seg"><span class="on">${I('cal', 14)} Calendario</span><span>${I('hist', 14)} Historial</span></div>
+      <span class="ib" style="width:40px">${I('sliders', 17)}</span>
+      <span class="btn pri">${I('plus', 16)} Nueva cita</span></div>
+  </div>
+  <div class="card" style="margin-top:18px;padding:14px 16px 6px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="btn" style="height:36px">Hoy</span>
+      <span class="ib" style="width:36px;height:36px">${I('left', 16)}</span><span class="ib" style="width:36px;height:36px">${I('right', 16)}</span>
+      <b class="disp" style="font-size:18px;margin-left:4px">9 – 15 noviembre 2026</b>
+      <div style="display:flex;gap:6px;margin-left:16px">
+        ${['Todos los fisios', 'Todas las modalidades', 'Todos los cobros'].map(f => `<span class="chip" style="height:32px;background:#f4f5fb;border:1px solid var(--line);color:var(--muted)">${f} ${I('down', 13)}</span>`).join('')}
+      </div>
+      <div class="seg" style="margin-left:auto"><span>Mes</span><span class="on">Semana</span><span>Día</span><span>${I('list', 14)}</span></div>
+    </div>
+    <div style="display:flex;gap:18px;align-items:center;margin:12px 0 6px;font-size:12px;color:var(--muted)">
+      <b style="font-size:11px;letter-spacing:1px;color:var(--soft)">MODALIDAD</b>
+      ${Object.values(MOD).map(([c, , l]) => `<span style="display:flex;align-items:center;gap:6px"><i style="width:10px;height:10px;border-radius:3px;background:${c}"></i>${l}</span>`).join('')}
+      <span style="width:1px;height:16px;background:var(--line)"></span>
+      <b style="font-size:11px;letter-spacing:1px;color:var(--soft)">ESTADO</b>
+      <span style="display:flex;align-items:center;gap:6px">${I('clock', 13)} Por confirmar</span>
+      <span style="display:flex;align-items:center;gap:6px"><i style="width:8px;height:8px;border-radius:50%;background:var(--green)"></i>Confirmada</span>
+      <span style="display:flex;align-items:center;gap:6px">${I('check', 13)} Completada</span>
+      <span style="display:flex;align-items:center;gap:6px;text-decoration:line-through">Cancelada</span>
+    </div>
+    ${grid}
+  </div>`,
+  mk(1, 652, 180) + mk(2, 1385, 238) + mk(3, 1060, 296) + mk(4, 800, 372) + mk(5, 651, 484) + mk(6, 1250, 600) + mk(7, 1080, 668) + mk(8, 1284, 108));
+};
+
+/* ======================= EXPEDIENTE ======================= */
+const expediente = () => {
+  const steps = [['user', 'Datos generales', 'on'], ['heart', 'Antecedentes', ''], ['img', 'Gabinete', ''], ['act', 'Exploración física', ''], ['steth', 'Diagnóstico y plan CIF', '']];
+  const field = (l, ph, extra = '', w = '') => `<label style="display:block;${w}"><span style="display:block;font-size:12.5px;font-weight:600;color:#3d4568;margin-bottom:6px">${l}</span>
+     <div style="height:42px;border-radius:11px;border:1px solid #dfe2ee;background:#fbfbfe;display:flex;align-items:center;padding:0 12px;color:var(--soft);font-size:13px;${extra}">${ph}</div></label>`;
+  return shell('Expediente', `
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="search" style="margin:0;width:420px;background:#fff">${I('search', 16)}<span>Buscar paciente por nombre o ID…</span></div>
+    <span class="btn">${I('list', 16)} Todos los expedientes <span class="chip" style="height:20px;background:var(--primary-50);color:var(--primary)">6</span></span>
+    <span style="margin-left:auto;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12.5px">${I('clock', 15)} Altas de la clínica hoy <b class="num" style="color:var(--ink)">0 / 30</b></span>
+    <span class="btn pri">${I('plus', 16)} Nuevo expediente ${I('down', 14)}</span>
+  </div>
+  <div class="card" style="margin-top:16px;padding:18px 20px;display:flex;align-items:center;gap:16px">
+    <div class="av" style="width:56px;height:56px;border-radius:16px;font-size:20px;background:linear-gradient(135deg,#ef4444,#f97316)">PT</div>
+    <div><div style="display:flex;gap:8px;align-items:center"><b class="disp" style="font-size:24px;letter-spacing:-.4px">Nuevo paciente</b><span class="id">ID · Nuevo</span></div>
+      <div style="margin-top:6px;display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--muted)">
+        <span>Expediente 0% completo</span><span style="width:160px;height:6px;border-radius:6px;background:#eef0f6;overflow:hidden"><i style="display:block;width:4%;height:100%;background:linear-gradient(90deg,var(--teal),var(--primary))"></i></span></div></div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+      <span class="btn" style="padding:0 12px">${I('user', 15)} <span style="color:var(--soft);font-weight:600">Asignar fisioterapeuta</span> ${I('down', 14)}</span>
+      <span class="btn ghost">${I('pdf', 16)} Informe PDF</span>
+      <span class="btn ghost">${I('trend', 16)} Progreso</span>
+      <span class="btn dis">${I('key', 15)} Activar cuenta</span>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px;overflow:hidden">
+    <div style="display:flex;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line);gap:6px">
+      ${steps.map(([icn, l, on], i) => `<div style="display:flex;align-items:center;gap:10px;padding:8px 12px 8px 8px;border-radius:12px;${on ? 'background:var(--primary-50)' : ''}">
+          <span class="num" style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;${on ? 'background:var(--primary);color:#fff' : 'background:#f1f3f9;color:var(--muted)'}">${i + 1}</span>
+          <span style="font-weight:700;font-size:13.5px;color:${on ? 'var(--primary)' : 'var(--muted)'}">${l}</span></div>${i < 4 ? '<span style="flex:1;height:2px;min-width:12px;background:var(--line)"></span>' : ''}`).join('')}
+    </div>
+    <div style="padding:20px 22px 0">
+      <div style="display:flex;align-items:baseline;gap:10px"><b style="font-size:16px">Ficha del paciente y contacto de emergencia</b><span style="font-size:12.5px;color:var(--soft)">Los campos con * son obligatorios</span></div>
+      <div style="display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:16px;margin-top:16px">
+        ${field('Nombre completo *', 'Ej. Laura Méndez Torres')}${field('Ocupación / ergonomía', 'Ej. Diseñador gráfico (8-10 h sentado)')}
+        ${field('Fecha de nacimiento *', 'dd / mm / aaaa', 'justify-content:space-between')}${field('Edad', '<span style="display:flex;align-items:center;gap:6px;color:var(--teal);font-weight:600">' + I('spark', 13) + ' Se calcula sola</span>', 'background:var(--teal-50);border-color:#c5eee9')}
+        ${field('Género', 'No especificado', 'justify-content:space-between')}${field('Teléfono móvil (WhatsApp) *', '<span style="color:var(--muted);margin-right:8px">🇲🇽 +52</span> 55 1234 5678')}
+        ${field('Correo electrónico', 'nombre@correo.com')}${field('Contacto de emergencia', 'Ej. María Gómez (esposa)')}
+      </div>
+    </div>
+    <div style="margin-top:20px;padding:12px 22px;border-top:1px solid var(--line);background:#fafbfe;display:flex;align-items:center;gap:10px">
+      <span style="width:8px;height:8px;border-radius:50%;background:var(--amber)"></span><span style="font-size:13px;color:var(--muted)">Cambios sin guardar · Revisa los bloques clínicos antes de guardar</span>
+      <span class="btn ghost" style="margin-left:auto">Descartar</span><span class="btn pri">${I('save', 16)} Guardar expediente</span>
+    </div>
+  </div>`,
+  mk(1, 696, 92) + mk(2, 330, 168) + mk(3, 741, 172) + mk(4, 1100, 168) + mk(5, 520, 296) + mk(6, 556, 430) + mk(7, 1305, 430) + mk(8, 1201, 561));
+};
+
+document.getElementById('root').innerHTML = { inicio, agenda, expediente }[P]();
+</script>
+</body>
+</html>
