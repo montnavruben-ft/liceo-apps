@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Physioverse · Móvil</title>
+<style>
+  :root {
+    --bg: #f4f5fb; --card: #fff; --line: #e7e9f2; --ink: #0e1530; --muted: #667091; --soft: #9aa3bf;
+    --primary: #2f55e4; --primary-50: #edf1fe; --teal: #12b5a5; --teal-50: #e6f8f6; --violet: #7c5cfa; --violet-50: #f1edff;
+    --amber: #e8a317; --amber-50: #fff7e6; --rose: #e5487a; --rose-50: #fdecf2; --green: #1fa463; --green-50: #e7f7ef; --side: #0c1130;
+    --shadow: 0 1px 2px rgba(14,21,48,.04), 0 8px 24px -12px rgba(14,21,48,.14);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 390px; height: 844px; overflow: hidden; background: var(--bg); font-family: 'Inter', sans-serif; color: var(--ink); font-size: 14px; }
+  .disp { font-family: 'Inter Display', 'Inter', sans-serif; } .num { font-variant-numeric: tabular-nums; }
+  svg.i { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  .scr { position: relative; width: 390px; height: 844px; overflow: hidden; }
+  /* Barra de estado */
+  .sb { height: 50px; display: flex; align-items: flex-end; padding: 0 28px 6px; font-weight: 700; font-size: 15px; }
+  .sb span { margin-left: auto; display: flex; gap: 6px; align-items: center; font-size: 12px; }
+  .island { position: absolute; left: 50%; top: 11px; width: 120px; height: 34px; margin-left: -60px; border-radius: 20px; background: #000; z-index: 9; }
+  /* Encabezado */
+  .hdr { display: flex; align-items: center; gap: 10px; padding: 8px 20px 12px; }
+  .lg { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; box-shadow: 0 0 14px rgba(124,92,250,.5); flex: none; }
+  .lg img { width: 46px; height: 46px; margin: -5px 0 0 -5px; }
+  .hdr b { display: block; font-size: 14.5px; } .hdr small { font-size: 11px; font-weight: 700; color: var(--teal); }
+  .ib { width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--line); background: #fff; display: flex; align-items: center; justify-content: center; color: var(--muted); position: relative; }
+  .ib .dot { position: absolute; top: 9px; right: 10px; width: 8px; height: 8px; border-radius: 50%; background: var(--rose); border: 2px solid #fff; }
+  .av { border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; flex: none; }
+  .body { padding: 0 20px 120px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); }
+  .eyebrow { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--teal); }
+  .h1 { font-family: 'Inter Display', 'Inter'; font-size: 26px; font-weight: 800; letter-spacing: -.6px; margin-top: 2px; line-height: 1.1; }
+  .lead { color: var(--muted); margin-top: 4px; font-size: 13.5px; }
+  .seg { display: flex; padding: 4px; border-radius: 12px; background: #eceef7; gap: 2px; }
+  .seg span { flex: 1; text-align: center; padding: 7px 6px; border-radius: 9px; font-weight: 600; color: var(--muted); font-size: 12.5px; white-space: nowrap; }
+  .seg span.on { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(14,21,48,.12); }
+  .seg em { font-style: normal; font-size: 10.5px; font-weight: 800; padding: 1px 6px; border-radius: 99px; background: var(--primary-50); color: var(--primary); margin-left: 3px; }
+  .chip { display: inline-flex; align-items: center; gap: 5px; height: 22px; padding: 0 9px; border-radius: 99px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+  .id { font: 600 11px ui-monospace, monospace; color: var(--muted); background: #f1f3f9; padding: 2px 7px; border-radius: 6px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 40px; padding: 0 14px; border-radius: 12px; font-weight: 700; font-size: 13px; border: 1px solid var(--line); background: #fff; color: var(--ink); white-space: nowrap; }
+  .btn.pri { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 6px 16px -6px rgba(47,85,228,.6); }
+  .sec { display: flex; align-items: center; gap: 8px; margin: 22px 0 10px; }
+  .sec b { font-size: 15.5px; }
+  /* Barra inferior (diseño de la app) */
+  .tab { position: absolute; left: 12px; right: 12px; bottom: 26px; height: 64px; border-radius: 32px; display: flex; align-items: center; padding: 5px;
+         background: rgba(244,246,251,.92); backdrop-filter: blur(14px); border: 1px solid #e3e7f0; box-shadow: 0 10px 30px -8px rgba(14,21,48,.22); z-index: 20; }
+  .tab a { flex: 1; height: 54px; border-radius: 27px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #8a93ad; font-size: 10px; font-weight: 600; }
+  .tab a.on { background: #d9e6f7; border: 1px solid #b7cdea; color: #0f5fa8; font-weight: 800; }
+  .tab a svg { width: 21px; height: 21px; stroke-width: 1.9; }
+  .home { position: absolute; left: 50%; bottom: 8px; width: 134px; height: 5px; margin-left: -67px; border-radius: 3px; background: #0e1530; z-index: 21; }
+  .fab { position: absolute; right: 20px; bottom: 104px; width: 56px; height: 56px; border-radius: 18px; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center;
+         box-shadow: 0 12px 26px -8px rgba(47,85,228,.75); z-index: 19; }
+  .field { display: block; margin-top: 14px; }
+  .field span { display: block; font-size: 12.5px; font-weight: 600; color: #3d4568; margin-bottom: 6px; }
+  .field div { height: 46px; border-radius: 12px; border: 1px solid #dfe2ee; background: #fbfbfe; display: flex; align-items: center; padding: 0 14px; color: var(--soft); font-size: 14px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const P = new URLSearchParams(location.search).get('p') || 'inicio';
+const ic = {
+  grid: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>',
+  cal: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>',
+  dollar: '<path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>',
+  search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>',
+  bell: '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/>',
+  clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>', users: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>', left: '<path d="m15 18-6-6 6-6"/>', right: '<path d="m9 18 6-6-6-6"/>', down: '<path d="m6 9 6 6 6-6"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>', play: '<path d="m6 3 14 9-14 9V3z"/>', spark: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/>',
+  sliders: '<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>', pdf: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M12 18v-6M9 15l3 3 3-3"/>',
+  trend: '<path d="m23 6-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/>', save: '<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/>',
+  key: '<circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"/>', user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
+  more: '<circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>'
+};
+const I = (n, s = 18) => `<svg class="i" viewBox="0 0 24 24" style="width:${s}px;height:${s}px">${ic[n]}</svg>`;
+const TABS = [['inicio', 'grid', 'Inicio'], ['agenda', 'cal', 'Agenda'], ['expediente', 'file', 'Expediente'], ['admin', 'dollar', 'Administración'], ['staff', 'shield', 'Staff']];
+const shell = (content, fab = false) => `<div class="scr">
+  <div class="island"></div>
+  <div class="sb"><span style="margin:0">10:52</span><span>●●●● &nbsp;📶 &nbsp;<b style="border:1.5px solid #0e1530;border-radius:4px;padding:0 3px;font-size:10px">80</b></span></div>
+  <div class="hdr"><div class="lg"><img src="assets/logo_master.jpg"></div><div><b>Multiverse Fisioterapia</b><small>● FISIO JEFE</small></div>
+    <div class="ib" style="margin-left:auto">${I('search', 18)}</div><div class="ib">${I('bell', 18)}<span class="dot"></span></div></div>
+  <div class="body">${content}</div>
+  ${fab ? `<div class="fab">${I('plus', 26)}</div>` : ''}
+  <nav class="tab">${TABS.map(([k, icn, l]) => `<a class="${k === P ? 'on' : ''}">${I(icn)}${l}</a>`).join('')}</nav>
+  <div class="home"></div></div>`;
+
+/* ===== INICIO ===== */
+const inicio = () => shell(`
+  <div class="eyebrow">${I('spark', 13)} Viernes 13 de noviembre</div>
+  <div class="h1">Buenas noches,<br>Plan Multiverse</div>
+  <div class="lead">Tienes <b style="color:var(--ink)">1 sesión</b> pendiente de confirmar.</div>
+  <div style="display:flex;gap:10px;margin:16px -20px 0;padding:0 20px;overflow:hidden">
+    ${[['Hoy', '1', 'users', 'var(--primary)', 'var(--primary-50)'], ['Por confirmar', '1', 'clock', 'var(--amber)', 'var(--amber-50)'], ['Concluidas', '0', 'check', 'var(--green)', 'var(--green-50)'], ['Mañana', '0', 'cal', 'var(--violet)', 'var(--violet-50)']]
+      .map(([l, n, icn, c, bg]) => `<div class="card" style="flex:none;width:118px;padding:12px 14px">
+        <div style="width:32px;height:32px;border-radius:10px;background:${bg};color:${c};display:flex;align-items:center;justify-content:center">${I(icn, 16)}</div>
+        <div class="disp num" style="font-size:26px;font-weight:800;margin-top:8px">${n}</div><div style="font-size:11.5px;color:var(--muted);font-weight:600">${l}</div></div>`).join('')}
+  </div>
+  <div class="seg" style="margin-top:18px"><span class="on">Todas<em>1</em></span><span>Próximas<em>1</em></span><span>Concluidas<em style="background:#eef0f5;color:var(--muted)">0</em></span></div>
+  <div class="sec"><span style="width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 4px var(--teal-50)"></span><b>Próximas sesiones</b><span class="chip" style="background:var(--teal-50);color:#0d8a7e">1</span></div>
+  <div class="card" style="overflow:hidden;position:relative">
+    <div style="position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--violet)"></div>
+    <div style="padding:14px 16px 14px 20px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="disp num" style="font-size:22px;font-weight:800">17:00</span><span style="font-size:12px;color:var(--soft)">– 18:00</span>
+        <span class="chip" style="margin-left:auto;background:var(--amber-50);color:#a26a00">${I('clock', 12)} Por confirmar</span></div>
+      <div style="display:flex;gap:12px;align-items:center;margin-top:12px">
+        <div class="av" style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#9333ea,#c026d3)">JW</div>
+        <div><b style="font-size:15px">Juan (WhatsApp)</b><div style="margin-top:3px;display:flex;gap:6px"><span class="id">EF-JW-0001</span><span class="chip" style="height:20px;background:var(--violet-50);color:var(--violet)">Valoración inicial</span></div></div></div>
+      <div style="margin-top:12px;display:flex;justify-content:space-between;font-size:12px;color:var(--muted)"><span>Avance de recuperación · última sesión 25 ago</span><b class="num" style="color:var(--ink)">0%</b></div>
+      <div style="height:6px;border-radius:6px;background:#eef0f6;margin-top:6px;overflow:hidden"><div style="width:3%;height:100%;background:linear-gradient(90deg,var(--teal),var(--primary))"></div></div>
+      <div style="display:grid;grid-template-columns:44px 1fr 1fr;gap:8px;margin-top:14px">
+        <span class="btn" style="padding:0">${I('phone', 16)}</span><span class="btn">${I('file', 15)} Expediente</span><span class="btn pri">${I('play', 12)} Iniciar</span></div>
+    </div>
+  </div>
+  <div style="margin-top:12px;border:2px dashed #dfe2ee;border-radius:18px;padding:16px;display:flex;align-items:center;gap:12px;color:var(--muted)">
+    <div style="width:40px;height:40px;border-radius:50%;background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--primary)">${I('plus', 18)}</div>
+    <div><b style="color:var(--ink);font-size:13.5px">No hay más citas hoy</b><div style="font-size:12px">Agenda una sesión en segundos</div></div></div>`, true);
+
+/* ===== AGENDA ===== */
+const MOD = { ini: ['var(--violet)', 'var(--violet-50)', 'Valoración'], cli: ['var(--primary)', 'var(--primary-50)', 'Clínica'], dom: ['var(--amber)', 'var(--amber-50)', 'Domicilio'], rev: ['var(--rose)', 'var(--rose-50)', 'Revaloración'] };
+const agenda = () => {
+  const days = [['L', 9, 1], ['M', 10, 2], ['M', 11, 2], ['J', 12, 2], ['V', 13, 1], ['S', 14, 0], ['D', 15, 0]];
+  const ev = [['8:00', '9:00', 'cli', 'Prueba Paciente 10', 'Electroterapia · Muñeca', 'conf'], ['10:00', '11:00', 'cli', 'María José Rangel', 'Neuro · Hemiparesia', 'conf'],
+              ['17:00', '18:00', 'ini', 'Juan (WhatsApp)', 'Primera valoración', 'pend']];
+  return shell(`
+  <div style="display:flex;align-items:flex-end">
+    <div><div class="eyebrow">${I('cal', 13)} Agenda</div><div class="h1">Noviembre 2026</div></div>
+    <div style="margin-left:auto;display:flex;gap:8px"><div class="ib">${I('sliders', 17)}</div><div class="ib" style="width:auto;padding:0 12px;font-weight:700;color:var(--ink);font-size:13px">Hoy</div></div>
+  </div>
+  <div class="card" style="margin-top:14px;padding:10px 8px;display:flex;align-items:center">
+    <span style="color:var(--soft)">${I('left', 16)}</span>
+    ${days.map(([d, n, c], i) => `<div style="flex:1;text-align:center">
+      <div style="font-size:11px;font-weight:700;color:${i === 3 ? 'var(--teal)' : 'var(--soft)'}">${d}</div>
+      <div class="disp num" style="margin:4px auto 0;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;${i === 3 ? 'background:var(--teal);color:#fff;box-shadow:0 4px 12px -2px rgba(18,181,165,.6)' : i > 4 ? 'color:var(--soft)' : ''}">${n}</div>
+      <div style="display:flex;gap:2px;justify-content:center;margin-top:5px;height:5px">${Array.from({ length: c }, () => `<i style="width:5px;height:5px;border-radius:50%;background:${i === 3 ? 'var(--teal)' : '#c6cbe0'}"></i>`).join('')}</div></div>`).join('')}
+    <span style="color:var(--soft)">${I('right', 16)}</span>
+  </div>
+  <div style="display:flex;gap:6px;margin-top:12px;overflow:hidden">
+    ${[['Todas', 1], ...Object.values(MOD).map(m => [m[2], 0, m[0]])].map(([l, on, c]) => `<span class="chip" style="height:30px;padding:0 12px;font-size:12px;${on ? 'background:var(--ink);color:#fff' : 'background:#fff;border:1px solid var(--line);color:var(--muted)'}">${c ? `<i style="width:8px;height:8px;border-radius:3px;background:${c}"></i>` : ''}${l}</span>`).join('')}
+  </div>
+  <div class="sec" style="margin-top:18px"><b>Jueves 12</b><span style="font-size:12.5px;color:var(--muted)">· 3 sesiones</span></div>
+  <div style="position:relative">
+    ${ev.map(([a, b, m, n, d, st], k) => { const [c, bg, l] = MOD[m]; const pend = st === 'pend';
+      return `${k === 2 ? `<div style="display:flex;align-items:center;gap:8px;margin:2px 0 12px 0"><span class="num" style="width:48px;font-size:11px;font-weight:700;color:var(--rose);text-align:right">16:20</span><span style="width:9px;height:9px;border-radius:50%;background:var(--rose)"></span><span style="flex:1;height:2px;background:var(--rose)"></span></div>` : ''}
+      <div style="display:flex;gap:10px;margin-bottom:12px">
+        <div class="num" style="width:48px;text-align:right;padding-top:12px"><b style="font-size:13px">${a}</b><div style="font-size:11px;color:var(--soft)">${b}</div></div>
+        <div style="flex:1;border-radius:14px;background:${bg};border-left:4px solid ${c};${pend ? `outline:1.5px dashed ${c};outline-offset:-1.5px;` : ''}padding:11px 12px">
+          <div style="display:flex;align-items:center;gap:6px"><b style="font-size:14px">${n}</b><span style="margin-left:auto;color:${c}">${pend ? I('clock', 15) : `<i style="display:block;width:8px;height:8px;border-radius:50%;background:var(--green)"></i>`}</span></div>
+          <div style="font-size:12px;color:var(--muted);margin-top:3px">${l} · ${d}</div>
+          <div style="font-size:11.5px;font-weight:700;margin-top:7px;color:${pend ? '#a26a00' : 'var(--green)'}">${pend ? 'Por confirmar · Enviar recordatorio →' : 'Confirmada'}</div></div></div>`; }).join('')}
+  </div>`, true);
+};
+
+/* ===== EXPEDIENTE ===== */
+const expediente = () => {
+  const steps = ['Datos', 'Antecedentes', 'Gabinete', 'Exploración', 'Diagnóstico'];
+  return shell(`
+  <div style="display:flex;gap:8px">
+    <div style="flex:1;height:44px;border-radius:12px;background:#fff;border:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:0 12px;color:var(--soft);font-size:13px">${I('search', 16)} Buscar paciente o ID…</div>
+    <span class="btn pri" style="height:44px;width:44px;padding:0">${I('plus', 20)}</span></div>
+  <div class="card" style="margin-top:12px;padding:14px 16px">
+    <div style="display:flex;gap:12px;align-items:center">
+      <div class="av" style="width:52px;height:52px;border-radius:15px;font-size:18px;background:linear-gradient(135deg,#ef4444,#f97316)">PT</div>
+      <div style="flex:1"><b class="disp" style="font-size:20px">Nuevo paciente</b><div style="margin-top:3px"><span class="id">ID · Nuevo</span></div></div>
+      <div class="ib" style="border:none">${I('more', 18)}</div></div>
+    <div style="margin-top:12px;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted)"><span>Expediente 0% completo</span>
+      <span style="flex:1;height:6px;border-radius:6px;background:#eef0f6;overflow:hidden"><i style="display:block;width:4%;height:100%;background:linear-gradient(90deg,var(--teal),var(--primary))"></i></span></div>
+    <div style="margin-top:12px;height:42px;border-radius:12px;border:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:0 12px;font-size:13px;color:var(--soft)">${I('user', 15)} Asignar fisioterapeuta <span style="margin-left:auto">${I('down', 14)}</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px">
+      <span class="btn" style="font-size:12px;padding:0 6px">${I('pdf', 14)} Informe</span><span class="btn" style="font-size:12px;padding:0 6px">${I('trend', 14)} Progreso</span>
+      <span class="btn" style="font-size:12px;padding:0 6px;color:var(--soft);background:#f7f8fc">${I('key', 14)} Cuenta</span></div>
+  </div>
+  <div style="display:flex;gap:6px;margin:16px -20px 0;padding:0 20px;overflow:hidden">
+    ${steps.map((s, i) => `<span class="chip" style="height:34px;padding:0 12px 0 5px;font-size:12.5px;${i === 0 ? 'background:var(--primary);color:#fff' : 'background:#fff;border:1px solid var(--line);color:var(--muted)'}">
+      <i class="num" style="font-style:normal;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;${i === 0 ? 'background:rgba(255,255,255,.25)' : 'background:#f1f3f9'}">${i + 1}</i>${s}</span>`).join('')}
+  </div>
+  <div class="card" style="margin-top:12px;padding:16px">
+    <b style="font-size:15px">Ficha del paciente</b><div style="font-size:12px;color:var(--soft);margin-top:2px">Los campos con * son obligatorios</div>
+    <label class="field"><span>Nombre completo *</span><div>Ej. Laura Méndez Torres</div></label>
+    <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:10px">
+      <label class="field"><span>Fecha de nacimiento *</span><div>dd / mm / aaaa</div></label>
+      <label class="field"><span>Edad</span><div style="background:var(--teal-50);border-color:#c5eee9;color:var(--teal);font-weight:600;font-size:12.5px;gap:5px">${I('spark', 13)} Automática</div></label></div>
+    <label class="field"><span>Teléfono móvil (WhatsApp) *</span><div><span style="color:var(--muted);margin-right:8px">🇲🇽 +52</span>55 1234 5678</div></label>
+  </div>
+  <div style="position:absolute;left:12px;right:12px;bottom:100px;z-index:19;border-radius:16px;background:#fff;border:1px solid var(--line);box-shadow:0 10px 30px -10px rgba(14,21,48,.3);padding:10px 10px 10px 14px;display:flex;align-items:center;gap:8px">
+    <span style="width:8px;height:8px;border-radius:50%;background:var(--amber)"></span><span style="font-size:12.5px;color:var(--muted)">Cambios sin guardar</span>
+    <span class="btn pri" style="margin-left:auto;height:38px">${I('save', 15)} Guardar</span></div>`);
+};
+
+/* ===== DETALLE DE SESIÓN (hoja) ===== */
+const sesion = () => shell(`
+  <div style="opacity:.35">${''}<div class="h1">Agenda</div></div>
+  <div style="position:absolute;inset:0;background:rgba(12,17,48,.45);z-index:15"></div>
+  <div style="position:absolute;left:0;right:0;bottom:0;top:130px;background:#fff;border-radius:28px 28px 0 0;z-index:16;padding:10px 20px 0">
+    <div style="width:40px;height:5px;border-radius:3px;background:#d7dbe8;margin:0 auto 14px"></div>
+    <div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:var(--primary)"></span><b style="font-size:12px;letter-spacing:1px;color:var(--muted)">SESIÓN EN CLÍNICA</b>
+      <span class="chip" style="margin-left:auto;background:var(--green-50);color:var(--green)">A cobrar $650</span></div>
+    <div style="display:flex;gap:12px;align-items:center;margin-top:14px">
+      <div class="av" style="width:52px;height:52px;border-radius:15px;background:linear-gradient(135deg,#a3b218,#c6d22e);font-size:18px">PP</div>
+      <div><b class="disp" style="font-size:20px">Prueba Paciente 10</b><div style="font-size:12.5px;color:var(--primary);font-weight:600;margin-top:2px">Neuropatía periférica aguda</div></div></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);margin-top:16px;border:1px solid var(--line);border-radius:14px">
+      ${[['Cita', 'Hoy 20:00'], ['Avance', '50%'], ['Estado', '<span style="color:var(--green)">● Confirmada</span>']].map(([a, b], i) => `<div style="padding:10px 12px;${i ? 'border-left:1px solid var(--line)' : ''}"><div style="font-size:11px;color:var(--soft);font-weight:700">${a}</div><b style="font-size:13.5px">${b}</b></div>`).join('')}</div>
+    <div style="display:flex;align-items:center;margin-top:18px"><b style="font-size:14px">Plan de intervención</b><span class="chip" style="margin-left:auto;background:var(--primary-50);color:var(--primary)">2 de 3</span></div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">
+      ${[['Electroterapia', 1], ['Ultrasonido', 0], ['Ejercicios', 1]].map(([l, on]) => `<span class="chip" style="height:36px;padding:0 14px;font-size:13px;${on ? 'background:var(--primary-50);color:var(--primary);border:1.5px solid #b9c8fb' : 'background:#fff;border:1.5px solid var(--line);color:var(--muted)'}">${I(on ? 'check' : 'plus', 14)}${l}</span>`).join('')}</div>
+    <div style="margin-top:18px;border-radius:16px;background:#f7f8fc;padding:14px">
+      <b style="font-size:13.5px">Recordatorio</b><div style="font-size:12px;color:var(--muted);margin-top:2px">Se envía por WhatsApp al paciente</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><span class="btn">${I('phone', 15)} Llamar</span><span class="btn" style="background:#25D366;border-color:#25D366;color:#fff">WhatsApp</span></div></div>
+    <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:10px;margin-top:18px"><span class="btn" style="height:48px">${I('file', 16)} Expediente</span><span class="btn pri" style="height:48px;background:var(--green);border-color:var(--green);box-shadow:0 8px 18px -8px rgba(31,164,99,.7)">${I('check', 16)} Finalizar sesión</span></div>
+  </div>`);
+
+document.getElementById('root').innerHTML = { inicio, agenda, expediente, sesion }[P]();
+</script>
+</body>
+</html>
