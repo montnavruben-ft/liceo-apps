@@ -1,0 +1,4 @@
+Coloca aquí los clips del agente de video:
+- clip-01_hook.mp4
+- clip-02_que-es.mp4 (o clip-02a / clip-02b)
+- clip-03_origen.mp4
