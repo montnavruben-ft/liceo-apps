@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "remotion studio",
     "render": "remotion render BobathReel out/bobath-reel.mp4",
+    "prueba": "remotion render Prueba15s out/prueba-15s.mp4",
     "cover": "remotion still Cover public/cover.png",
     "subtitles": "node scripts/build-subtitles.mjs && node scripts/export-srt.mjs",
     "srt": "node scripts/export-srt.mjs",

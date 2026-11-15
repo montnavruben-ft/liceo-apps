@@ -2,11 +2,14 @@ import React from "react";
 import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { ANCHO_UTIL, PALETA, ZONA_SEGURA } from "../constants";
 
-/** Barra de progreso fina, justo por encima de la zona segura inferior. */
-export const ProgressBar: React.FC = () => {
+/**
+ * Barra de progreso fina, justo por encima de la zona segura inferior.
+ * `total` permite que una prueba parcial muestre el progreso real del reel de 80 s.
+ */
+export const ProgressBar: React.FC<{ total?: number }> = ({ total }) => {
   const frame = useCurrentFrame();
   const { durationInFrames, height } = useVideoConfig();
-  const p = interpolate(frame, [0, durationInFrames - 1], [0, 1]);
+  const p = interpolate(frame, [0, (total ?? durationInFrames) - 1], [0, 1]);
   return (
     <div
       style={{
