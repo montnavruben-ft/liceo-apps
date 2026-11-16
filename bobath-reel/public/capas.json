@@ -1,0 +1,209 @@
+{
+  "canvas": [
+    1350,
+    2400
+  ],
+  "colors": {
+    "fondo": "#0B1220",
+    "cyan": "#22D3EE",
+    "coral": "#FF6B5E"
+  },
+  "escenas": {
+    "e01": {
+      "capas": [
+        "e01_brillo_suelo",
+        "e01_cerebro",
+        "e01_fondo",
+        "e01_sinapsis"
+      ],
+      "pivotes": {},
+      "puntos": {}
+    },
+    "e02": {
+      "capas": [
+        "e02_anillo_1",
+        "e02_anillo_2",
+        "e02_anillo_3",
+        "e02_fondo",
+        "e02_nervios",
+        "e02_p1"
+      ],
+      "pivotes": {},
+      "puntos": {}
+    },
+    "e03": {
+      "capas": [
+        "e03_arbustos_frente",
+        "e03_ciudad_media",
+        "e03_fondo",
+        "e03_p2",
+        "e03_p3",
+        "e03_suelo"
+      ],
+      "pivotes": {},
+      "puntos": {}
+    },
+    "e04": {
+      "capas": [
+        "e04_fondo",
+        "e04_red",
+        "e04_dano",
+        "e04_nodo_nuevo"
+      ],
+      "pivotes": {},
+      "puntos": {}
+    },
+    "e05": {
+      "capas": [
+        "e05_fondo",
+        "e05_p1_normal",
+        "e05_p1_afectado",
+        "e05_p1_afectado_brazo",
+        "e05_camino_verde",
+        "e05_camino_coral",
+        "e05_tension"
+      ],
+      "pivotes": {
+        "e05_p1_afectado_brazo": {
+          "pivote": [
+            1020,
+            1000
+          ],
+          "articulacion": "hombro",
+          "nota": "Capa de brazo requiere regeneración anatómica; no rotar todavía"
+        }
+      },
+      "puntos": {}
+    },
+    "e06": {
+      "capas": [
+        "e06_fondo",
+        "e06_p1_cuerpo",
+        "e06_p1_antebrazo_flexionado",
+        "e06_p1_antebrazo_relajado",
+        "e06_mano_hombro",
+        "e06_mano_pelvis",
+        "e06_tension_coral",
+        "e06_calma_azul"
+      ],
+      "pivotes": {
+        "e06_p1_antebrazo_flexionado": {
+          "pivote": [
+            780,
+            1130
+          ],
+          "articulacion": "codo",
+          "nota": "Referencia aproximada; capa vacía"
+        },
+        "e06_p1_antebrazo_relajado": {
+          "pivote": [
+            780,
+            1130
+          ],
+          "articulacion": "codo",
+          "nota": "Referencia aproximada; capa vacía"
+        }
+      },
+      "puntos": {}
+    },
+    "e07": {
+      "capas": [
+        "e07_fondo",
+        "e07_p1_cuerpo",
+        "e07_p1_brazo_bajo",
+        "e07_p1_brazo_alto",
+        "e07_p4",
+        "e07_p4_mano_guia",
+        "e07_objeto"
+      ],
+      "pivotes": {
+        "e07_p1_brazo_bajo": {
+          "pivote": [
+            760,
+            1080
+          ],
+          "articulacion": "hombro",
+          "nota": "Capa vacía; requiere ilustración separada"
+        },
+        "e07_p1_brazo_alto": {
+          "pivote": [
+            760,
+            1080
+          ],
+          "articulacion": "hombro",
+          "nota": "Capa vacía; requiere ilustración separada"
+        }
+      },
+      "puntos": {
+        "pelvis": [
+          680,
+          1470
+        ],
+        "tronco": [
+          680,
+          1270
+        ],
+        "hombro": [
+          750,
+          1090
+        ],
+        "mano": [
+          1060,
+          1260
+        ]
+      }
+    },
+    "e08": {
+      "capas": [
+        "e08_fondo"
+      ],
+      "pivotes": {},
+      "puntos": {},
+      "iconos": [
+        "e08_observar",
+        "e08_analizar",
+        "e08_tratar",
+        "e08_reevaluar"
+      ],
+      "icon_size": [
+        700,
+        700
+      ]
+    },
+    "e09": {
+      "capas": [
+        "e09_fondo",
+        "e09_personajes_preview"
+      ],
+      "pivotes": {},
+      "puntos": {},
+      "personajes": [
+        "e09_nino",
+        "e09_mayor",
+        "e09_silla",
+        "e09_adulto"
+      ],
+      "personaje_size": [
+        900,
+        1200
+      ]
+    },
+    "e10": {
+      "capas": [
+        "e10_fondo_iluminado",
+        "e10_p1",
+        "e10_nervios",
+        "e10_cerebro_luz"
+      ],
+      "pivotes": {},
+      "puntos": {}
+    }
+  },
+  "notas": [
+    "Las escenas e04-e10 son un prototipo visual en capas. Donde las capas de extremidades contienen transparencias vacías, la ilustración permanece dentro de la capa principal; no cumplen aún el rigging independiente.",
+    "e01-e03 preservan el fotograma original como fondo y las capas de sujetos son placeholders; no es una separación verdadera.",
+    "e05-e07 y e10 usan recortes de storyboard ampliados y no alcanzan calidad 3D nativa de 1350px.",
+    "e08 iconos son PNG 700x700 y e09 personajes son 900x1200, según prompt.",
+    "No se usaron modelos de video ni seed reproducibles; imagen de referencia generada con image_gen y composición con Pillow/OpenCV."
+  ]
+}
