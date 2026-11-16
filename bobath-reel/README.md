@@ -1,6 +1,12 @@
 # Método Bobath — Reel informativo (Remotion 4)
 
-Reel vertical **9:16, 1080 × 1920 px, 30 fps, 80 s (2400 frames)** sobre el Concepto Bobath, con animación 3D estilizada (`@remotion/three` + React Three Fiber), sin video real de pacientes ni rostros.
+Reel vertical **9:16, 1080 × 1920 px, 30 fps, 80 s (2400 frames)** sobre el Concepto Bobath. Usa ilustraciones 3D estilizadas (figuras humanas sin rostro), animadas en Remotion con movimientos ligeros. No hay video real de pacientes.
+
+## Composiciones
+- **`BobathReel`** (principal): ilustraciones de `public/e01 … e10` animadas con cámara (zoom y paneo), respiración de la imagen, luces que pulsan, trazos SVG que se dibujan, ondas y partículas. Todo depende del frame actual, sin video generativo. El código está en `src/escenas/` y las piezas reutilizables en `src/components/Plate.tsx`.
+- **`BobathReel3D`**: primera versión, hecha con primitivas 3D (`@remotion/three`). Se conserva como referencia.
+- **`Prueba15s`**: prueba de los primeros 15 s con los clips de `public/clips/`.
+- **`Cover`**: portada fija de 1080 × 1920.
 
 > **Video informativo. No sustituye la valoración de un profesional de la salud.**
 >
@@ -36,6 +42,8 @@ bobath-reel/
   subtitles.srt                 # exportado desde src/data/subtitles.json
   DESCRIPCION-REEL.md           # texto de descripción con disclaimer y fuente
   public/cover.png              # portada exportada
+  public/e01 … e10/             # ilustraciones por escena (composición, fondos, capas de luz sobre negro)
+  public/capas.json             # coordenadas entregadas por el agente de imágenes
   public/fonts/                 # Montserrat + Inter (woff2) y licencias OFL
   scripts/
     build-subtitles.mjs         # narration.json -> subtitles.json
@@ -51,7 +59,8 @@ bobath-reel/
     data/subtitles.json         # bloques con startFrame/endFrame para <Subtitles />
     components/                 # Scene, Brain3D, Avatar3D, OverlayText, Subtitles, ProgressBar,
                                 # Stage (ThreeCanvas + cámara), Primitives3D, Hand3D
-    scenes/                     # S01Hook … S10Cierre (una por escena del guion)
+    escenas/                    # E01Hook … E10Cierre: escenas con ilustraciones (versión principal)
+    scenes/                     # S01Hook … S10Cierre: versión 3D de referencia
     audio/                      # placeholders en silencio + README de audio
 ```
 

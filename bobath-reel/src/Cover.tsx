@@ -1,37 +1,32 @@
 import { fitText } from "@remotion/layout-utils";
 import React from "react";
-import { AbsoluteFill } from "remotion";
-import { Avatar3D, walkPose } from "./components/Avatar3D";
-import { Brain3D } from "./components/Brain3D";
-import { Particles } from "./components/Primitives3D";
-import { SceneBackground } from "./components/Scene";
-import { CameraRig, Stage } from "./components/Stage";
+import { AbsoluteFill, Img, staticFile } from "remotion";
+import { Glow, Plate } from "./components/Plate";
 import { ANCHO_UTIL, PALETA, ZONA_SEGURA } from "./constants";
 import { FUENTE_TEXTO, FUENTE_TITULO, useFontsReady } from "./fonts";
 
 const LINES = ["¿TU CEREBRO", "PUEDE REAPRENDER", "A MOVERSE?"];
 const MAX = 110;
 
-/** Portada 1080x1920: cerebro 3D arriba, título en 3 líneas, avatar caminando abajo. */
+/** Portada 1080x1920: cerebro arriba, título en 3 líneas, P1 caminando abajo. */
 export const Cover: React.FC = () => {
   const ready = useFontsReady();
   const sizes = LINES.map((l) =>
     ready ? Math.min(MAX, Math.floor(fitText({ text: l, withinWidth: ANCHO_UTIL - 20, fontFamily: FUENTE_TITULO, fontWeight: "800" }).fontSize)) : MAX,
   );
+  const brainMask = "radial-gradient(ellipse 520px 430px at 540px 1000px, black 60%, transparent 100%)";
   return (
     <AbsoluteFill style={{ backgroundColor: PALETA.fondo }}>
-      <SceneBackground glow="#173057" />
-      <Stage fov={40}>
-        <CameraRig position={[0, 0, 10]} target={[0, 0, 0]} />
-        <Particles count={260} opacity={0.6} />
-        <Brain3D position={[0, 1.95, 0]} rotationY={-0.5} scale={1.2} activation={1} />
-        <Avatar3D pose={walkPose(0.9)} position={[0, -2.55, 0]} rotationY={0.5} nerves={1} scale={0.7} />
-        <mesh position={[0, -2.55, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <ringGeometry args={[0.45, 0.55, 48]} />
-          <meshBasicMaterial color={PALETA.cian} transparent opacity={0.6} toneMapped={false} />
-        </mesh>
-      </Stage>
-      <div style={{ position: "absolute", top: 800, left: ZONA_SEGURA.lados, width: ANCHO_UTIL, textAlign: "center" }}>
+      {/* cerebro en el tercio superior */}
+      <Plate src="e01/e01_composite.png" camera={{ scale: 0.82, y: -470, origin: [540, 1000] }} imgStyle={{ WebkitMaskImage: brainMask, maskImage: brainMask }}>
+        <Glow x={540} y={1000} r={520} color={PALETA.cian} opacity={0.25} />
+      </Plate>
+      {/* P1 caminando, abajo */}
+      <Img
+        src={staticFile("e10/e10_p1.png")}
+        style={{ position: "absolute", left: 540 - 1125 * 0.21 / 2, top: 1262, width: 1125 * 0.21, height: 2000 * 0.21, filter: "drop-shadow(0 0 30px rgba(34,211,238,0.45))" }}
+      />
+      <div style={{ position: "absolute", top: 770, left: ZONA_SEGURA.lados, width: ANCHO_UTIL, textAlign: "center" }}>
         {LINES.map((l, i) => (
           <div
             key={l}
@@ -50,24 +45,14 @@ export const Cover: React.FC = () => {
             {l}
           </div>
         ))}
-        <div
-          style={{
-            marginTop: 34,
-            fontFamily: FUENTE_TITULO,
-            fontWeight: 700,
-            fontSize: 48,
-            letterSpacing: "0.32em",
-            color: PALETA.cian,
-            textShadow: "0 0 18px rgba(34,211,238,0.6)",
-          }}
-        >
+        <div style={{ marginTop: 30, fontFamily: FUENTE_TITULO, fontWeight: 700, fontSize: 48, letterSpacing: "0.32em", color: PALETA.cian, textShadow: "0 0 18px rgba(34,211,238,0.6)" }}>
           EL MÉTODO BOBATH
         </div>
       </div>
       <div
         style={{
           position: "absolute",
-          bottom: ZONA_SEGURA.abajo + 40,
+          bottom: ZONA_SEGURA.abajo + 20,
           width: "100%",
           textAlign: "center",
           fontFamily: FUENTE_TEXTO,

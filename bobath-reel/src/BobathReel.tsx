@@ -7,7 +7,9 @@ import { Scene } from "./components/Scene";
 import { Subtitles } from "./components/Subtitles";
 import { ESCENAS, PALETA } from "./constants";
 import { useFontsReady } from "./fonts";
+import { ESCENAS_IMAGEN } from "./escenas";
 import { SCENE_COMPONENTS } from "./scenes";
+import type { SceneProps } from "./scenes/types";
 
 /**
  * Reel completo: 10 escenas con startFrame/endFrame exactos (src/data/script.json),
@@ -16,13 +18,13 @@ import { SCENE_COMPONENTS } from "./scenes";
  * Audio: los archivos se entregan ya normalizados (voz -16 LUFS, música -24 LUFS),
  * por eso ambos van a volumen 1; la música solo hace fade-in/out.
  */
-export const BobathReel: React.FC = () => {
+const Reel: React.FC<{ scenes: Record<string, React.FC<SceneProps>> }> = ({ scenes }) => {
   useFontsReady();
   const { durationInFrames } = useVideoConfig();
   return (
     <AbsoluteFill style={{ backgroundColor: PALETA.fondo }}>
       {ESCENAS.map((s, i) => {
-        const Comp = SCENE_COMPONENTS[s.key];
+        const Comp = scenes[s.key];
         return (
           <Scene key={s.id} name={`${s.id}. ${s.name}`} startFrame={s.startFrame} endFrame={s.endFrame} isFirst={i === 0} isLast={i === ESCENAS.length - 1}>
             <Comp scene={s} duration={s.endFrame - s.startFrame} />
@@ -39,3 +41,9 @@ export const BobathReel: React.FC = () => {
     </AbsoluteFill>
   );
 };
+
+/** Versión principal: ilustraciones en capas animadas (public/e01 … e10). */
+export const BobathReel: React.FC = () => <Reel scenes={ESCENAS_IMAGEN} />;
+
+/** Versión anterior con animación 3D de primitivas (@remotion/three), se conserva como referencia. */
+export const BobathReel3D: React.FC = () => <Reel scenes={SCENE_COMPONENTS} />;
