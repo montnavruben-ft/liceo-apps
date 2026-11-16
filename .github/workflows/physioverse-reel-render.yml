@@ -1,0 +1,44 @@
+name: Physioverse Reel Production Workflow
+on:
+  workflow_dispatch:
+    inputs:
+      composition:
+        description: Remotion composition
+        required: true
+        default: BobathReel
+        type: choice
+        options:
+          - BobathReel
+          - Prueba15s
+permissions:
+  contents: read
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: bobath-reel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: bobath-reel/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - name: Render
+        env:
+          COMPOSITION: ${{ inputs.composition }}
+        run: |
+          mkdir -p entregas
+          npx remotion render "$COMPOSITION" entregas/reel-preview.mp4 --codec h264 --crf 23
+          ffprobe -v error -show_entries format=duration,size -of default=nw=1 entregas/reel-preview.mp4 > entregas/reel-preview-info.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: physioverse-reel-${{ github.run_number }}
+          path: |
+            bobath-reel/entregas/reel-preview.mp4
+            bobath-reel/entregas/reel-preview-info.txt
+          retention-days: 14
